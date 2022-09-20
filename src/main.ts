@@ -1,5 +1,4 @@
-import 'phaser';
+import "phaser";
+import {config} from "./core/config";
 
-export default class Main extends Phaser.Scene {
-	
-}
+export const game = new Phaser.Game(config);

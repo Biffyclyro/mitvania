@@ -6,7 +6,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
 	entry: './src/main.ts',
 	mode: 'production',
-	target: 'node',
 	module: {
 		rules: [
 			{

@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build:prod": "npm run webpack --env env=prod --output-path=docs/ && cp ./docs/index.html ./docs/404.html",
+    "build:dev": "webpack --env env=dev",
+    "start": "http-server ./dist/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -20,6 +23,7 @@
   },
   "dependencies": {
     "copy-webpack-plugin": "^11.0.0",
+    "eslint-webpack-plugin": "^3.2.0",
     "html-webpack-plugin": "^5.5.0",
     "phaser": "^3.55.2"
   }

@@ -6,7 +6,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
 	entry: './src/main.ts',
 	mode: 'development',
-	target: 'node',
 	devtool: 'eval-source-map',
 	module: {
 		rules: [

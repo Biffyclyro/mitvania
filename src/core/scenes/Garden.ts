@@ -11,7 +11,8 @@ export default class Garden extends Phaser.Scene {
 	}
 
 	create(): void {
-		this.add.image(0, 0, 'background');
+		const background = this.add.image(512, 384, 'background');
+		background.setScale(2)
 	}
 	
 }

@@ -1,18 +1,19 @@
+import "phaser" ;
+ 
 interface Command {
-	(): void; 
+	(): void;
 }
 
-export interface Commands {
-	Rigth: Command;
-	Left: Command;
-	Up: Command;
-	Down: Command;
-}
+const commands = new Map<string, Command>();
 
-export class KeyboardCommand implements Commands {
-	Rigth: Command = () => console.log('teste');
-	Left: Command = () => console.log('teste');
-	Up: Command = () => console.log('teste');
-	Down: Command = () => console.log('teste');
-}
+commands.set('ArrowLeft', () => console.log('teste'));
+commands.set('ArrowRight', () => console.log('teste'));
+commands.set('ArrowUp', () => console.log('teste'));
+commands.set('ArrowDown', () => console.log('teste'));
 
+export const commandHandler = (keyDownEvent: KeyboardEvent) => {
+	const key = keyDownEvent.code;
+	if (commands.has(key)) {
+		commands.get(key)!();
+	}
+}

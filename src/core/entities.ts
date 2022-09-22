@@ -26,6 +26,8 @@ export interface Status {
 }
 
 export interface SpriteEntity extends Physics.Arcade.Sprite, Entity {
+	life: number;
+	mana: number;
 	status: Status;
 	attack: () => void;
 	defeated: () => void;

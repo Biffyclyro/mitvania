@@ -1,6 +1,6 @@
 import { Scene } from "phaser"
 import { windowSize } from "../config";
-import { LevelConfig } from "../models";
+import { LevelConfig } from "../entities";
 
 
 export const backgroundManager = (scene: Scene ): void => {

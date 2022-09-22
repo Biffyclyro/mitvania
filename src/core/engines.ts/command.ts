@@ -1,19 +1,27 @@
 import "phaser" ;
+import { Player, SpriteEntity } from "../entities";
+import { commands } from "./movements";
  
-interface Command {
-	(): void;
+export interface Command {
+	(sprite: SpriteEntity): void;
 }
 
-const commands = new Map<string, Command>();
+const keyboardCommands = {
+	ArrowLeft: commands.get('left'),
+	ArrowRight: commands.get('right'),
+	ArrowUp: commands.get('up'),
+	ArrowDown: commands.get('down')
+}
 
-commands.set('ArrowLeft', () => console.log('teste'));
-commands.set('ArrowRight', () => console.log('teste'));
-commands.set('ArrowUp', () => console.log('teste'));
-commands.set('ArrowDown', () => console.log('teste'));
+type keyboardObjectKey = keyof typeof keyboardCommands;
 
-export const commandHandler = (keyDownEvent: KeyboardEvent) => {
-	const key = keyDownEvent.code;
-	if (commands.has(key)) {
-		commands.get(key)!();
-	}
+const execute = (command: Command | undefined, player: Player) => {
+	if (command) {command(player);}
+}
+
+
+export const commandHandler = (keyDownEvent: KeyboardEvent, player: Player) => {
+	const key = keyDownEvent.code as keyboardObjectKey;
+	const cmd = keyboardCommands[key];
+	execute(cmd, player);
 }

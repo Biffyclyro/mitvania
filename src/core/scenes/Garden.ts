@@ -1,6 +1,7 @@
 import "phaser";
-import { backgroundManager, buildField } from "../engines.ts/asssetsManager";
-import { commandHandler } from "../engines.ts/command";
+import { backgroundManager, buildField } from "../engines/asssetsManager";
+import { commandHandler } from "../engines/command";
+import { addEntity } from "../engines/utils";
 import { Player } from "../entities";
 import { garden } from "./levelsConfig";
 
@@ -21,15 +22,15 @@ export default class Garden extends Phaser.Scene {
 		//buildField(this, garden);
 		const bloco = this.add.image(24, 520, 'sceneTiles', 3);
 		bloco.setDisplaySize(96, 104);
-		this.player = new Player(this, 1, 1, 34, 519, 'attack',{}, [], () => console.log('balb '), () => console.log('aaaaall'), () => console.log('saadada'));
-		this.physics.add.group(this.player)
-		this.physics.
+		this.player = addEntity(this, new Player(this, 1, 1, 34, 519, 'attack',{}, [], () => console.log('balb '), () => console.log('aaaaall'), () => console.log('saadada')));
 		this.anims.create({
 			key: 'attack',
 			frameRate: 10,
 			repeat: -1,
 			frames: this.anims.generateFrameNumbers('attack', {start: 0, end: 6})
 		});
+
+		this.player.anims.play('attack');
 
 		this.input.keyboard.on('keydown', (e: KeyboardEvent) => commandHandler(e, this.player)); 
 	}

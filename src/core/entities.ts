@@ -44,6 +44,7 @@ export class SpriteEntity extends Physics.Arcade.Sprite implements Entity {
 }
 
 export class Player extends SpriteEntity {
+	specialAttack: () => void;
 	constructor(scene: Phaser.Scene,
 								life: number, 
 								mana:number, 
@@ -56,5 +57,6 @@ export class Player extends SpriteEntity {
 								attack: () => void,
 								defeat: () => void) {
 		super(scene, life, mana, x, y, texture, attack, defeat, stats);
+		this.specialAttack = specialAttack;
 	}
 }

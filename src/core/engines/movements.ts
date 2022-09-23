@@ -1,20 +1,26 @@
 import { SpriteEntity } from "../entities";
 import { Command } from "./command";
 
-export const moveUp: Command = (sprite: SpriteEntity) => {
-	sprite.setAccelerationY(-5);
+const velocity = 180;
+
+const moveUp: Command = (sprite: SpriteEntity) => {
+	sprite.setAccelerationY(-velocity);
 }
 
-export const moveDown: Command = (sprite: SpriteEntity) => {
-	sprite.setAccelerationY(5);
+const moveDown: Command = (sprite: SpriteEntity) => {
+	sprite.setAccelerationY(velocity);
 }
 
-export const moveLeft: Command = (sprite: SpriteEntity) => {
-	sprite.setAccelerationX(-5);
+const moveLeft: Command = (sprite: SpriteEntity) => {
+	sprite.setAccelerationX(-velocity);
 }
 
-export const  moveRight: Command = (sprite: SpriteEntity) => {
-	sprite.setAccelerationX(-5);
+const  moveRight: Command = (sprite: SpriteEntity) => {
+	sprite.setAccelerationX(velocity);
+}
+
+const stop: Command = (sprite: SpriteEntity) => {
+	sprite.setVelocity(0,0);
 }
 
 export const commands = new Map<string, Command>();
@@ -22,3 +28,4 @@ commands.set('left', moveLeft);
 commands.set('right', moveRight);
 commands.set('up', moveUp);
 commands.set('down', moveDown);
+commands.set('stop', stop);

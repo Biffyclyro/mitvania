@@ -1,7 +1,7 @@
 import "phaser";
 import { backgroundManager, buildField } from "../engines/asssetsManager";
 import { commandHandler } from "../engines/command";
-import { addEntity } from "../engines/utils";
+import { addEntity } from "../engines/entitiesHandler";
 import { Player } from "../entities";
 import { garden } from "./levelsConfig";
 
@@ -32,6 +32,6 @@ export default class Garden extends Phaser.Scene {
 
 		this.player.anims.play('attack');
 
-		this.input.keyboard.on('keydown', (e: KeyboardEvent) => commandHandler(e, this.player)); 
+		
 	}
 }

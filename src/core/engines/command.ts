@@ -1,4 +1,4 @@
-import "phaser" ;
+import { Scene } from "phaser";
 import { Player, SpriteEntity } from "../entities";
 import { commands } from "./movements";
  
@@ -21,7 +21,13 @@ const execute = (command: Command | undefined, player: Player) => {
 
 
 export const commandHandler = (keyDownEvent: KeyboardEvent, player: Player) => {
+	console.log(keyDownEvent)
 	const key = keyDownEvent.code as keyboardObjectKey;
 	const cmd = keyboardCommands[key];
 	execute(cmd, player);
+}
+
+export const inputsHandler = (scene: Scene) => {
+		scene.input.keyboard.on('keydown', (e: KeyboardEvent) => commandHandler(e, scene.player)); 
+		scene.input.keyboard.on('keyup', () => console.log('teste'))
 }

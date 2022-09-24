@@ -14,6 +14,9 @@ export const config = {
 		path: "../assets/"
 	},
 	physics: {
-		default: 'arcade'
+		default: 'arcade',
+		arcade: {
+			gravity:{y: 300} 
+		}
 	}
 }

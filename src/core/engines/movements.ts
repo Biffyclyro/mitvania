@@ -4,19 +4,19 @@ import { Command } from "./command";
 const velocity = 180;
 
 const moveUp: Command = (sprite: Physics.Arcade.Sprite) => {
-	sprite.setAccelerationY(-velocity);
+	sprite.setVelocityY(-velocity);
 }
 
 const moveDown: Command = (sprite: Physics.Arcade.Sprite) => {
-	sprite.setAccelerationY(velocity);
+	sprite.setVelocityY(velocity);
 }
 
 const moveLeft: Command = (sprite: Physics.Arcade.Sprite) => {
-	sprite.setAccelerationX(-velocity);
+	sprite.setVelocityX(-velocity);
 }
 
 const  moveRight: Command = (sprite: Physics.Arcade.Sprite) => {
-	sprite.setAccelerationX(velocity);
+	sprite.setVelocityX(velocity);
 }
 
 const stop: Command = (sprite: Physics.Arcade.Sprite) => {

@@ -1,6 +1,6 @@
 import "phaser";
 import { backgroundManager, buildField } from "../engines/asssetsManager";
-import { commandHandler } from "../engines/command";
+import { inputsHandler } from "../engines/command";
 import { addEntity } from "../engines/entitiesHandler";
 import { Player } from "../entities";
 import { player } from "../global";
@@ -39,6 +39,6 @@ export default class Standard extends Phaser.Scene {
 			frames: this.anims.generateFrameNumbers('player-idle', {start:0, end: 3})
 		});
 		player.getSprite().anims.play('player-idle');
-		
+		inputsHandler(this);
 	}
 }

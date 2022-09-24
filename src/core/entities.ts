@@ -33,6 +33,7 @@ export interface Stats {
 }
 
 export class SpriteEntity {
+		lvl = 1;
 		attack: (() => void ) | undefined;
 		defeat: (() => void) | undefined;
 		private sprite!: Physics.Arcade.Sprite;
@@ -49,6 +50,10 @@ export class SpriteEntity {
 
 		getSprite(): Physics.Arcade.Sprite {
 			return this.sprite;
+		}
+
+		up() {
+			this.lvl++;
 		}
 }
 

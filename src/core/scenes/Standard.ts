@@ -7,6 +7,7 @@ import { player } from "../global";
 import { garden } from "./levelsConfig";
 
 export default class Standard extends Phaser.Scene {
+	private readonly ground = this.physics.add.staticGroup();
 	constructor() {
 		super('Garden');
 	}
@@ -22,9 +23,11 @@ export default class Standard extends Phaser.Scene {
 		backgroundManager(this);
 		player.setSprite(this, 96, 510);
 		addEntity(this, player.getSprite());
+		player.getSprite().setFriction(300);
+		this.physics.add.collider(player.getSprite(), this.ground)
 		//buildField(this, garden);
-		const bloco = this.add.image(24, 520, 'sceneTiles', 3);
-		bloco.setDisplaySize(96, 104);
+		this.ground.create(24, 520, 'sceneTiles', 3);
+		//bloco.setDisplaySize(96, 104);
 		this.anims.create({
 			key: 'attack',
 			frameRate: 10,

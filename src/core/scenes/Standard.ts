@@ -1,4 +1,5 @@
 import "phaser";
+import { Physics } from "phaser";
 import { backgroundManager, buildField } from "../engines/asssetsManager";
 import { inputsHandler } from "../engines/command";
 import { addEntity } from "../engines/entitiesHandler";
@@ -7,7 +8,7 @@ import { player } from "../global";
 import { garden } from "./levelsConfig";
 
 export default class Standard extends Phaser.Scene {
-	private readonly ground = this.physics.add.staticGroup();
+	private ground!: Physics.Arcade.StaticGroup; 
 	constructor() {
 		super('Garden');
 	}
@@ -20,10 +21,11 @@ export default class Standard extends Phaser.Scene {
 	}
 
 	create(): void {
+		this.ground = this.physics.add.staticGroup(); 
 		backgroundManager(this);
 		player.setSprite(this, 96, 510);
 		addEntity(this, player.getSprite());
-		player.getSprite().setFriction(300);
+		player.getSprite().setGravity(300);
 		this.physics.add.collider(player.getSprite(), this.ground)
 		//buildField(this, garden);
 		this.ground.create(24, 520, 'sceneTiles', 3);

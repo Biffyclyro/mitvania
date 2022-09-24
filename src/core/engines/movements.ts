@@ -1,25 +1,25 @@
-import { SpriteEntity } from "../entities";
+import { Physics } from "phaser";
 import { Command } from "./command";
 
 const velocity = 180;
 
-const moveUp: Command = (sprite: SpriteEntity) => {
+const moveUp: Command = (sprite: Physics.Arcade.Sprite) => {
 	sprite.setAccelerationY(-velocity);
 }
 
-const moveDown: Command = (sprite: SpriteEntity) => {
+const moveDown: Command = (sprite: Physics.Arcade.Sprite) => {
 	sprite.setAccelerationY(velocity);
 }
 
-const moveLeft: Command = (sprite: SpriteEntity) => {
+const moveLeft: Command = (sprite: Physics.Arcade.Sprite) => {
 	sprite.setAccelerationX(-velocity);
 }
 
-const  moveRight: Command = (sprite: SpriteEntity) => {
+const  moveRight: Command = (sprite: Physics.Arcade.Sprite) => {
 	sprite.setAccelerationX(velocity);
 }
 
-const stop: Command = (sprite: SpriteEntity) => {
+const stop: Command = (sprite: Physics.Arcade.Sprite) => {
 	sprite.setVelocity(0,0);
 }
 

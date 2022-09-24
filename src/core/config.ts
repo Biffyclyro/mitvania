@@ -1,5 +1,5 @@
 import "phaser";
-import Garden from "./scenes/Garden";
+import Standard from "./scenes/Standard";
 
 export const windowSize = {
 	width: window.innerWidth,
@@ -9,7 +9,7 @@ export const windowSize = {
 export const config = {
 	width: windowSize.width,
 	height: windowSize.height,
-	scene: [Garden],
+	scene: [Standard],
 	loader: {
 		path: "../assets/"
 	},

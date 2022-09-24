@@ -1,8 +1,15 @@
-import { Physics } from "phaser";
+import {Scene, Physics } from "phaser";
 
 export interface Entity {
 	x: number;
 	y: number;
+}
+
+enum Direction {
+  Up,
+  Down,
+  Left,
+  Right,
 }
 
 export interface Item extends Physics.Arcade.Image, Entity {
@@ -25,38 +32,27 @@ export interface Stats {
 	agi?: number;
 }
 
-export class SpriteEntity extends Physics.Arcade.Sprite implements Entity {
-		attack: () => void;
-		defeat: () => void;
-		constructor(scene: Phaser.Scene,
-								life: number, 
-								mana:number, 
-								x:number, 
-								y: number, 
-								texture: string,
-								attack: () => void,
-								defeat: () => void,
-								stats: Stats) {
-			super(scene, x, y, texture );
-			this.attack = attack;
-			this.defeat = defeat;
+export class SpriteEntity {
+		attack: (() => void ) | undefined;
+		defeat: (() => void) | undefined;
+		private sprite!: Physics.Arcade.Sprite;
+		constructor(public life: number, 
+								public mana:number, 
+								public stats: Stats,
+								private baseTexture: string,
+								public direction: Direction = 3) {
+		}
+
+		setSprite(scene: Scene, x: number, y: number) {
+			this.sprite =  new Physics.Arcade.Sprite(scene, x, y, this.baseTexture);
+		}
+
+		getSprite(): Physics.Arcade.Sprite {
+			return this.sprite;
 		}
 }
 
 export class Player extends SpriteEntity {
-	specialAttack: () => void;
-	constructor(scene: Phaser.Scene,
-								life: number, 
-								mana:number, 
-								x:number, 
-								y: number, 
-								texture: string,
-								stats: Stats,
-								inventory: Item[],
-								specialAttack: () => void,
-								attack: () => void,
-								defeat: () => void) {
-		super(scene, life, mana, x, y, texture, attack, defeat, stats);
-		this.specialAttack = specialAttack;
-	}
+	specialAttack: (() => void) | undefined;
+	inventory: Item[] | undefined;
 }

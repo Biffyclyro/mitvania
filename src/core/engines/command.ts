@@ -1,9 +1,9 @@
-import { Scene } from "phaser";
-import { Player, SpriteEntity } from "../entities";
+import { Scene, Physics } from "phaser";
+import { player } from "../global";
 import { commands } from "./movements";
  
 export interface Command {
-	(sprite: SpriteEntity): void;
+	(sprite: Physics.Arcade.Sprite): void;
 }
 
 const keyboardCommands = {
@@ -15,19 +15,19 @@ const keyboardCommands = {
 
 type keyboardObjectKey = keyof typeof keyboardCommands;
 
-const execute = (command: Command | undefined, player: Player) => {
-	if (command) {command(player);}
+const execute = (command: Command | undefined) => {
+	if (command) {command(player.getSprite());}
 }
 
 
-export const commandHandler = (keyDownEvent: KeyboardEvent, player: Player) => {
+export const commandHandler = (keyDownEvent: KeyboardEvent) => {
 	console.log(keyDownEvent)
 	const key = keyDownEvent.code as keyboardObjectKey;
 	const cmd = keyboardCommands[key];
-	execute(cmd, player);
+	execute(cmd);
 }
 
 export const inputsHandler = (scene: Scene) => {
-		scene.input.keyboard.on('keydown', (e: KeyboardEvent) => commandHandler(e, scene.player)); 
+		scene.input.keyboard.on('keydown', (e: KeyboardEvent) => commandHandler(e)); 
 		scene.input.keyboard.on('keyup', () => console.log('teste'))
 }

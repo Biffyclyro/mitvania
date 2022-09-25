@@ -1,5 +1,8 @@
-<<<<<<< HEAD
 # Mitvania
+
+- Build: npm run build:dev
+- Run game: npm start
+
 
 =======
 <h1 align="center">Mitvania</h1>
@@ -25,4 +28,3 @@
 <h4 align="center"> 
 	🚧 Em construção...  🚧
 </h4>
->>>>>>> refs/remotes/origin/main

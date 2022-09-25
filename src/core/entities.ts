@@ -45,7 +45,7 @@ export class SpriteEntity {
 		}
 
 		setSprite(scene: Scene, x: number, y: number) {
-			this.sprite =  new Physics.Arcade.Sprite(scene, x, y, this.baseTexture);
+			this.sprite = new Physics.Arcade.Sprite(scene, x, y, this.baseTexture);
 		}
 
 		getSprite(): Physics.Arcade.Sprite {

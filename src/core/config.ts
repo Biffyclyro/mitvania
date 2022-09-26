@@ -14,7 +14,12 @@ export const config = {
 		path: "../assets/"
 	},
 	physics: {
-		default: 'arcade',
+		default: 'matter',
+		matter: {
+			debug: {
+				showBody: true
+			}
+		}
 		/*
 		arcade: {
 			gravity:{y: 300} 

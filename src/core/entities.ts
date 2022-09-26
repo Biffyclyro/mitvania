@@ -3,6 +3,8 @@ import {Scene, Physics } from "phaser";
 export interface Entity {
 	x: number;
 	y: number;
+	width?: number;
+	height?: number;
 }
 
 enum Direction {
@@ -12,7 +14,7 @@ enum Direction {
   Right,
 }
 
-export interface Item extends Physics.Arcade.Image, Entity {
+export interface Item extends Physics.Matter.Image{
 	name: string;
 	properties: any;
 }
@@ -36,7 +38,7 @@ export class SpriteEntity {
 		lvl = 1;
 		attack: (() => void ) | undefined;
 		defeat: (() => void) | undefined;
-		private sprite!: Physics.Arcade.Sprite;
+		private sprite!: Physics.Matter.Sprite;
 		constructor(public life: number, 
 								public mana:number, 
 								public stats: Stats,
@@ -44,11 +46,15 @@ export class SpriteEntity {
 								public direction: Direction = 3) {
 		}
 
-		setSprite(scene: Scene, x: number, y: number) {
-			this.sprite = new Physics.Arcade.Sprite(scene, x, y, this.baseTexture);
+		setSprite(scene: Scene, {x , y, width, height }: Entity) {
+			//this.sprite = new Physics.Matter.Sprite(scene.matter.world, x, y, this.baseTexture);
+			this.sprite = scene.matter.add.sprite(x, y, this.baseTexture);
+			if (width && height) {
+				this.sprite.setRectangle(width, height);
+			}
 		}
 
-		getSprite(): Physics.Arcade.Sprite {
+		getSprite(): Physics.Matter.Sprite {
 			return this.sprite;
 		}
 

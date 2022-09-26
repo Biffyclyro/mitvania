@@ -1,26 +1,25 @@
 import { Physics } from "phaser";
 import { Command } from "./command";
 
-const velocity = 180;
+const velocity = 8;
 
-const moveUp: Command = (sprite: Physics.Arcade.Sprite) => {
-	sprite.setVelocityY(-330);
+const moveUp: Command = (sprite: Physics.Matter.Sprite) => {
+	sprite.setVelocityY(-10);
 }
 
-const moveDown: Command = (sprite: Physics.Arcade.Sprite) => {
+const moveDown: Command = (sprite: Physics.Matter.Sprite) => {
 	sprite.setVelocityY(velocity);
 }
 
-const moveLeft: Command = (sprite: Physics.Arcade.Sprite) => {
+const moveLeft: Command = (sprite: Physics.Matter.Sprite) => {
 	sprite.setVelocityX(-velocity);
 }
 
-const  moveRight: Command = (sprite: Physics.Arcade.Sprite) => {
-	console.log('for some reason is running this ')
+const  moveRight: Command = (sprite: Physics.Matter.Sprite) => {
 	sprite.setVelocityX(velocity);
 }
 
-const stop: Command = (sprite: Physics.Arcade.Sprite) => {
+const stop: Command = (sprite: Physics.Matter.Sprite) => {
 	sprite.setVelocity(0,0);
 }
 

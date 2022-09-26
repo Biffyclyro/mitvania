@@ -3,7 +3,7 @@ import { player } from "../global";
 import { commands } from "./movements";
  
 export interface Command {
-	(sprite: Physics.Arcade.Sprite): void;
+	(sprite: Physics.Matter.Sprite): void;
 }
 
 const keyboardCommands = {

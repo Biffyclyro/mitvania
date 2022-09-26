@@ -26,13 +26,17 @@ export const loadPlayerAssets = (scene: Scene) => {
 		scene.load.spritesheet('player-idle', 'sprites/player-idle.png', {frameWidth: 64, frameHeight: 64});
 }
 
+export const makeLayerSolid = (scene: Scene, layer: Tilemaps.TilemapLayer) => {
+		layer.setCollisionByExclusion([-1]);	
+		scene.matter.world.convertTilemapLayer(layer);
+}
+
 export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 		const map = scene.make.tilemap({key: 'map'});
 		const tileset = map.addTilesetImage('teste', 'tiles');
 		map.createLayer('Tile Layer 3', tileset, 0, 0);
 		const second = map.createLayer('Tile Layer 2', tileset, 0, 0);
-		const fristLayer = map.createLayer('first-layer', tileset, 0, 0);
-		//fristLayer.setCollisionByProperty({collides: true});
-		fristLayer.setCollisionByExclusion([-1]);	
-		return fristLayer;
+		const firstLayer= map.createLayer('first-layer', tileset, 0, 0);
+		//firstLayer.setCollisionByProperty({collides: true});
+		return firstLayer;
 }

@@ -1,6 +1,6 @@
 import "phaser";
 import { Physics } from "phaser";
-import { backgroundManager, buildField, buildScene, loadPlayerAssets, loadSceneAssets } from "../engines/asssetsManager";
+import { backgroundManager, buildField, buildScene, loadPlayerAssets, loadSceneAssets, makeLayerSolid } from "../engines/asssetsManager";
 import { inputsHandler } from "../engines/command";
 import { addEntity } from "../engines/entitiesHandler";
 import { Player } from "../entities";
@@ -8,7 +8,6 @@ import { player } from "../global";
 import { garden } from "./levelsConfig";
 
 export default class Standard extends Phaser.Scene {
-	private ground!: Physics.Arcade.StaticGroup; 
 	constructor() {
 		super('Garden');
 	}
@@ -31,10 +30,11 @@ export default class Standard extends Phaser.Scene {
 		backgroundManager(this);
 
 		const fristLayer = buildScene(this);
-		player.setSprite(this, 96, 410);
+		player.setSprite(this, {x:96, y:410, width: 32, height:64});
 		addEntity(this, player.getSprite());
-		player.getSprite().setGravityY(300);
-		this.physics.add.collider(player.getSprite(), fristLayer);
+		makeLayerSolid(this, fristLayer);
+		//player.getSprite().setCollisionCategory(1);
+		//this.matter.add.sprite(96, 520, 'sceneTiles', 3).setStatic(true);
 		//buildField(this, garden);
 		//this.ground.create(24, 520, 'sceneTiles', 3);
 		//bloco.setDisplaySize(96, 104);
@@ -52,7 +52,6 @@ export default class Standard extends Phaser.Scene {
 			frames: this.anims.generateFrameNumbers('player-idle', {start:0, end: 3})
 		});
 		player.getSprite().anims.play('player-idle');
-		player.getSprite().setBodySize(24, 12)
 		inputsHandler(this);
 	}
 }

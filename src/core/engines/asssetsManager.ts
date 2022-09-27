@@ -37,6 +37,8 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 		map.createLayer('Tile Layer 3', tileset, 0, 0);
 		const second = map.createLayer('Tile Layer 2', tileset, 0, 0);
 		const firstLayer= map.createLayer('first-layer', tileset, 0, 0);
+		const teste = map.
 		//firstLayer.setCollisionByProperty({collides: true});
-		return firstLayer;
+		//return firstLayer;
+		return teste;
 }

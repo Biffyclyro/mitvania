@@ -18,7 +18,7 @@ export const buildField = (scene: Scene, levelConfig: LevelConfig) => {
 export const loadSceneAssets = (scene: Scene) => {
 		scene.load.image('background', 'backgrounds/Background_0.png');
 		scene.load.image('tiles', 'tiles/Tiles.png');
-		scene.load.tilemapTiledJSON('map','tiles/fist-tile.json');
+		scene.load.tilemapTiledJSON('map','tiles/teste.json');
 }
 
 export const loadPlayerAssets = (scene: Scene) => {
@@ -37,8 +37,10 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 		map.createLayer('Tile Layer 3', tileset, 0, 0);
 		const second = map.createLayer('Tile Layer 2', tileset, 0, 0);
 		const firstLayer= map.createLayer('first-layer', tileset, 0, 0);
-		const teste = map.
+		//map.createLayer('background', tileset)
+		//const teste = map.createFromObjects('polygons', {name: "chao"});
+		
 		//firstLayer.setCollisionByProperty({collides: true});
 		//return firstLayer;
-		return teste;
+		return firstLayer;
 }

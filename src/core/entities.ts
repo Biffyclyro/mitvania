@@ -3,8 +3,9 @@ import {Scene, Physics } from "phaser";
 export interface Entity {
 	x: number;
 	y: number;
-	width?: number;
-	height?: number;
+	width: number;
+	height: number;
+	scale: number;
 }
 
 enum Direction {
@@ -23,9 +24,6 @@ export interface Block extends Entity{
 	texture: string;
 }
 
-export interface LevelConfig {
-	blocks: Block[];
-}
 
 export interface Stats {
 	atk?: number;
@@ -46,11 +44,12 @@ export class SpriteEntity {
 								public direction: Direction = 3) {
 		}
 
-		setSprite(scene: Scene, {x , y, width, height }: Entity) {
+		setSprite(scene: Scene, {x , y, width, height, scale}: Entity) {
 			//this.sprite = new Physics.Matter.Sprite(scene.matter.world, x, y, this.baseTexture);
-			this.sprite = scene.matter.add.sprite(x, y, this.baseTexture);
+			this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 41);
 			if (width && height) {
 				this.sprite.setRectangle(width, height);
+				this.sprite.setScale(scale);
 			}
 		}
 

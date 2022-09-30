@@ -1,18 +1,30 @@
 import { Scene, Tilemaps } from "phaser"
 import { windowSize } from "../config";
-import { LevelConfig } from "../entities";
+
+export interface AssetManager {
+	(scene: Scene): void;
+}
+
+export const buildPlayerAnims: AssetManager = (scene: Scene) => {
+		scene.anims.create({
+			key: 'player-idle',
+			frameRate: 5,
+			repeat: -1,
+			frames: scene.anims.generateFrameNumbers('player', {start:40, end: 43})
+		});	
+		
+		scene.anims.create({
+			key: 'moving',
+			frameRate: 10,
+			frames: scene.anims.generateFrameNumbers('player', {start:8, end: 13})
+		});
+}
 
 
 export const backgroundManager = (scene: Scene ): void => {
 	const bg = scene.add.image(0, 0 , 'background');
 	bg.setDisplayOrigin(0, 0);
 	bg.setDisplaySize(windowSize.width, windowSize.height);
-}
-
-export const buildField = (scene: Scene, levelConfig: LevelConfig) => {
-	levelConfig.blocks.forEach(block => {
-			scene.add.image(block.x, block.y ,block.texture);
-	});
 }
 
 export const loadSceneAssets = (scene: Scene) => {
@@ -23,7 +35,7 @@ export const loadSceneAssets = (scene: Scene) => {
 
 export const loadPlayerAssets = (scene: Scene) => {
 		scene.load.spritesheet('attack', 'sprites/attack.png', {frameWidth: 74, frameHeight: 74});
-		scene.load.spritesheet('player-idle', 'sprites/player-idle.png', {frameWidth: 64, frameHeight: 64});
+		scene.load.spritesheet('player', 'sprites/sprites-char.png', {frameWidth: 16, frameHeight: 16});
 }
 
 export const makeLayerSolid = (scene: Scene, layer: Tilemaps.TilemapLayer) => {

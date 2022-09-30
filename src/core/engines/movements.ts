@@ -4,23 +4,28 @@ import { Command } from "./command";
 const velocity = 8;
 
 const moveUp: Command = (sprite: Physics.Matter.Sprite) => {
-	sprite.setVelocityY(-10);
+	sprite.setVelocity(0, -10);
+	sprite.anims.play('moving')
 }
 
 const moveDown: Command = (sprite: Physics.Matter.Sprite) => {
-	sprite.setVelocityY(velocity);
+	sprite.setVelocity(0, velocity);
+	sprite.anims.play('moving', true)
 }
 
 const moveLeft: Command = (sprite: Physics.Matter.Sprite) => {
-	sprite.setVelocityX(-velocity);
+	sprite.setVelocity(-velocity, 0);
+	sprite.anims.play('moving',true)
 }
 
 const  moveRight: Command = (sprite: Physics.Matter.Sprite) => {
-	sprite.setVelocityX(velocity);
+	sprite.setVelocity(velocity, 0);
+	sprite.anims.play('moving',true)
 }
 
 const stop: Command = (sprite: Physics.Matter.Sprite) => {
 	sprite.setVelocity(0,0);
+	sprite.anims.play('player-idle', true);
 }
 
 export const commands = new Map<string, Command>();

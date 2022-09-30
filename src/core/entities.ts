@@ -8,11 +8,11 @@ export interface Entity {
 	scale: number;
 }
 
-enum Direction {
-  Up,
-  Down,
-  Left,
-  Right,
+export enum Direction {
+  Up = 'up',
+  Down = 'down',
+  Left= 'left',
+  Right = 'right'
 }
 
 export interface Item extends Physics.Matter.Image{
@@ -34,6 +34,7 @@ export interface Stats {
 
 export class SpriteEntity {
 		lvl = 1;
+		moving = false;
 		attack: (() => void ) | undefined;
 		defeat: (() => void) | undefined;
 		private sprite!: Physics.Matter.Sprite;
@@ -41,7 +42,7 @@ export class SpriteEntity {
 								public mana:number, 
 								public stats: Stats,
 								private baseTexture: string,
-								public direction: Direction = 3) {
+								public direction: Direction = Direction.Right) {
 		}
 
 		setSprite(scene: Scene, {x , y, width, height, scale}: Entity) {
@@ -50,6 +51,7 @@ export class SpriteEntity {
 			if (width && height) {
 				this.sprite.setRectangle(width, height);
 				this.sprite.setScale(scale);
+				this.sprite.setFixedRotation();
 			}
 		}
 

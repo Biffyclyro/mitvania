@@ -1,44 +1,47 @@
-import { Physics } from "phaser";
-import { Direction, SpriteEntity } from "../entities";
-import { Command } from "./command";
+import { Physics } from "phaser"
+import { SpriteEntity } from "../entities"
+import { Command } from "./command"
 
-const velocity = 8;
+interface Movement {
+	(sprite: Physics.Matter.Sprite): void
+}
 
-const moveUp: Command = (sprite: Physics.Matter.Sprite) => {
-	sprite.setVelocity(0, -10);
+const velocity = 8
+
+const moveUp = (sprite: Physics.Matter.Sprite) => {
+	sprite.setVelocityY(-10)
 	sprite.anims.play('moving')
 }
 
-const moveDown: Command = (sprite: Physics.Matter.Sprite) => {
-	sprite.setVelocity(0, velocity);
+const moveDown = (sprite: Physics.Matter.Sprite) => {
+	sprite.setVelocity(0, velocity)
 	sprite.anims.play('moving', true)
 }
 
-const moveLeft: Command = (sprite: Physics.Matter.Sprite) => {
-	sprite.setVelocity(-velocity, 0);
+const moveLeft = (sprite: Physics.Matter.Sprite) => {
+	sprite.setVelocityX(-velocity)
 	sprite.anims.play('moving',true)
 }
 
-const  moveRight: Command = (sprite: Physics.Matter.Sprite) => {
-	sprite.setVelocity(velocity, 0);
+const  moveRight = (sprite: Physics.Matter.Sprite) => {
+	sprite.setVelocityX(velocity)
 	sprite.anims.play('moving',true)
 }
 
-const stop: Command = (sprite: Physics.Matter.Sprite) => {
-	sprite.setVelocity(0,0);
-	sprite.anims.play('player-idle', true);
+const stop = (sprite: Physics.Matter.Sprite) => {
+	sprite.setVelocity(0,0)
+	sprite.anims.play('player-idle', true)
 }
 
 export const move = (spriteEntity: SpriteEntity) => {
 	if (spriteEntity.moving) {
-		console.log('is moving')
-		commands.get(spriteEntity.direction)!(spriteEntity.getSprite());
+		commands.get(spriteEntity.direction)!(spriteEntity.getSprite())
 	}
 }
 
-export const commands = new Map<string, Command>();
-commands.set('Left', moveLeft);
-commands.set('Right', moveRight);
-commands.set('Up', moveUp);
-commands.set('Down', moveDown);
-commands.set('Stop', stop);
+export const commands = new Map<string, Movement>();
+commands.set('left', moveLeft)
+commands.set('right', moveRight)
+commands.set('up', moveUp)
+commands.set('down', moveDown)
+commands.set('stop', stop)

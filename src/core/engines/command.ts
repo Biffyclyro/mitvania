@@ -51,4 +51,8 @@ export const keyboardHandler = (scene: Scene) => {
 
 export const inputsHandler = (scene: Scene) => {
 	keyboardHandler(scene)
+	scene.game.events.on('focus', () => {
+		inputs = 0
+		setMovement(player.direction)
+	})
 }

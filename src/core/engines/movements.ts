@@ -36,6 +36,8 @@ const stop = (sprite: Physics.Matter.Sprite) => {
 export const move = (spriteEntity: SpriteEntity) => {
 	if (spriteEntity.moving) {
 		commands.get(spriteEntity.direction)!(spriteEntity.getSprite())
+	} else {
+		stop(spriteEntity.getSprite())
 	}
 }
 

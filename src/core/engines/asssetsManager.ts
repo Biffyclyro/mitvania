@@ -38,22 +38,16 @@ export const loadPlayerAssets = (scene: Scene) => {
 }
 
 export const makeLayerSolid = (scene: Scene, layer: Tilemaps.TilemapLayer) => {
-		//layer.setCollisionByExclusion([-1])
+		layer.setCollisionByExclusion([-1])
 		scene.matter.world.convertTilemapLayer(layer)
 }
 
 export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 		const map = scene.make.tilemap({key: 'map'})
-		const teste = map.setCollisionByProperty({porperties:[{name:'collides', value:true}]})
-		console.log(teste)
 		const tileset = map.addTilesetImage('teste', 'tiles')
 		map.createLayer('Tile Layer 3', tileset, 0, 0)
 		const second = map.createLayer('Tile Layer 2', tileset, 0, 0)
 		const firstLayer= map.createLayer('first-layer', tileset, 0, 0)
-		//map.createLayer('background', tileset)
-		//const teste = map.createFromObjects('polygons', {name: "chao"});
 		
-		//firstLayer.setCollisionByProperty({collides: true});
-		//return firstLayer;
 		return firstLayer
 }

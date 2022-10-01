@@ -1,10 +1,5 @@
 import { Physics } from "phaser"
-import { SpriteEntity } from "../entities"
 import { Command } from "./command"
-
-interface Movement {
-	(sprite: Physics.Matter.Sprite): void
-}
 
 const velocity = 8
 
@@ -19,29 +14,23 @@ const moveDown = (sprite: Physics.Matter.Sprite) => {
 }
 
 const moveLeft = (sprite: Physics.Matter.Sprite) => {
+	sprite.setFlipX(true)
 	sprite.setVelocityX(-velocity)
 	sprite.anims.play('moving',true)
 }
 
 const  moveRight = (sprite: Physics.Matter.Sprite) => {
+	sprite.resetFlip()
 	sprite.setVelocityX(velocity)
 	sprite.anims.play('moving',true)
 }
 
 const stop = (sprite: Physics.Matter.Sprite) => {
-	sprite.setVelocity(0,0)
+	sprite.setVelocityX(0)
 	sprite.anims.play('player-idle', true)
 }
 
-export const move = (spriteEntity: SpriteEntity) => {
-	if (spriteEntity.moving) {
-		commands.get(spriteEntity.direction)!(spriteEntity.getSprite())
-	} else {
-		stop(spriteEntity.getSprite())
-	}
-}
-
-export const commands = new Map<string, Movement>();
+export const commands = new Map<string, Command>();
 commands.set('left', moveLeft)
 commands.set('right', moveRight)
 commands.set('up', moveUp)

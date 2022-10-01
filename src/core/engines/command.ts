@@ -1,58 +1,52 @@
-import { Scene, Physics } from "phaser"
-import { Direction } from "../entities"
+import { Scene, Physics, Game, Input, Types } from "phaser"
 import { player } from "../global"
 import { commands } from "./movements"
  
 export interface Command {
-	(): void
+	(sprite: Physics.Matter.Sprite): void
 }
 
-let inputs = 0
+interface KeyboardKeys {
+	up:Input.Keyboard.Key
+	down:Input.Keyboard.Key
+	left:Input.Keyboard.Key
+	right:Input.Keyboard.Key
+}
 
-const setMovement = (direction: Direction, moving=false) => {
-	if (moving) {
-		inputs++
-		player.moving = moving
-		player.direction = direction
-	} else {
-		inputs--
-		player.direction = direction
-		if (inputs === 0) {
-			player.moving = false
+export interface Inputs {
+	keyboard: KeyboardKeys 
+}
+
+export class InputManager {
+	private static readonly INSTANCE = new InputManager()
+	private inputs: Inputs
+
+	constructor() {
+		if (InputManager.INSTANCE) {
+			return InputManager.INSTANCE
 		}
 	}
-}
 
-const keyboardCommands = {
-	ArrowLeft: () => setMovement(Direction.Left, true),
-	ArrowRight: () => setMovement(Direction.Right, true),
-	ArrowUp: () => setMovement(Direction.Up, true),
-	ArrowDown: () => setMovement(Direction.Down, true),
-	Stop: () => setMovement(player.direction) 
-}
+	buildInput(scene: Scene) {
+		this.inputs = {
+			keyboard: {
+				up: scene.input.keyboard.addKey('Up'),
+				down: scene.input.keyboard.addKey('Down'),
+				left: scene.input.keyboard.addKey('Left'),
+				right: scene.input.keyboard.addKey('Right')
+			}
+		}	
+	}
 
-type keyboardObjectKey = keyof typeof keyboardCommands;
+	inputHandler() {
 
-const execute = (command: Command | undefined ) => {
-	if (command) {command()}
-}
+		if (this.inputs.keyboard.left.isDown) {
+			commands.get('left')!(player.getSprite())
+		} if (this.inputs.keyboard.right.isDown) {
+			commands.get('right')!(player.getSprite())
+		} if (this.inputs.keyboard.up.isDown) {
+			commands.get('up')!(player.getSprite())
+		}
 
-export const keyboardHandler = (scene: Scene) => {
-	scene.input.keyboard.on('keydown', (e: KeyboardEvent) => {
-		const key = e.code as keyboardObjectKey
-		const cmd = keyboardCommands[key]
-		execute(cmd)
-	})
-	
-	scene.input.keyboard.on('keyup', () => {
-		keyboardCommands.Stop()
-	})
-}
-
-export const inputsHandler = (scene: Scene) => {
-	keyboardHandler(scene)
-	scene.game.events.on('focus', () => {
-		inputs = 0
-		setMovement(player.direction)
-	})
+	}
 }

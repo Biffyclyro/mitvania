@@ -20,10 +20,6 @@ export interface Item extends Physics.Matter.Image{
 	properties: any
 }
 
-export interface Block extends Entity{
-	texture: string
-}
-
 export interface Stats {
 	atk?: number
 	int?: number
@@ -45,12 +41,12 @@ export class SpriteEntity {
 		}
 
 		setSprite(scene: Scene, {x , y, width, height, scale}: Entity) {
-			//this.sprite = new Physics.Matter.Sprite(scene.matter.world, x, y, this.baseTexture);
 			this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0)
 			if (width && height) {
 				this.sprite.setRectangle(width, height)
 				this.sprite.setScale(scale)
 				this.sprite.setFixedRotation()
+				this.sprite.setFriction(-1)
 			}
 		}
 

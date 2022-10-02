@@ -81,13 +81,15 @@ export class Player extends SpriteEntity {
 		const teste = Bodies.rectangle(x, y + width/2, width, 1)
 		teste.isSensor = true
 
+	
+
 		const compoundBody = scene.matter.body.create({
 			parts: [body, teste],
-			restitution: 0.05
 		})
-		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0)	
+		this.sprite = scene.matter.add.sprite(0, 0, this.baseTexture, 0)	
 		this.sprite.setExistingBody(compoundBody)
 		this.sprite.setScale(scale)
 		this.sprite.setFixedRotation()
+
 	}
 }

@@ -46,7 +46,6 @@ export class SpriteEntity {
 				this.sprite.setRectangle(width, height)
 				this.sprite.setScale(scale)
 				this.sprite.setFixedRotation()
-				this.sprite.setFriction(-1)
 			}
 		}
 
@@ -60,6 +59,9 @@ export class SpriteEntity {
 }
 
 export class Player extends SpriteEntity {
+	sensors = {
+		bottom: 
+	}
 	specialAttack: (() => void) | undefined
 	inventory: Item[] | undefined
 }

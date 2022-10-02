@@ -31,8 +31,8 @@ const stop = (sprite: Physics.Matter.Sprite) => {
 }
 
 export const commands = new Map<string, Command>();
-commands.set('left', moveLeft)
-commands.set('right', moveRight)
-commands.set('up', moveUp)
-commands.set('down', moveDown)
+commands.set('ArrowLeft', moveLeft)
+commands.set('ArrowRight', moveRight)
+commands.set('ArrowUp', moveUp)
+commands.set('ArrowDown', moveDown)
 commands.set('stop', stop)

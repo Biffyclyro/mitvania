@@ -38,15 +38,20 @@ export class InputManager {
 		}	
 	}
 
-	inputHandler() {
-
+	keyboarHandler() {
 		if (this.inputs.keyboard.left.isDown) {
-			commands.get('left')!(player.getSprite())
-		} if (this.inputs.keyboard.right.isDown) {
-			commands.get('right')!(player.getSprite())
-		} if (this.inputs.keyboard.up.isDown) {
-			commands.get('up')!(player.getSprite())
+			commands.get('ArrowLeft')!(player.getSprite())
+		} else if (this.inputs.keyboard.right.isDown) {
+			commands.get('ArrowRight')!(player.getSprite())
+		} else {
+			commands.get('stop')!(player.getSprite())
 		}
+		if (this.inputs.keyboard.up.isDown) {
+			commands.get('ArrowUp')!(player.getSprite())
+		}
+	}
 
+	inputHandler() {
+		this.keyboarHandler()
 	}
 }

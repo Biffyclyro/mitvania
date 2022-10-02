@@ -21,11 +21,10 @@ export default class Standard extends Phaser.Scene {
 		buildPlayerAnims(this)
 		backgroundManager(this)
 		const fristLayer = buildScene(this)
-		player.setSprite(this, {x:96, y:410, width: 16, height:16, scale: 3})
+		player.setSprite(this, {x:96, y:410, width: 12, height:12, scale: 3})
 		this.sceneSpriteEntities.push(player)	
 		makeLayerSolid(this, fristLayer)
 		this.inputManager.buildInput(this)
-		//inputsHandler(this)
 	}
 
 	update() {

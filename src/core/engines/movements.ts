@@ -1,38 +1,33 @@
-import { Physics } from "phaser"
-import { Command } from "./command"
+import { Direction, SpriteEntity } from "../entities"
 
-const velocity = 8
-
-const moveUp = (sprite: Physics.Matter.Sprite) => {
-	sprite.setVelocityY(-10)
-	sprite.anims.play('moving')
+export interface Command {
+	(sprite: SpriteEntity): void
 }
 
-const moveDown = (sprite: Physics.Matter.Sprite) => {
-	sprite.setVelocity(0, velocity)
-	sprite.anims.play('moving', true)
+
+const jump = (sprite: SpriteEntity) => {
+	sprite.jump()
 }
 
-const moveLeft = (sprite: Physics.Matter.Sprite) => {
-	sprite.setFlipX(true)
-	sprite.setVelocityX(-velocity)
-	sprite.anims.play('moving',true)
+const moveDown = (sprite: SpriteEntity) => {
+	console.log('down')
 }
 
-const  moveRight = (sprite: Physics.Matter.Sprite) => {
-	sprite.resetFlip()
-	sprite.setVelocityX(velocity)
-	sprite.anims.play('moving',true)
+const moveLeft = (sprite: SpriteEntity) => {
+	sprite.move(Direction.Left)
 }
 
-const stop = (sprite: Physics.Matter.Sprite) => {
-	sprite.setVelocityX(0)
-	sprite.anims.play('player-idle', true)
+const  moveRight = (sprite: SpriteEntity) => {
+	sprite.move(Direction.Right)
+}
+
+const stop = (sprite: SpriteEntity) => {
+	sprite.idle()
 }
 
 export const commands = new Map<string, Command>();
 commands.set('ArrowLeft', moveLeft)
 commands.set('ArrowRight', moveRight)
-commands.set('ArrowUp', moveUp)
+commands.set('ArrowUp', jump)
 commands.set('ArrowDown', moveDown)
 commands.set('stop', stop)

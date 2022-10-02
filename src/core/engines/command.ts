@@ -2,9 +2,7 @@ import { Scene, Physics, Game, Input, Types } from "phaser"
 import { player } from "../global"
 import { commands } from "./movements"
  
-export interface Command {
-	(sprite: Physics.Matter.Sprite): void
-}
+
 
 interface KeyboardKeys {
 	up:Input.Keyboard.Key
@@ -39,16 +37,19 @@ export class InputManager {
 	}
 
 	keyboarHandler() {
+
+		
 		if (this.inputs.keyboard.left.isDown) {
-			commands.get('ArrowLeft')!(player.getSprite())
+			commands.get('ArrowLeft')!(player)
 		} else if (this.inputs.keyboard.right.isDown) {
-			commands.get('ArrowRight')!(player.getSprite())
+			commands.get('ArrowRight')!(player)
 		} else {
-			commands.get('stop')!(player.getSprite())
+			commands.get('stop')!(player)
 		}
 		if (this.inputs.keyboard.up.isDown) {
-			commands.get('ArrowUp')!(player.getSprite())
+			commands.get('ArrowUp')!(player)
 		}
+		 
 	}
 
 	inputHandler() {

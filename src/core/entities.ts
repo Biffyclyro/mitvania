@@ -34,6 +34,7 @@ export interface Stats {
 export class SpriteEntity {
 		lvl = 1
 		moving = false
+		velocity = 8
 		attack: (() => void ) | undefined
 		defeat: (() => void) | undefined
 		sprite!: Physics.Matter.Sprite
@@ -46,32 +47,69 @@ export class SpriteEntity {
 
 		setSprite(scene: Scene, {x , y, width, height, scale}: Entity) {
 			this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0)
-			if (width && height) {
-				this.sprite.setRectangle(width, height)
-				this.sprite.setScale(scale)
-				this.sprite.setFixedRotation()
+		if (width && height) {
+			this.sprite.setRectangle(width, height)
+			this.sprite.setScale(scale)
+			this.sprite.setFixedRotation()
+		}
+	}
+
+	getSprite(): Physics.Matter.Sprite {
+		return this.sprite
+	}
+
+	idle() {
+		this.sprite.setVelocityX(0)
+		this.sprite.anims.play('player-idle', true)
+	}
+
+	up() {
+		this.lvl++
+	}
+
+	jump() {
+		this.sprite.setVelocityY(-10)
+		this.sprite.anims.play('moving')
+	}
+
+	move(direction: Direction) {
+		const movements = {
+			Left: () => {
+				this.sprite.setFlipX(true)
+				this.sprite.setVelocityX(-this.velocity)
+				this.sprite.anims.play('moving', true)
+			},
+			Right: () => {
+				this.sprite.resetFlip()
+				this.sprite.setVelocityX(this.velocity)
+				this.sprite.anims.play('moving', true)
 			}
 		}
-
-		getSprite(): Physics.Matter.Sprite {
-			return this.sprite
+		switch (direction) {
+			case Direction.Left:
+				movements.Left()
+				break
+			case Direction.Right:
+				movements.Right()
+				break
 		}
+	}
 
-		up() {
-			this.lvl++
-		}
+	
 }
 
 export class Player extends SpriteEntity {
 	sensors: Sensors
 	specialAttack: (() => void) | undefined
-	inventory: Item[] | undefined
+	inventory: Item[] = [] 
 
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
 		const Bodies = scene.matter.bodies 
 		this.sensors = {
-			bottom: Bodies.rectangle(12, 20, width, 1,{isSensor: true})
+			bottom: Bodies.rectangle(12, 21, width, 1,{isSensor: true})
 		}
+		// investigar esses valores
+
 		const body = Bodies.rectangle(12, 13, width, height)
 		const compoundBody = scene.matter.body.create({
 			parts: [body, this.sensors.bottom],

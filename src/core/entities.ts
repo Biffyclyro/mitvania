@@ -15,6 +15,12 @@ export enum Direction {
   Right = 'right'
 }
 
+interface Sensors{
+	bottom: Physics.Matter.Sprite
+	left?: Physics.Matter.Sprite
+	right?: Physics.Matter.Sprite
+}
+
 export interface Item extends Physics.Matter.Image{
 	name: string
 	properties: any
@@ -32,11 +38,11 @@ export class SpriteEntity {
 		moving = false
 		attack: (() => void ) | undefined
 		defeat: (() => void) | undefined
-		private sprite!: Physics.Matter.Sprite
+		sprite!: Physics.Matter.Sprite
 		constructor(public life: number, 
 								public mana:number, 
 								public stats: Stats,
-								private baseTexture: string,
+								public baseTexture: string,
 								public direction: Direction = Direction.Right) {
 		}
 
@@ -59,9 +65,29 @@ export class SpriteEntity {
 }
 
 export class Player extends SpriteEntity {
-	sensors = {
-		bottom: 
-	}
+	sensors: Sensors
 	specialAttack: (() => void) | undefined
 	inventory: Item[] | undefined
+
+	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
+		//super.setSprite(scene, {x:x, y:y, width:width, height: height, scale: scale})
+		this.sensors = {
+			bottom: scene.matter.add.sprite(x, y + height, 'bottom-sensor')
+		}
+		this.sensors.bottom.setRectangle(width, 0)
+
+		const Bodies = scene.matter.bodies 
+		const body = Bodies.rectangle(x, y, width, height)
+		const teste = Bodies.rectangle(x, y + width/2, width, 1)
+		teste.isSensor = true
+
+		const compoundBody = scene.matter.body.create({
+			parts: [body, teste],
+			restitution: 0.05
+		})
+		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0)	
+		this.sprite.setExistingBody(compoundBody)
+		this.sprite.setScale(scale)
+		this.sprite.setFixedRotation()
+	}
 }

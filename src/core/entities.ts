@@ -34,6 +34,8 @@ export interface Stats {
 export class SpriteEntity {
 		lvl = 1
 		moving = false
+		maxJumps = 1
+		jumps = this.maxJumps 
 		velocity = 8
 		attack: (() => void ) | undefined
 		defeat: (() => void) | undefined
@@ -45,13 +47,14 @@ export class SpriteEntity {
 								public direction: Direction = Direction.Right) {
 		}
 
-		setSprite(scene: Scene, {x , y, width, height, scale}: Entity) {
-			this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0)
+	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
+		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0)
 		if (width && height) {
 			this.sprite.setRectangle(width, height)
 			this.sprite.setScale(scale)
 			this.sprite.setFixedRotation()
 		}
+		scene.matter.world.on('collisionactive', (e:Physics.Matter.Events.CollisionActiveEvent) => this.resetJump)
 	}
 
 	getSprite(): Physics.Matter.Sprite {
@@ -68,10 +71,17 @@ export class SpriteEntity {
 	}
 
 	jump() {
-		this.sprite.setVelocityY(-10)
-		this.sprite.anims.play('moving')
+		if (this.jumps > 0) {
+			this.jumps--
+			this.sprite.setVelocityY(-10)
+			this.sprite.anims.play('moving')
+		}
 	}
 
+	resetJump() {
+		this.jumps = this.maxJumps	
+	}
+	
 	move(direction: Direction) {
 		const movements = {
 			Left: () => {
@@ -118,5 +128,15 @@ export class Player extends SpriteEntity {
 		this.sprite.setExistingBody(compoundBody)
 		this.sprite.setScale(scale)
 		this.sprite.setFixedRotation()
+		scene.matter.world.on('collisionactive', (e:Physics.Matter.Events.CollisionActiveEvent) => {
+			e.pairs.forEach(p => {
+				const bodyA = p.bodyA;
+				const bodyB = p.bodyB;
+				if (this.sensors.bottom === bodyA || bodyB) {
+					this.resetJump()
+					console.log(e)
+				}
+			})
+		})
 	}
 }

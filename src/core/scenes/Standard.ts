@@ -1,4 +1,5 @@
 import "phaser"
+import { Physics } from "phaser"
 import { backgroundManager, buildPlayerAnims, buildScene, loadPlayerAssets, loadSceneAssets, makeLayerSolid } from "../engines/asssetsManager"
 import { InputManager } from "../engines/command"
 import { SpriteEntity } from "../entities"

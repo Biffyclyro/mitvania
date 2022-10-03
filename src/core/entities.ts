@@ -54,7 +54,7 @@ export class SpriteEntity {
 			this.sprite.setScale(scale)
 			this.sprite.setFixedRotation()
 		}
-		scene.matter.world.on('collisionactive', (e:Physics.Matter.Events.CollisionActiveEvent) => this.resetJump)
+		scene.matter.world.on('collisionactive', this.resetJump.bind(this))
 	}
 
 	getSprite(): Physics.Matter.Sprite {
@@ -113,6 +113,16 @@ export class Player extends SpriteEntity {
 	specialAttack: (() => void) | undefined
 	inventory: Item[] = [] 
 
+	private verifyCollision(e: Physics.Matter.Events.CollisionActiveEvent) {
+		e.pairs.forEach(p => {
+			const bodyA = p.bodyA
+			const bodyB = p.bodyB
+			if (this.sensors.bottom === bodyA || this.sensors.bottom === bodyB) {
+				this.resetJump()
+			}
+		})
+	}
+
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
 		const Bodies = scene.matter.bodies 
 		this.sensors = {
@@ -128,15 +138,6 @@ export class Player extends SpriteEntity {
 		this.sprite.setExistingBody(compoundBody)
 		this.sprite.setScale(scale)
 		this.sprite.setFixedRotation()
-		scene.matter.world.on('collisionactive', (e:Physics.Matter.Events.CollisionActiveEvent) => {
-			e.pairs.forEach(p => {
-				const bodyA = p.bodyA;
-				const bodyB = p.bodyB;
-				if (this.sensors.bottom === bodyA || bodyB) {
-					this.resetJump()
-					console.log(e)
-				}
-			})
-		})
+		scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
 	}
 }

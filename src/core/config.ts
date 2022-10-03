@@ -20,10 +20,5 @@ export const config = {
 				showBody: true
 			}
 		}
-		/*
-		arcade: {
-			gravity:{y: 300} 
-		}
-		*/
 	}
 }

@@ -1,7 +1,6 @@
 import { Scene, Physics, Game, Input, Types } from "phaser"
 import { player } from "../global"
 import { commands } from "./movements"
- 
 
 
 interface KeyboardKeys {
@@ -37,8 +36,6 @@ export class InputManager {
 	}
 
 	keyboarHandler() {
-
-		
 		if (this.inputs.keyboard.left.isDown) {
 			commands.get('ArrowLeft')!(player)
 		} else if (this.inputs.keyboard.right.isDown) {
@@ -49,7 +46,6 @@ export class InputManager {
 		if (this.inputs.keyboard.up.isDown) {
 			commands.get('ArrowUp')!(player)
 		}
-		 
 	}
 
 	inputHandler() {

@@ -104,8 +104,6 @@ export class SpriteEntity {
 				break
 		}
 	}
-
-	
 }
 
 export class Player extends SpriteEntity {
@@ -126,11 +124,11 @@ export class Player extends SpriteEntity {
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
 		const Bodies = scene.matter.bodies 
 		this.sensors = {
-			bottom: Bodies.rectangle(12, 21, width, 1,{isSensor: true})
+			bottom: Bodies.rectangle(12, 21, width/2, 1,{isSensor: true})
 		}
 		// investigar esses valores
 
-		const body = Bodies.rectangle(12, 13, width, height)
+		const body = Bodies.rectangle(12, 13, width/2, height)
 		const compoundBody = scene.matter.body.create({
 			parts: [body, this.sensors.bottom],
 		})
@@ -138,6 +136,7 @@ export class Player extends SpriteEntity {
 		this.sprite.setExistingBody(compoundBody)
 		this.sprite.setScale(scale)
 		this.sprite.setFixedRotation()
+		this.sprite.setFriction(0)
 		scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
 	}
 }

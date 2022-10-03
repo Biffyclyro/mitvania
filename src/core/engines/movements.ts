@@ -4,7 +4,6 @@ export interface Command {
 	(sprite: SpriteEntity): void
 }
 
-
 const jump = (sprite: SpriteEntity) => {
 	sprite.jump()
 }

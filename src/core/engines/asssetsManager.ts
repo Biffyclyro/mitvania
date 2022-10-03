@@ -24,6 +24,7 @@ export const backgroundManager = (scene: Scene ): void => {
 	const bg = scene.add.image(0, 0 , 'background')
 	bg.setDisplayOrigin(0, 0)
 	bg.setDisplaySize(windowSize.width, windowSize.height)
+	bg.setScrollFactor(0.25)	
 }
 
 export const loadSceneAssets = (scene: Scene) => {

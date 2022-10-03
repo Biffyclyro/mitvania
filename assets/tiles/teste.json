@@ -515,7 +515,7 @@
                 }],
          "height":32,
          "id":1,
-         "name":"first-layer",
+         "name":"main-layer",
          "opacity":1,
          "properties":[
                 {

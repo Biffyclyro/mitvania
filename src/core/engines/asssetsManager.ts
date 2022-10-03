@@ -35,7 +35,7 @@ export const loadSceneAssets = (scene: Scene) => {
 
 export const loadPlayerAssets = (scene: Scene) => {
 		scene.load.spritesheet('attack', 'sprites/attack.png', {frameWidth: 74, frameHeight: 74})
-		scene.load.spritesheet('player', 'sprites/dino-sprite.png', {frameWidth: 24, frameHeight: 24})
+		scene.load.spritesheet('player', 'sprites/dino-sprite.png', {frameWidth: 48, frameHeight: 48})
 }
 
 export const makeLayerSolid = (scene: Scene, layer: Tilemaps.TilemapLayer) => {
@@ -46,9 +46,14 @@ export const makeLayerSolid = (scene: Scene, layer: Tilemaps.TilemapLayer) => {
 export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 		const map = scene.make.tilemap({key: 'map'})
 		const tileset = map.addTilesetImage('teste', 'tiles')
-		map.createLayer('Tile Layer 3', tileset, 0, 0)
-		const second = map.createLayer('Tile Layer 2', tileset, 0, 0)
-		const firstLayer= map.createLayer('first-layer', tileset, 0, 0)
+		let mainLayer!: Tilemaps.TilemapLayer;
 		
-		return firstLayer
+		map.getTileLayerNames().forEach((tileLayerName: string) => {
+			const layer = map.createLayer(tileLayerName, tileset,0, 0)
+			if (tileLayerName === 'main-layer') {
+				mainLayer = layer
+			}
+		})
+
+		return mainLayer
 }

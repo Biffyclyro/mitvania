@@ -124,13 +124,13 @@ export class Player extends SpriteEntity {
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
 		const Bodies = scene.matter.bodies 
 		this.sensors = {
-			bottom: Bodies.rectangle(12, 21, width/2, 1,{isSensor: true})
+			bottom: Bodies.rectangle(width, height + (height/4), width, 1,{isSensor: true})
 		}
-		// investigar esses valores
+		// ainda é necessário cuidar esses valores 
 
-		const body = Bodies.rectangle(12, 13, width/2, height)
+		const body = Bodies.rectangle(width, width, width, height)
 		const compoundBody = scene.matter.body.create({
-			parts: [body, this.sensors.bottom],
+			parts: [body, this.sensors.bottom]
 		})
 		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0)	
 		this.sprite.setExistingBody(compoundBody)

@@ -3,7 +3,7 @@
  "infinite":true,
  "layers":[
         {
-         "draworder":"topdown",
+         "draworder":"index",
          "id":11,
          "name":"objetos",
          "objects":[
@@ -545,12 +545,6 @@
          "id":1,
          "name":"main-layer",
          "opacity":1,
-         "properties":[
-                {
-                 "name":"collides",
-                 "type":"bool",
-                 "value":true
-                }],
          "startx":0,
          "starty":0,
          "type":"tilelayer",
@@ -562,7 +556,7 @@
  "nextlayerid":13,
  "nextobjectid":12,
  "orientation":"orthogonal",
- "renderorder":"right-down",
+ "renderorder":"left-up",
  "tiledversion":"1.9.2",
  "tileheight":32,
  "tilesets":[

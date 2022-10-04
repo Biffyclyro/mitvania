@@ -1,5 +1,6 @@
 import { BodyType } from "matter"
 import { GameObjects, Physics, Scene, Tilemaps } from "phaser"
+import { game } from "../../main"
 import { windowSize } from "../config"
 
 export interface AssetManager {
@@ -45,7 +46,7 @@ export const makeLayerSolid = (scene: Scene, layer: Tilemaps.TilemapLayer) => {
 }
 
 export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
-	const Bodies = scene.matter.bodies 
+	const Bodies = scene.matter.bodies
 	const map = scene.make.tilemap({ key: 'map' })
 	const tileset = map.addTilesetImage('teste', 'tiles')
 	let mainLayer!: Tilemaps.TilemapLayer;
@@ -56,21 +57,34 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 	//object[0].body = meuDeus 
 	
 	//console.log(object)
-	console.log(objLayer)
+	//console.log(objLayer)
 
 	objLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
-		if (obj.name ==='plataforma') {
+		if (obj.name === 'plataforma') {
 			// const plataforma = new GameObjects.Polygon(scene, obj.x!, obj.y!, obj.polygon!).setOrigin(0,0)
 			// const img = scene.matter.add.imag(obj.x!, obj.y!, '', 0, {
 			// 	vertices: obj.polygon!,
 			// 	isStatic: true,
 			// })
-		const put =scene.matter.add.polygon(pols.x!,pols.y!, pols.polygon!.length,0, {
+
+			const abs =scene.matter.add.sprite(pols.x!, pols.y!, 'plataforma', 0)
+
+			const put = scene.matter.add.polygon(0, 0, pols.polygon!.length, 0, {
+				label: obj.name,
 				vertices: pols.polygon!,
-				isStatic: true,
+				isStatic: true
 			})
-			put.
-	
+
+			console.log(put.position)
+
+			// abs.setPolygon(0,pols.polygon!.length, {
+			// 	label: obj.name,
+			//  	vertices: pols.polygon!,
+			// 	isStatic: true
+			//  	})
+			// const blas = new GameObjects.Polygon(scene, obj.x!, obj.y!, obj.polygon!)
+			// 	abs.setMask(blas.mask)
+
 		}
 	})
 

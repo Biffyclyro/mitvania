@@ -161,7 +161,6 @@ export class Player extends SpriteEntity {
 		this.sprite.setExistingBody(compoundBody)
 		this.sprite.setScale(scale)
 		this.sprite.setFixedRotation()
-		this.sprite.setFriction(0)
 		scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
 		scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
 	}

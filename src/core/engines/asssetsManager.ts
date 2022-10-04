@@ -1,3 +1,4 @@
+import { BodyType } from "matter"
 import { GameObjects, Physics, Scene, Tilemaps } from "phaser"
 import { windowSize } from "../config"
 
@@ -44,9 +45,34 @@ export const makeLayerSolid = (scene: Scene, layer: Tilemaps.TilemapLayer) => {
 }
 
 export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
+	const Bodies = scene.matter.bodies 
 	const map = scene.make.tilemap({ key: 'map' })
 	const tileset = map.addTilesetImage('teste', 'tiles')
 	let mainLayer!: Tilemaps.TilemapLayer;
+	const objLayer = map.getObjectLayer('objetos')
+	const pols = objLayer.objects[2]
+		//const object = map.createFromObjects('objetos', {id: 11})
+
+	//object[0].body = meuDeus 
+	
+	//console.log(object)
+	console.log(objLayer)
+
+	objLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
+		if (obj.name ==='plataforma') {
+			// const plataforma = new GameObjects.Polygon(scene, obj.x!, obj.y!, obj.polygon!).setOrigin(0,0)
+			// const img = scene.matter.add.imag(obj.x!, obj.y!, '', 0, {
+			// 	vertices: obj.polygon!,
+			// 	isStatic: true,
+			// })
+		const put =scene.matter.add.polygon(pols.x!,pols.y!, pols.polygon!.length,0, {
+				vertices: pols.polygon!,
+				isStatic: true,
+			})
+			put.
+	
+		}
+	})
 
 	map.getTileLayerNames().forEach((tileLayerName: string) => {
 		const layer = map.createLayer(tileLayerName, tileset, 0, 0)

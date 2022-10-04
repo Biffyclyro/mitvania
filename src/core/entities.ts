@@ -36,7 +36,7 @@ export class SpriteEntity {
 		moving = false
 		maxJumps = 1
 		jumps = this.maxJumps 
-		velocity = 8
+		velocity = 6
 		attack: (() => void ) | undefined
 		defeat: (() => void) | undefined
 		sprite!: Physics.Matter.Sprite
@@ -111,13 +111,20 @@ export class Player extends SpriteEntity {
 	specialAttack: (() => void) | undefined
 	inventory: Item[] = [] 
 
-	private verifyCollision(e: Physics.Matter.Events.CollisionActiveEvent) {
+	private verifyCollision(e: Physics.Matter.Events.CollisionActiveEvent |
+		 												 Physics.Matter.Events.CollisionEndEvent) {
 		e.pairs.forEach(p => {
 			const bodyA = p.bodyA
 			const bodyB = p.bodyB
 			if (this.sensors.bottom === bodyA || this.sensors.bottom === bodyB) {
-				this.resetJump()
+				if(e.name === 'collisionEnd') {
+					this.jumps--
+				}
+				if(e.name === 'collisionActive') {
+					this.resetJump()
+				}
 			}
+			//return this.sensors.bottom === bodyA || this.sensors.bottom === bodyB
 		})
 	}
 
@@ -128,9 +135,12 @@ export class Player extends SpriteEntity {
 		}
 		// ainda é necessário cuidar esses valores 
 
-		const body = Bodies.rectangle(width, width, width, height)
+		const body = Bodies.rectangle(width, width, width, height, { chamfer: { radius: 10 }})
 		const compoundBody = scene.matter.body.create({
-			parts: [body, this.sensors.bottom]
+			parts: [body, this.sensors.bottom],
+			frictionStatic: 0,
+      frictionAir: 0.02,
+      friction: 0.1,
 		})
 		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0)	
 		this.sprite.setExistingBody(compoundBody)
@@ -138,5 +148,6 @@ export class Player extends SpriteEntity {
 		this.sprite.setFixedRotation()
 		this.sprite.setFriction(0)
 		scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
+		scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
 	}
 }

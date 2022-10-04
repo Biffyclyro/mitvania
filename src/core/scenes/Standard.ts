@@ -16,9 +16,8 @@ export default class Standard extends Phaser.Scene {
 	}
 
 	create(): void {
-		this.cameras.main.setBounds(0, 0, 1920 * 2, 1080 * 2)
-		this.matter.world.setBounds(0, 0, 1920 * 2, 1080 * 2)
 		this.inputManager.buildInput(this)
+		this.setCamera()
 		backgroundManager(this)
 		buildPlayerAnims(this)
 		const mainLayer = buildScene(this)
@@ -29,5 +28,11 @@ export default class Standard extends Phaser.Scene {
 
 	update() {
 		this.inputManager.inputHandler()
+	}
+
+	private setCamera() {
+		this.cameras.main.setBounds(0, 0, 1920 * 2, 1080 * 2)
+		this.matter.world.setBounds(0, 0, 1920 * 2, 1080 * 2)
+		this.cameras.main.zoom = 1.5
 	}
 }

@@ -43,7 +43,7 @@ export class InputManager {
 		} else {
 			commands.get('stop')!(player)
 		}
-		if (this.inputs.keyboard.up.isDown) {
+		if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.up)) {
 			commands.get('ArrowUp')!(player)
 		}
 	}

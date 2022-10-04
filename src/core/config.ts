@@ -17,7 +17,8 @@ export const config = {
 		default: 'matter',
 		matter: {
 			debug: {
-				showBody: true
+				showBody: true,
+			
 			}
 		}
 	}

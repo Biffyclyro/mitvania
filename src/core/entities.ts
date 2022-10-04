@@ -17,6 +17,8 @@ export enum Direction {
 
 interface Sensors{
 	bottom: MatterJS.BodyType
+	left: MatterJS.BodyType
+	right: MatterJS.BodyType
 }
 
 export interface Item extends Physics.Matter.Image{
@@ -33,7 +35,7 @@ export interface Stats {
 
 export class SpriteEntity {
 		lvl = 1
-		moving = false
+		canMove = false
 		maxJumps = 1
 		jumps = this.maxJumps 
 		velocity = 6
@@ -113,16 +115,30 @@ export class Player extends SpriteEntity {
 
 	private verifyCollision(e: Physics.Matter.Events.CollisionActiveEvent |
 		 												 Physics.Matter.Events.CollisionEndEvent) {
+
+		const bottom = this.sensors.bottom
+		const left = this.sensors.left
+		const rigth = this.sensors.right
 		e.pairs.forEach(p => {
 			const bodyA = p.bodyA
 			const bodyB = p.bodyB
-			if (this.sensors.bottom === bodyA || this.sensors.bottom === bodyB) {
+			if (bottom === bodyA || bottom === bodyB) {
 				if(e.name === 'collisionEnd') {
 					this.jumps--
 				}
 				if(e.name === 'collisionActive') {
 					this.resetJump()
 				}
+			}
+
+			if (left === bodyA || left === bodyB) {
+				this.sprite.x += this.sprite.width/10
+			}
+
+			if (rigth === bodyA || rigth === bodyB) {
+				
+				this.sprite.x -= this.sprite.width/10
+
 			}
 			//return this.sensors.bottom === bodyA || this.sensors.bottom === bodyB
 		})
@@ -131,16 +147,15 @@ export class Player extends SpriteEntity {
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
 		const Bodies = scene.matter.bodies 
 		this.sensors = {
-			bottom: Bodies.rectangle(width, height + (height/4), width, 1,{isSensor: true})
+			bottom: Bodies.rectangle(width, height + (height/4), width, 1,{isSensor: true}),
+			left: Bodies.rectangle(width - (width/2), width, 1, width,{isSensor: true}),
+			right: Bodies.rectangle(width + (width/2), width, 1, width,{isSensor: true})
 		}
 		// ainda é necessário cuidar esses valores 
 
 		const body = Bodies.rectangle(width, width, width, height, { chamfer: { radius: 10 }})
 		const compoundBody = scene.matter.body.create({
-			parts: [body, this.sensors.bottom],
-			frictionStatic: 0,
-      frictionAir: 0.02,
-      friction: 0.1,
+			parts: [body, this.sensors.bottom, this.sensors.left, this.sensors.right],
 		})
 		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0)	
 		this.sprite.setExistingBody(compoundBody)

@@ -6,3 +6,8 @@ export const addEntity = <T extends GameObjects
 	scene.matter.world.add(e);
 	return e;
 }
+/*
+shape: { type: 'fromVerts', 
+																										 verts: pols.polygon!, 
+																										 flagInternal: false},
+																										 */

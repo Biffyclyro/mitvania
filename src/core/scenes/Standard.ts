@@ -21,7 +21,7 @@ export default class Standard extends Phaser.Scene {
 		backgroundManager(this)
 		buildPlayerAnims(this)
 		const mainLayer = buildScene(this)
-		makeLayerSolid(this, mainLayer)
+		//makeLayerSolid(this, mainLayer)
 		player.setSprite(this, {x:96, y:410, width: 24, height:32, scale: 1})
 		this.cameras.main.startFollow(player.getSprite(), true, 0.05, 0.05)
 	}

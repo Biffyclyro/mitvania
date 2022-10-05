@@ -50,15 +50,13 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 	const map = scene.make.tilemap({ key: 'map' })
 	const tileset = map.addTilesetImage('teste', 'tiles')
 	let mainLayer!: Tilemaps.TilemapLayer;
-	const objLayer = map.getObjectLayer('objetos')
-	const pols = objLayer.objects[2]
+	const objLayer = map.getObjectLayer('collisions')
 
 	//object[0].body = meuDeus 
 	
 	//console.log(objLayer)
 
 	objLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
-		if (obj.name === 'plataforma') {
 			// const plataforma = new GameObjects.Polygon(scene, obj.x!, obj.y!, obj.polygon!).setOrigin(0,0)
 			// const img = scene.matter.add.imag(obj.x!, obj.y!, '', 0, {
 			// 	vertices: obj.polygon!,
@@ -72,21 +70,22 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 			// 	vertices: pols.polygon!,
 			// 	isStatic: true
 			// })
-			  const poly = scene.add.polygon(pols.x, pols.y, pols.polygon!)
 
-				scene.matter.add.gameObject(poly, { 
-																						shape: { type: 'fromVerts', 
-																										 verts: pols.polygon!, 
-																										 flagInternal: false}, 
-																						isStatic: false }).body.position = {
-      x: poly.x + poly.body.centerOffset.x,
-      y: poly.y + poly.body.centerOffset.y}
+		const poly = scene.add.polygon(obj.x, obj.y, obj.polygon!) as Phaser.GameObjects.Polygon
 
+		const bts = scene.matter.add.gameObject(poly, {
+			shape: {
+				type: 'fromVerts',
+				verts: obj.polygon!,
+				flagInternal: false
+			},
+			isStatic: true,
+			friction: 0
+		}) as Phaser.GameObjects.Polygon
 
-				
-				
-				
-			
+		//@ts-ignore
+		bts.setPosition(poly.x + poly.body.centerOffset.x, poly.y + poly.body.centerOffset.y)
+																						
 			//  scene.matter.add.gameObject(poly)
 			//const poly = scene.matter.add.image(pols.x!, pols.y!, 'orange')
 		// 	poly.setBody({
@@ -103,7 +102,6 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 			// const blas = new GameObjects.Polygon(scene, obj.x!, obj.y!, obj.polygon!)
 			// 	abs.setMask(blas.mask)
 
-		}
 	})
 
 	map.getTileLayerNames().forEach((tileLayerName: string) => {

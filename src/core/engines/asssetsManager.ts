@@ -52,11 +52,9 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 	let mainLayer!: Tilemaps.TilemapLayer;
 	const objLayer = map.getObjectLayer('objetos')
 	const pols = objLayer.objects[2]
-	const object = map.createFromObjects('objetos', {id: 11, objects: })
 
 	//object[0].body = meuDeus 
 	
-	console.log(object[0])
 	//console.log(objLayer)
 
 	objLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
@@ -74,14 +72,28 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 			// 	vertices: pols.polygon!,
 			// 	isStatic: true
 			// })
-			//  const poly = scene.add.polygon(0, 0, pols.polygon!)
+			  const poly = scene.add.polygon(pols.x, pols.y, pols.polygon!)
+
+				scene.matter.add.gameObject(poly, { 
+																						shape: { type: 'fromVerts', 
+																										 verts: pols.polygon!, 
+																										 flagInternal: false}, 
+																						isStatic: false }).body.position = {
+      x: poly.x + poly.body.centerOffset.x,
+      y: poly.y + poly.body.centerOffset.y}
+
+
+				
+				
+				
+			
 			//  scene.matter.add.gameObject(poly)
-			const poly = scene.matter.add.image(pols.x!, pols.y!, 'orange')
-			poly.setBody({
-				sides: 4,
-        type: 'polygon',
-				verts: pols.polygon!
-    })
+			//const poly = scene.matter.add.image(pols.x!, pols.y!, 'orange')
+		// 	poly.setBody({
+		// 		sides: 4,
+    //     type: 'polygon',
+		// 		verts: pols.polygon!
+    // })
 
 			// abs.setPolygon(0,pols.polygon!.length, {
 			// 	label: obj.name,

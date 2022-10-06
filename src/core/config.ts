@@ -16,10 +16,9 @@ export const config = {
 	physics: {
 		default: 'matter',
 		matter: {
-			debug: {
-				showBody: true,
-			
-			}
+			// debug: {
+				//showBody: false,
+			// }
 		}
 	}
 }

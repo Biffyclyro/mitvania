@@ -71,9 +71,9 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 			// 	isStatic: true
 			// })
 
-		const poly = scene.add.polygon(obj.x, obj.y, obj.polygon!) as Phaser.GameObjects.Polygon
+		const poly:GameObjects.Polygon = scene.add.polygon(obj.x, obj.y, obj.polygon!) 
 
-		const bts = scene.matter.add.gameObject(poly, {
+		const polyObject = scene.matter.add.gameObject(poly, {
 			shape: {
 				type: 'fromVerts',
 				verts: obj.polygon!,
@@ -82,9 +82,8 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 			isStatic: true,
 			friction: 0
 		}) as Phaser.GameObjects.Polygon
-
-		//@ts-ignore
-		bts.setPosition(poly.x + poly.body.centerOffset.x, poly.y + poly.body.centerOffset.y)
+//@ts-ignore
+		polyObject.setPosition(poly.x + poly.body.centerOffset.x, poly.y + poly.body.centerOffset.y)
 																						
 			//  scene.matter.add.gameObject(poly)
 			//const poly = scene.matter.add.image(pols.x!, pols.y!, 'orange')

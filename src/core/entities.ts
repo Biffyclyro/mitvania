@@ -131,15 +131,15 @@ export class Player extends SpriteEntity {
 				}
 			}
 
-			if (left === bodyA || left === bodyB) {
-				this.sprite.x += this.sprite.width/10
-			}
+			// if (left === bodyA || left === bodyB) {
+			// 	this.sprite.x += this.sprite.width/10
+			// }
 
-			if (rigth === bodyA || rigth === bodyB) {
+			// if (rigth === bodyA || rigth === bodyB) {
 				
-				this.sprite.x -= this.sprite.width/10
+			// 	this.sprite.x -= this.sprite.width/10
 
-			}
+			// }
 			//return this.sensors.bottom === bodyA || this.sensors.bottom === bodyB
 		})
 	}
@@ -161,6 +161,7 @@ export class Player extends SpriteEntity {
 		this.sprite.setExistingBody(compoundBody)
 		this.sprite.setScale(scale)
 		this.sprite.setFixedRotation()
+		this.sprite.setFriction(0)
 		scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
 		scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
 	}

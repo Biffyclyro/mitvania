@@ -36,6 +36,7 @@ export interface Stats {
 export class SpriteEntity {
 		lvl = 1
 		canMove = false
+		jumping = false
 		maxJumps = 1
 		jumps = this.maxJumps 
 		velocity = 6
@@ -76,12 +77,13 @@ export class SpriteEntity {
 		if (this.jumps > 0) {
 			this.jumps--
 			this.sprite.setVelocityY(-10)
-			this.sprite.anims.play('moving')
 		}
+		this.sprite.anims.play('jump', true)
 	}
 
 	resetJump() {
 		this.jumps = this.maxJumps	
+		this.jumping = false
 	}
 	
 	move(direction: Direction) {
@@ -89,12 +91,20 @@ export class SpriteEntity {
 			Left: () => {
 				this.sprite.setFlipX(true)
 				this.sprite.setVelocityX(-this.velocity)
-				this.sprite.anims.play('moving', true)
+				if (this.jumping) {
+					this.sprite.anims.play('jump', true)
+				} else {
+					this.sprite.anims.play('moving', true)
+				}
 			},
 			Right: () => {
 				this.sprite.resetFlip()
 				this.sprite.setVelocityX(this.velocity)
-				this.sprite.anims.play('moving', true)
+				if (this.jumping) {
+					this.sprite.anims.play('jump', true)
+				} else {
+					this.sprite.anims.play('moving', true)
+				}
 			}
 		}
 		switch (direction) {
@@ -125,6 +135,7 @@ export class Player extends SpriteEntity {
 			if (bottom === bodyA || bottom === bodyB) {
 				if(e.name === 'collisionEnd') {
 					this.jumps--
+					this.jumping = true
 				}
 				if(e.name === 'collisionActive') {
 					this.resetJump()

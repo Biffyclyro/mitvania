@@ -18,7 +18,13 @@ export const buildPlayerAnims: AssetManager = (scene: Scene) => {
 	scene.anims.create({
 		key: 'moving',
 		frameRate: 10,
-		frames: scene.anims.generateFrameNumbers('player', { start: 4, end: 7 })
+		frames: scene.anims.generateFrameNumbers('player', { start: 4, end: 9 })
+	})
+
+	scene.anims.create({
+		key: 'jump',
+		frameRate: 5,
+		frames: scene.anims.generateFrameNumbers('player', { start: 10, end: 12 })
 	})
 }
 

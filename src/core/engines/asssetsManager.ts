@@ -2,6 +2,7 @@ import { BodyType } from "matter"
 import { GameObjects, Physics, Scene, Tilemaps } from "phaser"
 import { game } from "../../main"
 import { windowSize } from "../config"
+import { BodyOffset } from "../entities"
 
 export interface AssetManager {
 	(scene: Scene): void
@@ -57,6 +58,7 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 	const tileset = map.addTilesetImage('teste', 'tiles')
 	let mainLayer!: Tilemaps.TilemapLayer;
 	const objLayer = map.getObjectLayer('collisions')
+	map.createFromObjects
 
 	//object[0].body = meuDeus 
 	
@@ -77,7 +79,7 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 			// 	isStatic: true
 			// })
 
-		const poly:GameObjects.Polygon = scene.add.polygon(obj.x, obj.y, obj.polygon!) 
+		const poly = scene.add.polygon(obj.x, obj.y, obj.polygon!) 
 
 		const polyObject = scene.matter.add.gameObject(poly, {
 			shape: {
@@ -88,8 +90,10 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 			isStatic: true,
 			friction: 0
 		}) as Phaser.GameObjects.Polygon
-//@ts-ignore
-		polyObject.setPosition(poly.x + poly.body.centerOffset.x, poly.y + poly.body.centerOffset.y)
+
+
+		const offset = poly.body as BodyOffset
+		polyObject.setPosition(poly.x + offset.centerOffset.x, poly.y + offset.centerOffset.y)
 																						
 			//  scene.matter.add.gameObject(poly)
 			//const poly = scene.matter.add.image(pols.x!, pols.y!, 'orange')

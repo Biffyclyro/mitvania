@@ -8,6 +8,10 @@ export interface Entity {
 	scale: number
 }
 
+export interface BodyOffset {
+	centerOffset: {x: number, y: number}
+}
+
 export enum Direction {
   Up = 'up',
   Down = 'down',

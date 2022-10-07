@@ -1,6 +1,4 @@
-import { BodyType } from "matter"
-import { GameObjects, Physics, Scene, Tilemaps } from "phaser"
-import { game } from "../../main"
+import { Scene, Tilemaps } from "phaser"
 import { windowSize } from "../config"
 import { BodyOffset } from "../entities"
 
@@ -32,7 +30,7 @@ export const buildPlayerAnims: AssetManager = (scene: Scene) => {
 export const backgroundManager = (scene: Scene): void => {
 	const bg = scene.add.image(0, 0, 'background')
 	bg.setDisplayOrigin(0, 0)
-	bg.setDisplaySize(windowSize.width, windowSize.height)
+	bg.setDisplaySize(windowSize.width + windowSize.width /2, windowSize.height)
 	bg.setScrollFactor(0.25)
 }
 
@@ -52,34 +50,23 @@ export const makeLayerSolid = (scene: Scene, layer: Tilemaps.TilemapLayer) => {
 	scene.matter.world.convertTilemapLayer(layer)
 }
 
-export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
-	const Bodies = scene.matter.bodies
-	const map = scene.make.tilemap({ key: 'map' })
-	const tileset = map.addTilesetImage('teste', 'tiles')
-	let mainLayer!: Tilemaps.TilemapLayer;
-	const objLayer = map.getObjectLayer('collisions')
-	map.createFromObjects
-
-	//object[0].body = meuDeus 
-	
-	//console.log(objLayer)
-
+const buildCollision = (objLayer: Tilemaps.ObjectLayer, scene: Scene) => {
 	objLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
-			// const plataforma = new GameObjects.Polygon(scene, obj.x!, obj.y!, obj.polygon!).setOrigin(0,0)
-			// const img = scene.matter.add.imag(obj.x!, obj.y!, '', 0, {
-			// 	vertices: obj.polygon!,
-			// 	isStatic: true,
-			// })
+		// const plataforma = new GameObjects.Polygon(scene, obj.x!, obj.y!, obj.polygon!).setOrigin(0,0)
+		// const img = scene.matter.add.imag(obj.x!, obj.y!, '', 0, {
+		// 	vertices: obj.polygon!,
+		// 	isStatic: true,
+		// })
 
-			//const abs =scene.matter.add.sprite(pols.x!, pols.y!, 'plataforma', 0)
+		//const abs =scene.matter.add.sprite(pols.x!, pols.y!, 'plataforma', 0)
 
-			//  scene.matter.add.polygon(0, 0, pols.polygon!.length, 0, {
-			// 	label: obj.name,
-			// 	vertices: pols.polygon!,
-			// 	isStatic: true
-			// })
+		//  scene.matter.add.polygon(0, 0, pols.polygon!.length, 0, {
+		// 	label: obj.name,
+		// 	vertices: pols.polygon!,
+		// 	isStatic: true
+		// })
 
-		const poly = scene.add.polygon(obj.x, obj.y, obj.polygon!) 
+		const poly = scene.add.polygon(obj.x, obj.y, obj.polygon!)
 
 		const polyObject = scene.matter.add.gameObject(poly, {
 			shape: {
@@ -94,7 +81,18 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 
 		const offset = poly.body as BodyOffset
 		polyObject.setPosition(poly.x + offset.centerOffset.x, poly.y + offset.centerOffset.y)
-																						
+	})
+}
+
+export const buildScene = (scene: Scene) => {
+	const map = scene.make.tilemap({ key: 'map' })
+	const tileset = map.addTilesetImage('teste', 'tiles')
+	let mainLayer!: Tilemaps.TilemapLayer;
+	const objLayer = map.getObjectLayer('collisions')
+	buildCollision(objLayer, scene)
+	
+
+																					
 			//  scene.matter.add.gameObject(poly)
 			//const poly = scene.matter.add.image(pols.x!, pols.y!, 'orange')
 		// 	poly.setBody({
@@ -111,13 +109,11 @@ export const buildScene = (scene: Scene): Tilemaps.TilemapLayer  => {
 			// const blas = new GameObjects.Polygon(scene, obj.x!, obj.y!, obj.polygon!)
 			// 	abs.setMask(blas.mask)
 
-	})
-
 	map.getTileLayerNames().forEach((tileLayerName: string) => {
 		const layer = map.createLayer(tileLayerName, tileset, 0, 0)
 		if (tileLayerName === 'main-layer') {
 			mainLayer = layer
 		}
 	})
-	return mainLayer
+	//return mainLayer
 }

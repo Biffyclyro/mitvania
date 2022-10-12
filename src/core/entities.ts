@@ -5,7 +5,10 @@ export interface Entity {
 	y: number
 	width: number
 	height: number
-	scale: number
+	scale?: number
+	point?: boolean
+	ellipse?: boolean
+	polygon?: Phaser.Types.Math.Vector2Like[] 
 }
 
 export interface BodyOffset {
@@ -55,10 +58,10 @@ export class SpriteEntity {
 		}
 
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
-		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0)
-		if (width && height) {
+		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 35)
+		if (width && height ) {
 			this.sprite.setRectangle(width, height)
-			this.sprite.setScale(scale)
+			scale ? this.sprite.setScale(scale) : scale
 			this.sprite.setFixedRotation()
 		}
 		scene.matter.world.on('collisionactive', this.resetJump.bind(this))
@@ -174,7 +177,8 @@ export class Player extends SpriteEntity {
 		})
 		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0)	
 		this.sprite.setExistingBody(compoundBody)
-		this.sprite.setScale(scale)
+		scale ? this.sprite.setScale(scale) : scale 
+		//this.sprite.setScale(scale)
 		this.sprite.setFixedRotation()
 		this.sprite.setFriction(0)
 		scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))

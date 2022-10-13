@@ -60,8 +60,10 @@ export default class AssetManager {
 															GameObjects.Rectangle | 
 															GameObjects.Ellipse, 
 															polygon?: Phaser.Types.Math.Vector2Like[]) {
+															
+		let shapeObject 
 		if (polygon) {
-			const polyObject = this.scene.matter.add.gameObject(shape, {
+			shapeObject = this.scene.matter.add.gameObject(shape, {
 				shape: {
 					type: 'fromVerts',
 					verts: polygon!,
@@ -69,11 +71,15 @@ export default class AssetManager {
 				},
 				isStatic: true,
 				friction: 0
-			}) as Phaser.GameObjects.Polygon
+			}) 
 
-			const offset = shape.body as BodyOffset
-			polyObject.setPosition(shape.x + offset.centerOffset.x, shape.y + offset.centerOffset.y)
+		} else {
+			shapeObject = this.scene.matter.add.gameObject(shape)
 		}
+
+		shapeObject = shapeObject as Phaser.GameObjects.Polygon
+		const offset = shape.body as BodyOffset
+		shapeObject.setPosition(shape.x + offset.centerOffset.x, shape.y + offset.centerOffset.y)
 	}
 
 	private objectManager(objLayer: Tilemaps.ObjectLayer) {

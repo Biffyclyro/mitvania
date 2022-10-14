@@ -1,8 +1,8 @@
-import { GameObjects, Physics, Scene, Tilemaps } from "phaser"
+import { GameObjects, Scene, Tilemaps } from "phaser"
 import { windowSize } from "../config"
-import { BodyOffset, Entity, SpriteEntity } from "../entities"
+import { BodyOffset, SpriteEntity } from "../entities"
 
-export default class AssetManager {
+export default class SceneManager{
 	private numLayers = 1 
 
 	constructor(private readonly scene: Scene) { }
@@ -28,15 +28,23 @@ export default class AssetManager {
 		})
 	}
 
-	setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {
-		//layer.setScrollFactor()
+	private setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {
+		const parallaxFactor = 1 / this.numLayers
+		layer.setScrollFactor(parallaxFactor)
+		this.numLayers--
 	}
 
-	backgroundManager() {
+	private spawnMob(obj: Phaser.Types.Tilemaps.TiledObject) {
+		const mob = new SpriteEntity(10, 10, {}, obj.properties[0].value)
+		mob.setSprite(this.scene, { x: obj.x!, y: obj.y!, width: 23, height: 32 })
+	}
+
+	private backgroundManager() {
 		const bg = this.scene.add.image(0, 0, 'background')
 		bg.setDisplayOrigin(0, 0)
 		bg.setDisplaySize(windowSize.width + windowSize.width / 2, windowSize.height)
-		bg.setScrollFactor(0.25)
+		//bg.setScrollFactor(0.5)
+		this.setParallax(bg)
 	}
 
 	loadSceneAssets() {
@@ -48,7 +56,7 @@ export default class AssetManager {
 	loadPlayerAssets() {
 		this.scene.load.spritesheet('attack', 'sprites/attack.png', { frameWidth: 74, frameHeight: 74 })
 		this.scene.load.spritesheet('player', 'sprites/dino-sprite.png', { frameWidth: 48, frameHeight: 48 })
-		this.scene.load.spritesheet('mob', 'sprites/cogu.png', {frameWidth: 48 ,frameHeight:48})
+		this.scene.load.spritesheet('mush', 'sprites/cogu.png', {frameWidth: 48 ,frameHeight:32})
 	}
 
 	makeLayerSolid(layer: Tilemaps.TilemapLayer) {
@@ -59,6 +67,7 @@ export default class AssetManager {
 	private shapeManager(shape: GameObjects.Polygon | 
 															GameObjects.Rectangle | 
 															GameObjects.Ellipse, 
+															ellipse?: boolean,
 															polygon?: Phaser.Types.Math.Vector2Like[]) {
 															
 		let shapeObject 
@@ -73,6 +82,14 @@ export default class AssetManager {
 				friction: 0
 			}) 
 
+		} else if(ellipse) {
+			let radius 
+			if (shape.width > shape.height) {
+				radius = shape.width
+			} else {
+				radius = shape.height
+			}
+			shapeObject = this.scene.matter.add.gameObject(shape, {circleRadius: radius / 2} )
 		} else {
 			shapeObject = this.scene.matter.add.gameObject(shape)
 		}
@@ -97,40 +114,37 @@ export default class AssetManager {
 			// 	vertices: pols.polygon!,
 			// 	isStatic: true
 			// })
-					console.log(obj)
 			if (obj.height === 0 && obj.width === 0) {
 				if (obj.point) {
-					console.log(obj)
-					const mob = new SpriteEntity(10, 10, {}, 'mob')
-					mob.setSprite(this.scene ,{x:obj.x!, y: obj.y!, width: 23, height:32} )
+					if (obj.properties && obj.properties[0].name === 'mob') {
+						this.spawnMob(obj)
+					}
 				}
 
 				if (obj.polygon) {
-					this.shapeManager(this.scene.add.polygon(obj.x, obj.y, obj.polygon), obj.polygon!)
+					this.shapeManager(this.scene.add.polygon(obj.x, obj.y, obj.polygon), obj.ellipse, obj.polygon!)
 				}
 
 			} else {
 				if (obj.ellipse) {
-					this.shapeManager(this.scene.add.ellipse(obj.x, obj.y, obj.width, obj.height))
+					this.shapeManager(this.scene.add.ellipse(obj.x, obj.y, obj.width, obj.height, 0), obj.ellipse)
 				} else {
 					this.shapeManager(this.scene.add.rectangle(obj.x, obj.y, obj.width, obj.height))
 				}
 			}
-
 			//const poly = this.scene.add.polygon(obj.x, obj.y, obj.polygon!)
 			//const poly = chooseShape(obj)
-
 			
 		})
 	}
 
 	buildScene() {
 		const map = this.scene.make.tilemap({ key: 'map' })
-		const tileset = map.addTilesetImage('teste', 'tiles')
+		const tileset = map.addTilesetImage('garden', 'tiles')
 		//let mainLayer!: Tilemaps.TilemapLayer;
 		const objLayer = map.getObjectLayer('collisions')
-
-
+		this.numLayers += map.layers.length
+		this.backgroundManager()
 		//  scene.matter.add.gameObject(poly)
 		//const poly = scene.matter.add.image(pols.x!, pols.y!, 'orange')
 		// 	poly.setBody({
@@ -147,14 +161,13 @@ export default class AssetManager {
 		// const blas = new GameObjects.Polygon(scene, obj.x!, obj.y!, obj.polygon!)
 		// 	abs.setMask(blas.mask)
 
+
 		map.getTileLayerNames().forEach((tileLayerName: string) => {
 			const layer = map.createLayer(tileLayerName, tileset, 0, 0)
 			if (tileLayerName !== 'main-layer') {
-				//	mainLayer = layer
+				this.setParallax(layer)
 			}
 		})
-
 		this.objectManager(objLayer)
-		//return mainLayer
 	}
 }

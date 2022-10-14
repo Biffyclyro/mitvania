@@ -1,30 +1,27 @@
 import "phaser"
-import AssetManager from "../engines/asssetsManager"
+import SceneManager from "../engines/SceneManager"
 import { InputManager } from "../engines/command"
 import { player } from "../global"
 
 export default class Standard extends Phaser.Scene {
 	private inputManager = new InputManager()
-	private readonly asssetsManager: AssetManager
+	private readonly sceneManager: SceneManager 
 
 	constructor() {
 		super('Garden')
-		this.asssetsManager = new AssetManager(this)
+		this.sceneManager = new SceneManager(this)
 	}
 
-	preload(): void {
-		this.asssetsManager.loadSceneAssets()
-		this.asssetsManager.loadPlayerAssets()
+	preload() {
+		this.sceneManager.loadSceneAssets()
+		this.sceneManager.loadPlayerAssets()
 	}
 
-	create(): void {
+	create() {
 		this.inputManager.buildInput(this)
 		this.setCamera()
-		this.asssetsManager.backgroundManager()
-		this.asssetsManager.buildPlayerAnims()
-		//const mainLayer = buildScene(this)
-		this.asssetsManager.buildScene()
-		//makeLayerSolid(this, mainLayer)
+		this.sceneManager.buildPlayerAnims()
+		this.sceneManager.buildScene()
 		player.setSprite(this, {x:96, y:410, width: 24, height:32, scale: 1})
 		this.cameras.main.startFollow(player.getSprite(), true, 0.05, 0.05)
 	}

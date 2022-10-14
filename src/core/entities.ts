@@ -58,7 +58,7 @@ export class SpriteEntity {
 		}
 
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
-		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 35)
+		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 69)
 		if (width && height ) {
 			this.sprite.setRectangle(width, height)
 			scale ? this.sprite.setScale(scale) : scale

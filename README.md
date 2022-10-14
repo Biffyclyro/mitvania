@@ -59,10 +59,31 @@
 
 </h4>
 
-## To-do
+## Build a lvl
+Tiled JSON Tilemap file with:
 
-- [] tile map collisions
-
-- [] movement 
-
-- [] double jump 
+{
+ "height":20,
+ "infinite":true,
+ "layers":[
+        {
+         "name":"collisions",
+         "objects":[ ],
+         "x":0,
+         "y":0
+        }, 
+         "name":"main-layer",
+         "type":"tilelayer",
+         "visible":true,
+         "x":0,
+         "y":0
+        },
+ "orientation":"orthogonal",
+ "renderorder":"right-down",
+ "tilesets":[
+        {
+         "image":"Tiles.png",
+         "name":"the tileset name",
+        }],
+ "type":"map",
+}

@@ -1,6 +1,7 @@
 import { GameObjects, Scene, Tilemaps } from "phaser"
 import { windowSize } from "../config"
 import { BodyOffset, SpriteEntity } from "../entities"
+import { gameStructure } from "../global"
 
 export default class SceneManager{
 	private numLayers = 1 
@@ -16,16 +17,20 @@ export default class SceneManager{
 		})
 
 		this.scene.anims.create({
-			key: 'moving',
+			key: 'player-moving',
 			frameRate: 10,
 			frames: this.scene.anims.generateFrameNumbers('player', { start: 4, end: 9 })
 		})
 
 		this.scene.anims.create({
-			key: 'jump',
+			key: 'player-jump',
 			frameRate: 5,
 			frames: this.scene.anims.generateFrameNumbers('player', { start: 10, end: 12 })
 		})
+	}
+	 
+	buildAllMobsAnims() {
+		import("../../../assets/gameStructure.json").then(console.log)
 	}
 
 	private setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {
@@ -139,6 +144,7 @@ export default class SceneManager{
 	}
 
 	buildScene() {
+		this.buildAllMobsAnims()
 		const map = this.scene.make.tilemap({ key: 'map' })
 		const tileset = map.addTilesetImage('garden', 'tiles')
 		//let mainLayer!: Tilemaps.TilemapLayer;

@@ -73,7 +73,7 @@ export class SpriteEntity {
 
 	idle() {
 		this.sprite.setVelocityX(0)
-		this.sprite.anims.play('player-idle', true)
+		this.sprite.anims.play(`${this.baseTexture}-idle`, true)
 	}
 
 	up() {
@@ -85,7 +85,7 @@ export class SpriteEntity {
 			this.jumps--
 			this.sprite.setVelocityY(-10)
 		}
-		this.sprite.anims.play('jump', true)
+		this.sprite.anims.play(`${this.baseTexture}-jump`, true)
 	}
 
 	resetJump() {
@@ -99,18 +99,18 @@ export class SpriteEntity {
 				this.sprite.setFlipX(true)
 				this.sprite.setVelocityX(-this.velocity)
 				if (this.jumping) {
-					this.sprite.anims.play('jump', true)
+					this.sprite.anims.play(`${this.baseTexture}-jump`, true)
 				} else {
-					this.sprite.anims.play('moving', true)
+					this.sprite.anims.play(`${this.baseTexture}-moving`, true)
 				}
 			},
 			Right: () => {
 				this.sprite.resetFlip()
 				this.sprite.setVelocityX(this.velocity)
 				if (this.jumping) {
-					this.sprite.anims.play('jump', true)
+					this.sprite.anims.play(`${this.baseTexture}-jump`, true)
 				} else {
-					this.sprite.anims.play('moving', true)
+					this.sprite.anims.play(`${this.baseTexture}-moving`, true)
 				}
 			}
 		}

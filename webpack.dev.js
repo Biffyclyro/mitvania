@@ -7,6 +7,7 @@ module.exports = {
 	entry: './src/main.ts',
 	mode: 'development',
 	devtool: 'eval-source-map',
+	//target: 'electron-main',
 	module: {
 		rules: [
 			{
@@ -41,7 +42,12 @@ module.exports = {
           from: './app.css',
           to: './app.css',
           force: true
-        }
+        },
+				{
+					from: './src/electron',
+					to: './electron',
+					force: true
+				}
       ]
     })
 	]

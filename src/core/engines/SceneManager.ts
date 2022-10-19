@@ -60,6 +60,8 @@ export default class SceneManager{
 		this.scene.load.spritesheet('attack', 'sprites/attack.png', { frameWidth: 74, frameHeight: 74 })
 		this.scene.load.spritesheet('player', 'sprites/dino-sprite.png', { frameWidth: 48, frameHeight: 48 })
 		this.scene.load.spritesheet('mush', 'sprites/cogu.png', {frameWidth: 48 ,frameHeight:32})
+		this.scene.load.image('lotus', 'sprites/lotus.png')
+
 	}
 
 	makeLayerSolid(layer: Tilemaps.TilemapLayer) {
@@ -149,6 +151,7 @@ export default class SceneManager{
 		const objLayer = map.getObjectLayer('collisions')
 		this.numLayers += map.layers.length
 		this.backgroundManager()
+		this.scene.matter.add.image(79, 79, 'lotus')
 		//  scene.matter.add.gameObject(poly)
 		//const poly = scene.matter.add.image(pols.x!, pols.y!, 'orange')
 		// 	poly.setBody({

@@ -6,7 +6,7 @@ export const windowSize = {
 	height: window.innerHeight
 }
 
-export const config = {
+export const phaserConfig = {
 	width: windowSize.width,
 	height: windowSize.height,
 	scene: [Standard],
@@ -16,9 +16,9 @@ export const config = {
 	physics: {
 		default: 'matter',
 		matter: {
-			// debug: {
-			// 	showBody: true,
-			// }
+			debug: {
+				showBody: true,
+			}
 		}
 	}
 }

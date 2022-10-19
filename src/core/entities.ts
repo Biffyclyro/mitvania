@@ -185,3 +185,5 @@ export class Player extends SpriteEntity {
 		scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
 	}
 }
+
+

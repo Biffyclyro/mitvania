@@ -14,7 +14,7 @@ const createWindow = () => {
 	})
 	win.loadFile(path.join(__dirname, '../index.html'))
 
-	fs.readFile(path.join(__dirname, '../assets/teste.json'), (error, data) => {
+	fs.readFile(path.join(__dirname, '../assets/mainGameConfig.json'), (error, data) => {
 		win.webContents.send("read-file", data.toString());
 	})
 }
@@ -31,4 +31,5 @@ app.on('ready', () => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
- 
+
+ipcMain.on('save', (event, data) => console.log(data))

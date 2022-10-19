@@ -44,8 +44,13 @@ module.exports = {
           force: true
         },
 				{
-					from: './src/electron',
+					from: './electron',
 					to: './electron',
+					force: true
+				},
+				{
+					from: './src/config-object.js',
+					to: './config-object.js',
 					force: true
 				}
       ]

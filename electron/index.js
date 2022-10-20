@@ -21,10 +21,20 @@ const createWindow = () => {
 				//nodeIntegration: true
 			}
 		})
-		win.webContents.send("read-file", mainGameConfig.toString());
+		
+		win.webContents.send("read-file", mainGameConfig.toString())
+
 		win.loadFile(path.join(__dirname, '../index.html'))
+
+
+		ipcMain.on('save', (event, data) => {
+			fs.writeFile(path.join(__dirname, '../gameSave.json'), JSON.stringify(data), (error) => {
+				if (error) {
+					console.log(error)
+				} else {
+					win.webContents.send('game-saved')
+				}
+			})
+		})
 	})
 }
-
-
-ipcMain.on('save', (event, data) => console.log('save: ', data) )

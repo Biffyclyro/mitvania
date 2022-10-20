@@ -1,9 +1,11 @@
-import { GameObjects, Scene, Tilemaps } from "phaser"
 import { windowSize } from "../config"
+import { GameObjects, Scene, Tilemaps } from "phaser"
 import { BodyOffset, SpriteEntity } from "../entities"
+import { mainGameConfigManager } from "../global"
 
 export default class SceneManager{
 	private numLayers = 1 
+	private readonly mainConfig = mainGameConfigManager.config
 
 	constructor(private readonly scene: Scene) { }
 
@@ -29,6 +31,10 @@ export default class SceneManager{
 	}
 	 
 	buildAllMobsAnims() {
+	}
+
+	buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
+		this.scene.add.sprite(obj.x!, obj.y!, 'lotus')
 	}
 
 	private setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {

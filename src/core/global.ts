@@ -22,11 +22,11 @@ class MainGameConfigManager {
 }
 
 interface SaveInfos {
-	lvl: number
+	lvl: string 
 }
 
-export const save = (saveInfos: SaveInfos) => {
-	const event = new CustomEvent('save', { detail: saveInfos })
+export const saveGame = (saveInfos: SaveInfos) => {
+	const event = new CustomEvent<SaveInfos>('save', { detail: saveInfos })
 	window.dispatchEvent(event)
 }
 

@@ -8,7 +8,7 @@
     "build:dev": "webpack --env env=dev",
     "start-web": "http-server ./dist/",
     "start": "electron ./dist/electron",
-    "reset": "npm run build:dev && npm start",
+    "reload": "npm run build:dev && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

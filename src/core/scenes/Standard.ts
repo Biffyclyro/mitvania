@@ -1,7 +1,7 @@
 import "phaser"
 import SceneManager from "../engines/SceneManager"
 import { InputManager } from "../engines/command"
-import { player, save } from "../global"
+import { mainGameConfigManager, player, saveGame } from "../global"
 
 export default class Standard extends Phaser.Scene {
 	private inputManager = new InputManager()
@@ -24,7 +24,7 @@ export default class Standard extends Phaser.Scene {
 		this.sceneManager.buildScene()
 		player.setSprite(this, {x:96, y:410, width: 24, height:32, scale: 1})
 		this.cameras.main.startFollow(player.getSprite(), true, 0.05, 0.05)
-		save({lvl:1})
+		saveGame({lvl: mainGameConfigManager.config.lvls[0]})
 	}
 
 	update() {

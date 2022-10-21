@@ -34,7 +34,7 @@ export default class SceneManager{
 	}
 
 	buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
-		this.scene.add.sprite(obj.x!, obj.y!, 'lotus').setOrigin(0.5,0.5)
+		this.scene.add.sprite(obj.x!, obj.y!, 'lotus').setOrigin(0.5, 0.5)
 	}
 
 	private setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {
@@ -59,7 +59,7 @@ export default class SceneManager{
 	loadSceneAssets() {
 		this.scene.load.image('background', 'backgrounds/Background_0.png')
 		this.scene.load.image('tiles', 'tiles/Tiles.png')
-		this.scene.load.tilemapTiledJSON('map', 'tiles/teste2.json')
+		this.scene.load.tilemapTiledJSON('map', 'tiles/teste.json')
 	}
 
 	loadPlayerAssets() {
@@ -67,7 +67,6 @@ export default class SceneManager{
 		this.scene.load.spritesheet('player', 'sprites/dino-sprite.png', { frameWidth: 48, frameHeight: 48 })
 		this.scene.load.spritesheet('mush', 'sprites/cogu.png', {frameWidth: 48 ,frameHeight:32})
 		this.scene.load.image('lotus', 'sprites/lotus.png')
-
 	}
 
 	makeLayerSolid(layer: Tilemaps.TilemapLayer) {
@@ -100,9 +99,9 @@ export default class SceneManager{
 			} else {
 				radius = shape.height
 			}
-			shapeObject = this.scene.matter.add.gameObject(shape, {circleRadius: radius / 2} )
+			shapeObject = this.scene.matter.add.gameObject(shape, {circleRadius: radius / 2, isStatic: true} )
 		} else {
-			shapeObject = this.scene.matter.add.gameObject(shape)
+			shapeObject = this.scene.matter.add.gameObject(shape, {isStatic: true})
 		}
 
 		shapeObject = shapeObject as Phaser.GameObjects.Polygon
@@ -142,7 +141,6 @@ export default class SceneManager{
 			// })
 			if (obj.height === 0 && obj.width === 0) {
 				
-
 				if (obj.polygon) {
 					this.shapeManager(this.scene.add.polygon(obj.x, obj.y, obj.polygon), obj.ellipse, obj.polygon!)
 				}
@@ -154,9 +152,6 @@ export default class SceneManager{
 					this.shapeManager(this.scene.add.rectangle(obj.x, obj.y, obj.width, obj.height))
 				}
 			}
-			//const poly = this.scene.add.polygon(obj.x, obj.y, obj.polygon!)
-			//const poly = chooseShape(obj)
-			
 		})
 	}
 

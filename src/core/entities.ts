@@ -6,9 +6,9 @@ export interface Entity {
 	width: number
 	height: number
 	scale?: number
-	point?: boolean
-	ellipse?: boolean
-	polygon?: Phaser.Types.Math.Vector2Like[] 
+	// point?: boolean
+	// ellipse?: boolean
+	// polygon?: Phaser.Types.Math.Vector2Like[] 
 }
 
 export interface BodyOffset {
@@ -130,45 +130,22 @@ export class Player extends SpriteEntity {
 	specialAttack: (() => void) | undefined
 	inventory: Item[] = [] 
 
-	private verifyCollision(e: Physics.Matter.Events.CollisionActiveEvent |
-		 												 Physics.Matter.Events.CollisionEndEvent) {
-
-		const bottom = this.sensors.bottom
-		const left = this.sensors.left
-		const rigth = this.sensors.right
-		e.pairs.forEach(p => {
-			const bodyA = p.bodyA
-			const bodyB = p.bodyB
-			if (bottom === bodyA || bottom === bodyB) {
-				if(e.name === 'collisionEnd') {
-					this.jumps--
-					this.jumping = true
-				}
-				if(e.name === 'collisionActive') {
-					this.resetJump()
-				}
-			}
-
-			// if (left === bodyA || left === bodyB) {
-			// 	this.sprite.x += this.sprite.width/10
-			// }
-
-			// if (rigth === bodyA || rigth === bodyB) {
-				
-			// 	this.sprite.x -= this.sprite.width/10
-
-			// }
-			//return this.sensors.bottom === bodyA || this.sensors.bottom === bodyB
-		})
-	}
-
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
 		const Bodies = scene.matter.bodies 
 		this.sensors = {
-			bottom: Bodies.rectangle(width, height + (height/4), width, 1,{isSensor: true}),
+			bottom: Bodies.rectangle(width, height + (height/4), width/3, 1,{isSensor: true}),
 			left: Bodies.rectangle(width - (width/2), width, 1, width,{isSensor: true}),
 			right: Bodies.rectangle(width + (width/2), width, 1, width,{isSensor: true})
 		}
+		this.sensors.bottom.onCollideActiveCallback = this.resetJump.bind(this)
+		this.sensors.bottom.onCollideEndCallback = () => {
+			this.jumps--
+			this.jumping = true
+		}
+
+		this.sensors.bottom.isSensor = true
+		this.sensors.left.isSensor = true
+		this.sensors.right.isSensor = true
 		// ainda é necessário cuidar esses valores 
 
 		const body = Bodies.rectangle(width, width, width, height, { chamfer: { radius: 10 }})
@@ -181,7 +158,7 @@ export class Player extends SpriteEntity {
 		//this.sprite.setScale(scale)
 		this.sprite.setFixedRotation()
 		this.sprite.setFriction(0)
-		scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
-		scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
+		//scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
+		//scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
 	}
 }

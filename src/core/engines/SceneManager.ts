@@ -34,12 +34,12 @@ export default class SceneManager{
 	}
 
 	buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
-		this.scene.add.sprite(obj.x!, obj.y!, 'lotus')
+		this.scene.add.sprite(obj.x!, obj.y!, 'lotus').setOrigin(0.5,0.5)
 	}
 
 	private setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {
 		const parallaxFactor = 1 / this.numLayers
-		layer.setScrollFactor(parallaxFactor)
+		layer.setScrollFactor(parallaxFactor, 1)
 		this.numLayers--
 	}
 
@@ -59,7 +59,7 @@ export default class SceneManager{
 	loadSceneAssets() {
 		this.scene.load.image('background', 'backgrounds/Background_0.png')
 		this.scene.load.image('tiles', 'tiles/Tiles.png')
-		this.scene.load.tilemapTiledJSON('map', 'tiles/teste.json')
+		this.scene.load.tilemapTiledJSON('map', 'tiles/teste2.json')
 	}
 
 	loadPlayerAssets() {
@@ -110,8 +110,23 @@ export default class SceneManager{
 		shapeObject.setPosition(shape.x + offset.centerOffset.x, shape.y + offset.centerOffset.y)
 	}
 
-	private objectManager(objLayer: Tilemaps.ObjectLayer) {
-		objLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject ) => {
+	private spriteLayerManager(spriteLayer: Tilemaps.ObjectLayer) {
+		if (spriteLayer) {
+			console.log('cheou nos sprites')
+			spriteLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
+				if (obj.point) {
+					if (obj.properties && obj.properties[0].name === 'mob') {
+						this.spawnMob(obj)
+					} else if (obj.name === 'lotus') {
+						this.buildSaveLotus(obj)
+					}
+				}
+			})
+		}
+	}
+
+	private collisionsManager(collisionsLayer: Tilemaps.ObjectLayer) {
+		collisionsLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
 			// const plataforma = new GameObjects.Polygon(scene, obj.x!, obj.y!, obj.polygon!).setOrigin(0,0)
 			// const img = scene.matter.add.imag(obj.x!, obj.y!, '', 0, {
 			// 	vertices: obj.polygon!,
@@ -126,11 +141,7 @@ export default class SceneManager{
 			// 	isStatic: true
 			// })
 			if (obj.height === 0 && obj.width === 0) {
-				if (obj.point) {
-					if (obj.properties && obj.properties[0].name === 'mob') {
-						this.spawnMob(obj)
-					}
-				}
+				
 
 				if (obj.polygon) {
 					this.shapeManager(this.scene.add.polygon(obj.x, obj.y, obj.polygon), obj.ellipse, obj.polygon!)
@@ -154,10 +165,11 @@ export default class SceneManager{
 		const map = this.scene.make.tilemap({ key: 'map' })
 		const tileset = map.addTilesetImage('garden', 'tiles')
 		//let mainLayer!: Tilemaps.TilemapLayer;
-		const objLayer = map.getObjectLayer('collisions')
+		const collisionsLayer = map.getObjectLayer('collisions')
+		const spriteLayer = map.getObjectLayer('sprite-objects')
 		this.numLayers += map.layers.length
 		this.backgroundManager()
-		this.scene.matter.add.image(79, 79, 'lotus')
+		//this.scene.matter.add.image(79, 79, 'lotus')
 		//  scene.matter.add.gameObject(poly)
 		//const poly = scene.matter.add.image(pols.x!, pols.y!, 'orange')
 		// 	poly.setBody({
@@ -177,10 +189,11 @@ export default class SceneManager{
 
 		map.getTileLayerNames().forEach((tileLayerName: string) => {
 			const layer = map.createLayer(tileLayerName, tileset, 0, 0)
-			if (tileLayerName !== 'main-layer') {
+			if (tileLayerName !== 'main-layer' && tileLayerName !== 'second-layer') {
 				this.setParallax(layer)
 			}
 		})
-		this.objectManager(objLayer)
+		this.collisionsManager(collisionsLayer)
+		this.spriteLayerManager(spriteLayer)
 	}
 }

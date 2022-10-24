@@ -1,7 +1,8 @@
 import { windowSize } from "../config"
-import { GameObjects, Scene, Tilemaps } from "phaser"
+import { GameObjects, Physics, Scene, Tilemaps } from "phaser"
 import { BodyOffset, SpriteEntity } from "../entities"
 import { mainGameConfigManager, saveManager } from "../global"
+import { Body } from "matter"
 
 export default class SceneManager{
 	private numLayers = 1 
@@ -92,8 +93,8 @@ export default class SceneManager{
 															ellipse?: boolean,
 															polygon?: Phaser.Types.Math.Vector2Like[]) {
 															
-		let shapeObject
-		
+		let shapeObject 
+
 		if (polygon) {
 			shapeObject = this.scene.matter.add.gameObject(shape, {
 				shape: {
@@ -117,13 +118,14 @@ export default class SceneManager{
 			shapeObject = this.scene.matter.add.gameObject(shape, {isStatic: true})
 		}
 
-		shapeObject = shapeObject as Phaser.GameObjects.Polygon
-		const offset = shape.body as BodyOffset
-		console.log(offset.centerOffset.x)
+		shapeObject = shapeObject as Phaser.GameObjects.Polygon | Phaser.GameObjects.Ellipse | Phaser.GameObjects.Rectangle
+		//const offset = shape.body as BodyOffset
 		console.log(shape.displayOriginX, 'shape body')
-		console.log(shapeObject.body)
 		// displayOrigin é o mesmo que centerOffset?????????
 		//shapeObject.setPosition(shape.x + offset.centerOffset.x, shape.y + offset.centerOffset.y)
+
+		console.log(shapeObject)
+		
 		shapeObject.setPosition(shape.x + shape.displayOriginX, shape.y + shape.displayOriginY)
 	}
 

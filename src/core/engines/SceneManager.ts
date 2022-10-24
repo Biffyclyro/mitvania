@@ -1,13 +1,14 @@
 import { windowSize } from "../config"
 import { GameObjects, Scene, Tilemaps } from "phaser"
 import { BodyOffset, SpriteEntity } from "../entities"
-import { mainGameConfigManager } from "../global"
+import { mainGameConfigManager, saveManager } from "../global"
 
 export default class SceneManager{
 	private numLayers = 1 
 	private readonly mainConfig = mainGameConfigManager.config
+	private readonly currentStage: string = saveManager.saveInfos.stage
 
-	constructor(private readonly scene: Scene) { }
+	constructor(private readonly scene: Scene) {}
 
 	buildPlayerAnims() {
 		this.scene.anims.create({
@@ -30,11 +31,16 @@ export default class SceneManager{
 		})
 	}
 	 
-	buildAllMobsAnims() {
+	buildAllMobsAnims(mob: string) {
+		this.scene.anims.create({
+			key: `${mob}-idle`,
+			frameRate: 5,
+			frames: this.scene.anims.generateFrameNames(mob, {start: 0, end:0})
+		})
 	}
 
 	buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
-		this.scene.add.sprite(obj.x!, obj.y!, 'lotus').setOrigin(0.5, 0.5)
+		const lotus = this.scene.add.sprite(obj.x!, obj.y!, 'lotus').setOrigin(0.5, 0.5)
 	}
 
 	private setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {
@@ -57,16 +63,22 @@ export default class SceneManager{
 	}
 
 	loadSceneAssets() {
-		this.scene.load.image('background', 'backgrounds/Background_0.png')
-		this.scene.load.image('tiles', 'tiles/Tiles.png')
-		this.scene.load.tilemapTiledJSON('map', 'tiles/teste.json')
+		const mobs = this.mainConfig.stages[this.currentStage].mobs
+		if (mobs) { 
+			mobs.forEach(m => {
+				this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 48 ,frameHeight:32})
+			})
+		}
+		this.scene.load.image('background', `backgrounds/${this.currentStage}.png`)
+		this.scene.load.image('tiles', `tiles/${this.currentStage}/Tiles.png`)
+		this.scene.load.image('lotus', 'sprites/lotus.png')
+		this.scene.load.tilemapTiledJSON('map', `tiles/${this.currentStage}/teste2.json`)
 	}
 
 	loadPlayerAssets() {
 		this.scene.load.spritesheet('attack', 'sprites/attack.png', { frameWidth: 74, frameHeight: 74 })
 		this.scene.load.spritesheet('player', 'sprites/dino-sprite.png', { frameWidth: 48, frameHeight: 48 })
-		this.scene.load.spritesheet('mush', 'sprites/cogu.png', {frameWidth: 48 ,frameHeight:32})
-		this.scene.load.image('lotus', 'sprites/lotus.png')
+		//this.scene.load.spritesheet('mush', 'sprites/cogu.png', {frameWidth: 48 ,frameHeight:32})
 	}
 
 	makeLayerSolid(layer: Tilemaps.TilemapLayer) {
@@ -80,7 +92,8 @@ export default class SceneManager{
 															ellipse?: boolean,
 															polygon?: Phaser.Types.Math.Vector2Like[]) {
 															
-		let shapeObject 
+		let shapeObject
+		
 		if (polygon) {
 			shapeObject = this.scene.matter.add.gameObject(shape, {
 				shape: {
@@ -106,12 +119,16 @@ export default class SceneManager{
 
 		shapeObject = shapeObject as Phaser.GameObjects.Polygon
 		const offset = shape.body as BodyOffset
-		shapeObject.setPosition(shape.x + offset.centerOffset.x, shape.y + offset.centerOffset.y)
+		console.log(offset.centerOffset.x)
+		console.log(shape.displayOriginX, 'shape body')
+		console.log(shapeObject.body)
+		// displayOrigin é o mesmo que centerOffset?????????
+		//shapeObject.setPosition(shape.x + offset.centerOffset.x, shape.y + offset.centerOffset.y)
+		shapeObject.setPosition(shape.x + shape.displayOriginX, shape.y + shape.displayOriginY)
 	}
 
 	private spriteLayerManager(spriteLayer: Tilemaps.ObjectLayer) {
 		if (spriteLayer) {
-			console.log('cheou nos sprites')
 			spriteLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
 				if (obj.point) {
 					if (obj.properties && obj.properties[0].name === 'mob') {
@@ -156,7 +173,7 @@ export default class SceneManager{
 	}
 
 	buildScene() {
-		this.buildAllMobsAnims()
+		//this.buildAllMobsAnims()
 		const map = this.scene.make.tilemap({ key: 'map' })
 		const tileset = map.addTilesetImage('garden', 'tiles')
 		//let mainLayer!: Tilemaps.TilemapLayer;

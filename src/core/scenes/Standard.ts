@@ -1,14 +1,14 @@
 import "phaser"
 import SceneManager from "../engines/SceneManager"
 import { InputManager } from "../engines/command"
-import { mainGameConfigManager, player, saveGame } from "../global"
+import { mainGameConfigManager, player, saveManager} from "../global"
 
 export default class Standard extends Phaser.Scene {
 	private inputManager = new InputManager()
 	private readonly sceneManager: SceneManager 
 
 	constructor() {
-		super('Garden')
+		super(saveManager.saveInfos.stage)
 		this.sceneManager = new SceneManager(this)
 	}
 
@@ -24,8 +24,8 @@ export default class Standard extends Phaser.Scene {
 		this.sceneManager.buildScene()
 		player.setSprite(this, {x:96, y:410, width: 24, height:32, scale: 1})
 		this.cameras.main.startFollow(player.getSprite(), true, 0.05, 0.05)
-		saveGame({lvl: mainGameConfigManager.config.lvls[0]})
-		window.addEventListener('saved', (e) => console.log((e as CustomEvent).detail))
+		saveManager.saveGame({stage: JSON.stringify(mainGameConfigManager.config.stages)})
+		//window.addEventListener('saved', (e) => console.log((e as CustomEvent).detail))
 	}
 
 	update() {

@@ -1,10 +1,11 @@
 import "phaser";
 import {phaserConfig} from './core/config'
-import { mainGameConfigManager } from "./core/global";
+import { saveManager, mainGameConfigManager } from "./core/global";
 
 try {
 	mainGameConfigManager.config = JSON.parse(localStorage.getItem('main-game-config')!)
-	console.log(mainGameConfigManager.config)
+	saveManager.saveInfos = JSON.parse(localStorage.getItem('game-save')!)
+	console.log(saveManager.saveInfos)
 	const game = new Phaser.Game(phaserConfig)
 } catch(e) {
 	console.log(e)

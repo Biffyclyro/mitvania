@@ -1,4 +1,4 @@
-import { Scene, Physics, Game, Input, Types } from "phaser"
+import { Scene, Input } from "phaser"
 import { player } from "../global"
 import { commands } from "./movements"
 

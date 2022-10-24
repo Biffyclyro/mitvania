@@ -1,12 +1,42 @@
-import { Player } from "./entities";
+import { Player } from "./entities"
 
-export const player = new Player(10, 10, {}, 'player');
+export const player = new Player(10, 10, {}, 'player')
+
+interface Stage {
+	mobs?: string[]
+	sonds?: string[]
+	music?: string
+	routes?: string[]
+}
 
 interface MainGameConfig {
-	lvls: string[]
-	mobs?: string[]
-	bosses?: string[]
-	musics?: string[]
+	stages: {
+		[stages: string]: Stage
+	} 
+	custom: {
+		[stages: string]: Stage
+	}
+}
+
+interface SaveInfos {
+	stage: string 
+}
+
+class SaveManager{
+	private _saveInfos: SaveInfos
+
+	get saveInfos() {
+		return this._saveInfos
+	}
+
+	set saveInfos(save: SaveInfos) {
+		this._saveInfos = save
+	}
+
+	saveGame(saveInfos: SaveInfos) {
+		const event = new CustomEvent<SaveInfos>('save', { detail: saveInfos })
+		window.dispatchEvent(event)
+	}
 }
 
 class MainGameConfigManager {
@@ -21,14 +51,6 @@ class MainGameConfigManager {
 	}
 }
 
-interface SaveInfos {
-	lvl: string 
-}
-
-export const saveGame = (saveInfos: SaveInfos) => {
-	const event = new CustomEvent<SaveInfos>('save', { detail: saveInfos })
-	window.dispatchEvent(event)
-}
-
 
 export const mainGameConfigManager = new MainGameConfigManager()
+export const saveManager = new SaveManager()

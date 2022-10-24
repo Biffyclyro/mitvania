@@ -26,6 +26,9 @@ const createWindow = () => {
 
 		win.loadFile(path.join(__dirname, '../index.html'))
 
+		fs.readFile(path.join(__dirname, '../gameSave.json'), (error, gameSave) => {
+			win.webContents.send('read-save', gameSave.toString())
+		})
 
 		ipcMain.on('save', (event, data) => {
 			fs.writeFile(path.join(__dirname, '../gameSave.json'), JSON.stringify(data), (error) => {

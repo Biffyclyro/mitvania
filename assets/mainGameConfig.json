@@ -1,3 +1,7 @@
 {
-	"lvls":["test"] 
+	"stages": {
+		"Garden": {
+			"mobs": ["mush"]
+		}
+	}	
 }

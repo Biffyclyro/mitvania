@@ -47,6 +47,11 @@ module.exports = {
 					from: './electron',
 					to: './electron',
 					force: true
+				},
+				{
+					from: './src/gameSave.json',
+					to: './gameSave.json',
+					force: true
 				}
       ]
     })

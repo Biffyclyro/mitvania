@@ -1,8 +1,7 @@
 import { windowSize } from "../config"
-import { GameObjects, Physics, Scene, Tilemaps } from "phaser"
-import { BodyOffset, SpriteEntity } from "../entities"
+import { GameObjects, Scene, Tilemaps } from "phaser"
+import { SpriteEntity } from "../entities"
 import { mainGameConfigManager, saveManager } from "../global"
-import { Body } from "matter"
 
 export default class SceneManager{
 	private numLayers = 1 
@@ -40,8 +39,8 @@ export default class SceneManager{
 		})
 	}
 
-	buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
-		const lotus = this.scene.add.sprite(obj.x!, obj.y!, 'lotus').setOrigin(0.5, 0.5)
+	private buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
+		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus').setOrigin(0.5, 0.5)
 	}
 
 	private setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {
@@ -92,9 +91,9 @@ export default class SceneManager{
 															GameObjects.Ellipse, 
 															ellipse?: boolean,
 															polygon?: Phaser.Types.Math.Vector2Like[]) {
-															
-		let shapeObject 
-
+								
+		let shapeObject: GameObjects.GameObject 
+																
 		if (polygon) {
 			shapeObject = this.scene.matter.add.gameObject(shape, {
 				shape: {
@@ -105,7 +104,6 @@ export default class SceneManager{
 				isStatic: true,
 				friction: 0
 			}) 
-
 		} else if(ellipse) {
 			let radius 
 			if (shape.width > shape.height) {
@@ -117,16 +115,15 @@ export default class SceneManager{
 		} else {
 			shapeObject = this.scene.matter.add.gameObject(shape, {isStatic: true})
 		}
-
-		shapeObject = shapeObject as Phaser.GameObjects.Polygon | Phaser.GameObjects.Ellipse | Phaser.GameObjects.Rectangle
-		//const offset = shape.body as BodyOffset
-		console.log(shape.displayOriginX, 'shape body')
+		//método sem typecast
 		// displayOrigin é o mesmo que centerOffset?????????
-		//shapeObject.setPosition(shape.x + offset.centerOffset.x, shape.y + offset.centerOffset.y)
+		shapeObject.body.gameObject!.setPosition(shape.x + shape.displayOriginX, shape.y + shape.displayOriginY)
 
-		console.log(shapeObject)
-		
-		shapeObject.setPosition(shape.x + shape.displayOriginX, shape.y + shape.displayOriginY)
+		//shapeObject = shapeObject as Phaser.GameObjects.Polygon | Phaser.GameObjects.Ellipse | Phaser.GameObjects.Rectangle
+		//const offset = shape.body as BodyOffset
+		//console.log(shape.displayOriginX, 'shape body')
+		//shapeObject.setPosition(shape.x + offset.centerOffset.x, shape.y + offset.centerOffset.y)
+		//shapeObject.setPosition(shape.x + shape.displayOriginX, shape.y + shape.displayOriginY)
 	}
 
 	private spriteLayerManager(spriteLayer: Tilemaps.ObjectLayer) {
@@ -184,22 +181,6 @@ export default class SceneManager{
 		this.numLayers += map.layers.length
 		this.backgroundManager()
 		//this.scene.matter.add.image(79, 79, 'lotus')
-		//  scene.matter.add.gameObject(poly)
-		//const poly = scene.matter.add.image(pols.x!, pols.y!, 'orange')
-		// 	poly.setBody({
-		// 		sides: 4,
-		//     type: 'polygon',
-		// 		verts: pols.polygon!
-		// })
-
-		// abs.setPolygon(0,pols.polygon!.length, {
-		// 	label: obj.name,
-		//  	vertices: pols.polygon!,
-		// 	isStatic: true
-		//  	})
-		// const blas = new GameObjects.Polygon(scene, obj.x!, obj.y!, obj.polygon!)
-		// 	abs.setMask(blas.mask)
-
 
 		map.getTileLayerNames().forEach((tileLayerName: string) => {
 			const layer = map.createLayer(tileLayerName, tileset, 0, 0)

@@ -48,8 +48,8 @@ export class SpriteEntity {
 		jumps = this.maxJumps 
 		velocity = 6
 		attack: (() => void ) | undefined
-		defeat: (() => void) | undefined
-		sprite!: Physics.Matter.Sprite
+		defeat: (() => void ) | undefined
+		protected sprite: Physics.Matter.Sprite
 		constructor(public life: number, 
 								public mana:number, 
 								public stats: Stats,
@@ -122,6 +122,10 @@ export class SpriteEntity {
 				movements.Right()
 				break
 		}
+	}
+
+
+	public takeDamage() {
 	}
 }
 

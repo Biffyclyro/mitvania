@@ -5,8 +5,8 @@ export const player = new Player(10, 10, {}, 'player')
 interface Stage {
 	mobs?: string[]
 	sonds?: string[]
-	music?: string
 	routes?: string[]
+	music?: string
 }
 
 interface MainGameConfig {

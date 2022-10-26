@@ -40,7 +40,7 @@ export default class SceneManager{
 	}
 
 	private buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
-		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus').setOrigin(0.5, 0.5)
+		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus')
 	}
 
 	private setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {

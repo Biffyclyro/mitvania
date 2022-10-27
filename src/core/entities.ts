@@ -71,9 +71,18 @@ export class SpriteEntity {
 		return this.sprite
 	}
 
+	private playAnims(anim: string) {
+		if (!this.sprite.anims.isPlaying) {
+			this.sprite.anims.play(anim, true)
+		} else if (this.sprite.anims.currentAnim.key !== `${this.baseTexture}-damage` ){
+			
+			this.sprite.anims.play(anim, true)
+		}
+	}
+
 	idle() {
 		this.sprite.setVelocityX(0)
-		this.sprite.anims.play(`${this.baseTexture}-idle`, true)
+		this.playAnims(`${this.baseTexture}-idle`)	
 	}
 
 	up() {
@@ -85,7 +94,7 @@ export class SpriteEntity {
 			this.jumps--
 			this.sprite.setVelocityY(-10)
 		}
-		this.sprite.anims.play(`${this.baseTexture}-jump`, true)
+		this.playAnims(`${this.baseTexture}-jump`)
 	}
 
 	resetJump() {
@@ -99,18 +108,18 @@ export class SpriteEntity {
 				this.sprite.setFlipX(true)
 				this.sprite.setVelocityX(-this.velocity)
 				if (this.jumping) {
-					this.sprite.anims.play(`${this.baseTexture}-jump`, true)
+					this.playAnims(`${this.baseTexture}-jump`)
 				} else {
-					this.sprite.anims.play(`${this.baseTexture}-moving`, true)
+					this.playAnims(`${this.baseTexture}-moving`)
 				}
 			},
 			Right: () => {
 				this.sprite.resetFlip()
 				this.sprite.setVelocityX(this.velocity)
 				if (this.jumping) {
-					this.sprite.anims.play(`${this.baseTexture}-jump`, true)
+					this.playAnims(`${this.baseTexture}-jump`)
 				} else {
-					this.sprite.anims.play(`${this.baseTexture}-moving`, true)
+					this.playAnims(`${this.baseTexture}-moving`)
 				}
 			}
 		}
@@ -124,8 +133,8 @@ export class SpriteEntity {
 		}
 	}
 
-
 	public takeDamage() {
+		this.playAnims(`${this.baseTexture}-damage`)
 	}
 }
 

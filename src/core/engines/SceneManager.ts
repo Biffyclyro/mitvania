@@ -29,6 +29,13 @@ export default class SceneManager{
 			frameRate: 5,
 			frames: this.scene.anims.generateFrameNumbers('player', { start: 10, end: 12 })
 		})
+
+		this.scene.anims.create({
+			key: 'player-damage',
+			frameRate: 10,
+			repeat: 3,
+			frames: this.scene.anims.generateFrameNumbers('player', { start: 14, end: 16 })
+		})
 	}
 	 
 	buildAllMobsAnims(mob: string) {
@@ -41,6 +48,7 @@ export default class SceneManager{
 
 	private buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
 		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus')
+		lotus.setCollisionCategory(100)
 	}
 
 	private setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {

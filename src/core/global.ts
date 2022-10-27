@@ -54,3 +54,6 @@ class MainGameConfigManager {
 
 export const mainGameConfigManager = new MainGameConfigManager()
 export const saveManager = new SaveManager()
+export const test = (fun:(...args: any) => any) => {
+	fun()
+}

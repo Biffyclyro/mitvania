@@ -2,6 +2,7 @@ import "phaser"
 import SceneManager from "../engines/SceneManager"
 import { InputManager } from "../engines/command"
 import { mainGameConfigManager, player, saveManager, test} from "../global"
+import { skillsMap } from "../especials/skills"
 
 export default class Standard extends Phaser.Scene {
 	private inputManager = new InputManager()
@@ -23,6 +24,8 @@ export default class Standard extends Phaser.Scene {
 		this.sceneManager.buildPlayerAnims()
 		this.sceneManager.buildScene()
 		player.setSprite(this, {x:96, y:410, width: 24, height:32, scale: 1})
+
+		player.normalSkill = 'lightning-bolt'
 		this.cameras.main.startFollow(player.getSprite(), true, 0.05, 0.05)
 		//setTimeout(()=> test(player.takeDamage.bind(player)), 6000)
 		saveManager.saveGame({stage: JSON.stringify(mainGameConfigManager.config.stages)})

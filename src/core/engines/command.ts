@@ -8,6 +8,7 @@ interface KeyboardKeys {
 	down:Input.Keyboard.Key
 	left:Input.Keyboard.Key
 	right:Input.Keyboard.Key
+	normalSkill: Input.Keyboard.Key
 }
 
 export interface Inputs {
@@ -30,7 +31,8 @@ export class InputManager {
 				up: scene.input.keyboard.addKey('Up'),
 				down: scene.input.keyboard.addKey('Down'),
 				left: scene.input.keyboard.addKey('Left'),
-				right: scene.input.keyboard.addKey('Right')
+				right: scene.input.keyboard.addKey('Right'),
+				normalSkill: scene.input.keyboard.addKey('z')
 			}
 		}	
 	}
@@ -45,6 +47,9 @@ export class InputManager {
 		}
 		if (this.inputs.keyboard.up.isDown) {
 			commands.get('ArrowUp')!(player)
+		}
+		if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.normalSkill)) {
+			commands.get('normalSkill')!(player)
 		}
 		// if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.up)) {
 		// 	commands.get('ArrowUp')!(player)

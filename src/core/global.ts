@@ -1,6 +1,6 @@
 import { Player } from "./entities"
 
-export const player = new Player(10, 10, {}, 'player')
+export const player = new Player(10, 10, 10, {}, 'player')
 
 interface Stage {
 	mobs?: string[]
@@ -51,9 +51,9 @@ class MainGameConfigManager {
 	}
 }
 
-
 export const mainGameConfigManager = new MainGameConfigManager()
 export const saveManager = new SaveManager()
+
 export const test = (fun:(...args: any) => any) => {
 	fun()
 }

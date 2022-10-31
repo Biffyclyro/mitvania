@@ -24,9 +24,14 @@ const stop = (sprite: SpriteEntity) => {
 	sprite.idle()
 }
 
+const normalSkill = (sprite: SpriteEntity) => {
+	sprite.useNormalSkill()
+}
+
 export const commands = new Map<string, Command>();
 commands.set('ArrowLeft', moveLeft)
 commands.set('ArrowRight', moveRight)
 commands.set('ArrowUp', jump)
 commands.set('ArrowDown', moveDown)
 commands.set('stop', stop)
+commands.set('normalSkill', normalSkill)

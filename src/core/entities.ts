@@ -1,4 +1,5 @@
 import {Scene, Physics } from "phaser"
+import { skillsMap } from "./especials/skills"
 
 export interface Entity {
 	x: number
@@ -18,7 +19,7 @@ export interface BodyOffset {
 export enum Direction {
   Up = 'up',
   Down = 'down',
-  Left= 'left',
+  Left = 'left',
   Right = 'right'
 }
 
@@ -29,8 +30,9 @@ interface Sensors{
 }
 
 export interface Item extends Physics.Matter.Image{
-	name: string
+	description: string
 	properties: any
+	dropRate: number
 }
 
 export interface Stats {
@@ -41,30 +43,39 @@ export interface Stats {
 }
 
 export class SpriteEntity {
-		lvl = 1
-		canMove = false
-		jumping = false
-		maxJumps = 1
-		jumps = this.maxJumps 
-		velocity = 6
-		attack: (() => void ) | undefined
-		defeat: (() => void ) | undefined
-		protected sprite: Physics.Matter.Sprite
-		constructor(public life: number, 
-								public mana:number, 
-								public stats: Stats,
-								public baseTexture: string,
-								public direction: Direction = Direction.Right) {
-		}
+	lvl = 1
+	canMove = false
+	jumping = false
+	maxJumps = 1
+	jumps = this.maxJumps
+	velocity = 6
+	normalSkill: string = ''
+	inventory: string[] = []
+	defeat: (() => void) | undefined
+	protected sprite: Physics.Matter.Sprite
+	constructor(public life: number,
+		public mana: number,
+		public def: number,
+		public stats: Stats,
+		public baseTexture: string,
+		public direction: Direction = Direction.Right) {
+	}
 
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
 		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 69)
-		if (width && height ) {
+		if (width && height) {
 			this.sprite.setRectangle(width, height)
 			scale ? this.sprite.setScale(scale) : scale
 			this.sprite.setFixedRotation()
 		}
 		scene.matter.world.on('collisionactive', this.resetJump.bind(this))
+	}
+
+	useNormalSkill() {
+		const skill = skillsMap.get(this.normalSkill)
+		if (skill) {
+			skill(this)
+		}
 	}
 
 	getSprite(): Physics.Matter.Sprite {
@@ -74,18 +85,17 @@ export class SpriteEntity {
 	private playAnims(anim: string) {
 		if (!this.sprite.anims.isPlaying) {
 			this.sprite.anims.play(anim, true)
-		} else if (this.sprite.anims.currentAnim.key !== `${this.baseTexture}-damage` ){
-			
+		} else if (this.sprite.anims.currentAnim.key !== `${this.baseTexture}-damage`) {
 			this.sprite.anims.play(anim, true)
 		}
 	}
 
 	idle() {
 		this.sprite.setVelocityX(0)
-		this.playAnims(`${this.baseTexture}-idle`)	
+		this.playAnims(`${this.baseTexture}-idle`)
 	}
 
-	up() {
+	lvlUp() {
 		this.lvl++
 	}
 
@@ -98,10 +108,10 @@ export class SpriteEntity {
 	}
 
 	resetJump() {
-		this.jumps = this.maxJumps	
+		this.jumps = this.maxJumps
 		this.jumping = false
 	}
-	
+
 	move(direction: Direction) {
 		const movements = {
 			Left: () => {
@@ -133,15 +143,15 @@ export class SpriteEntity {
 		}
 	}
 
-	public takeDamage() {
+	public takeDamage(attack: number) {
 		this.playAnims(`${this.baseTexture}-damage`)
+		this.life -= attack - this.def
 	}
 }
 
 export class Player extends SpriteEntity {
 	sensors: Sensors
-	specialAttack: (() => void) | undefined
-	inventory: Item[] = [] 
+	specialSkill: string = '' 
 
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
 		const Bodies = scene.matter.bodies 

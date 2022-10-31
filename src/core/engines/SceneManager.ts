@@ -1,7 +1,7 @@
 import { windowSize } from "../config"
 import { GameObjects, Scene, Tilemaps } from "phaser"
 import { SpriteEntity } from "../entities"
-import { mainGameConfigManager, saveManager } from "../global"
+import { mainGameConfigManager, player, saveManager } from "../global"
 
 export default class SceneManager{
 	private numLayers = 1 
@@ -47,8 +47,7 @@ export default class SceneManager{
 	}
 
 	private buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
-		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus')
-		lotus.setCollisionCategory(100)
+		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus',0)
 	}
 
 	private setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {
@@ -58,7 +57,7 @@ export default class SceneManager{
 	}
 
 	private spawnMob(obj: Phaser.Types.Tilemaps.TiledObject) {
-		const mob = new SpriteEntity(10, 10, {}, obj.properties[0].value)
+		const mob = new SpriteEntity(10, 10, 10, {}, obj.properties[0].value)
 		mob.setSprite(this.scene, { x: obj.x!, y: obj.y!, width: 23, height: 32 })
 	}
 
@@ -84,7 +83,8 @@ export default class SceneManager{
 	}
 
 	loadPlayerAssets() {
-		this.scene.load.spritesheet('attack', 'sprites/attack.png', { frameWidth: 74, frameHeight: 74 })
+		this.scene.load.spritesheet('lightning-bolt', 'sprites/lightning-bolt.png', { frameWidth: 16, frameHeight: 16 })
+		this.scene.load.spritesheet('fire-ball', 'sprites/fire-ball.png', { frameWidth: 16, frameHeight: 16 })
 		this.scene.load.spritesheet('player', 'sprites/dino-sprite.png', { frameWidth: 48, frameHeight: 48 })
 		//this.scene.load.spritesheet('mush', 'sprites/cogu.png', {frameWidth: 48 ,frameHeight:32})
 	}
@@ -191,7 +191,7 @@ export default class SceneManager{
 		//this.scene.matter.add.image(79, 79, 'lotus')
 
 		map.getTileLayerNames().forEach((tileLayerName: string) => {
-			const layer = map.createLayer(tileLayerName, tileset, 0, 0)
+			const layer = map.createLayer(tileLayerName, tileset)
 			if (tileLayerName !== 'main-layer' && tileLayerName !== 'second-layer') {
 				this.setParallax(layer)
 			}

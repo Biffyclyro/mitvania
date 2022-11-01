@@ -7,6 +7,7 @@ export default class SceneManager{
 	private numLayers = 1 
 	private readonly mainConfig = mainGameConfigManager.config
 	private readonly currentStage: string = saveManager.saveInfos.stage
+	private collisionGroup: number
 
 	constructor(private readonly scene: Scene) {}
 
@@ -48,6 +49,7 @@ export default class SceneManager{
 
 	private buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
 		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus',0)
+		lotus.setCollisionCategory(1)
 	}
 
 	private setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {

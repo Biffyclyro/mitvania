@@ -2,7 +2,6 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('receiver', {
-	//receive: ipcRenderer.on('read-file', (event, data) => FacadeObjectConfig.config = data),
 	savedNotify: ipcRenderer.on('game-saved', () => {
 		const event = new CustomEvent('saved', {detail: 'game saved'})
 		window.dispatchEvent(event)

@@ -1,17 +1,16 @@
 import {Scene, Physics } from "phaser"
 import { skillsMap } from "./especials/skills"
 
+//provavelmente não será útil 
 export interface Entity {
 	x: number
 	y: number
 	width: number
 	height: number
 	scale?: number
-	// point?: boolean
-	// ellipse?: boolean
-	// polygon?: Phaser.Types.Math.Vector2Like[] 
 }
 
+//remover assim que se confirmar a inutilidade disso
 export interface BodyOffset {
 	centerOffset: {x: number, y: number}
 }
@@ -35,6 +34,7 @@ export interface Item extends Physics.Matter.Image{
 	dropRate: number
 }
 
+//ainda avaliando se isso realmente vai ser usado
 export interface Stats {
 	atk?: number
 	int?: number
@@ -64,11 +64,12 @@ export class SpriteEntity {
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
 		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 69)
 		if (width && height) {
-			this.sprite.setRectangle(width, height)
+			this.sprite.setRectangle(width, height, {label: 'sprite'})
 			scale ? this.sprite.setScale(scale) : scale
 			this.sprite.setFixedRotation()
 		}
 		scene.matter.world.on('collisionactive', this.resetJump.bind(this))
+		this.sprite.setData('entity', this)
 	}
 
 	useNormalSkill() {
@@ -146,6 +147,7 @@ export class SpriteEntity {
 	public takeDamage(attack: number) {
 		this.playAnims(`${this.baseTexture}-damage`)
 		this.life -= attack - this.def
+		this.sprite.destroy()
 	}
 }
 
@@ -156,9 +158,9 @@ export class Player extends SpriteEntity {
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
 		const Bodies = scene.matter.bodies 
 		this.sensors = {
-			bottom: Bodies.rectangle(width, height + (height/4), width/3, 1,{isSensor: true}),
-			left: Bodies.rectangle(width - (width/2), width, 1, width,{isSensor: true}),
-			right: Bodies.rectangle(width + (width/2), width, 1, width,{isSensor: true})
+			bottom: Bodies.rectangle(width, height + (height/4), width/3, 1, {isSensor: true}),
+			left: Bodies.rectangle(width - (width/2), width, 1, width, {isSensor: true}),
+			right: Bodies.rectangle(width + (width/2), width, 1, width, {isSensor: true})
 		}
 		this.sensors.bottom.onCollideActiveCallback = this.resetJump.bind(this)
 		this.sensors.bottom.onCollideEndCallback = () => {
@@ -166,21 +168,17 @@ export class Player extends SpriteEntity {
 			this.jumping = true
 		}
 
-		this.sensors.bottom.isSensor = true
-		this.sensors.left.isSensor = true
-		this.sensors.right.isSensor = true
 		// ainda é necessário cuidar esses valores 
-
 		const body = Bodies.rectangle(width, width, width, height, { chamfer: { radius: 10 }})
 		const compoundBody = scene.matter.body.create({
 			parts: [body, this.sensors.bottom, this.sensors.left, this.sensors.right],
 		})
-		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0)	
+		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0, {label: 'sprite'})	
 		this.sprite.setExistingBody(compoundBody)
 		scale ? this.sprite.setScale(scale) : scale 
-		//this.sprite.setScale(scale)
 		this.sprite.setFixedRotation()
 		this.sprite.setFriction(0)
+		this.sprite.setData('entity', this)
 		//scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
 		//scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
 	}

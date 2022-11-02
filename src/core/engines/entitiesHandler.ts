@@ -1,5 +1,5 @@
 import {GameObjects} from  "phaser";
-
+// provavelmente nunca será útil
 export const addEntity = <T extends GameObjects
 																		.GameObject>(scene: Phaser.Scene, e: T): T => {
 	scene.add.existing(e);

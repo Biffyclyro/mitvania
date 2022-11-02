@@ -1,13 +1,12 @@
 import { windowSize } from "../config"
 import { GameObjects, Scene, Tilemaps } from "phaser"
 import { SpriteEntity } from "../entities"
-import { mainGameConfigManager, player, saveManager } from "../global"
+import { mainGameConfigManager, saveManager } from "../global"
 
 export default class SceneManager{
 	private numLayers = 1 
 	private readonly mainConfig = mainGameConfigManager.config
 	private readonly currentStage: string = saveManager.saveInfos.stage
-	private collisionGroup: number
 
 	constructor(private readonly scene: Scene) {}
 
@@ -48,8 +47,9 @@ export default class SceneManager{
 	}
 
 	private buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
-		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus',0)
-		lotus.setCollisionCategory(1)
+		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus',0, {isStatic: true})
+		lotus.setCollisionGroup(-1)
+		lotus.setOnCollide(() => saveManager.saveGame({stage: this.currentStage}))
 	}
 
 	private setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {
@@ -88,7 +88,6 @@ export default class SceneManager{
 		this.scene.load.spritesheet('lightning-bolt', 'sprites/lightning-bolt.png', { frameWidth: 16, frameHeight: 16 })
 		this.scene.load.spritesheet('fire-ball', 'sprites/fire-ball.png', { frameWidth: 16, frameHeight: 16 })
 		this.scene.load.spritesheet('player', 'sprites/dino-sprite.png', { frameWidth: 48, frameHeight: 48 })
-		//this.scene.load.spritesheet('mush', 'sprites/cogu.png', {frameWidth: 48 ,frameHeight:32})
 	}
 
 	makeLayerSolid(layer: Tilemaps.TilemapLayer) {
@@ -152,19 +151,6 @@ export default class SceneManager{
 
 	private collisionsManager(collisionsLayer: Tilemaps.ObjectLayer) {
 		collisionsLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
-			// const plataforma = new GameObjects.Polygon(scene, obj.x!, obj.y!, obj.polygon!).setOrigin(0,0)
-			// const img = scene.matter.add.imag(obj.x!, obj.y!, '', 0, {
-			// 	vertices: obj.polygon!,
-			// 	isStatic: true,
-			// })
-
-			//const abs =scene.matter.add.sprite(pols.x!, pols.y!, 'plataforma', 0)
-
-			//  scene.matter.add.polygon(0, 0, pols.polygon!.length, 0, {
-			// 	label: obj.name,
-			// 	vertices: pols.polygon!,
-			// 	isStatic: true
-			// })
 			if (obj.height === 0 && obj.width === 0) {
 				
 				if (obj.polygon) {
@@ -181,16 +167,14 @@ export default class SceneManager{
 		})
 	}
 
+	//metódo provavelmente será o único público invocado dentro da cena
 	buildScene() {
-		//this.buildAllMobsAnims()
 		const map = this.scene.make.tilemap({ key: 'map' })
 		const tileset = map.addTilesetImage('garden', 'tiles')
-		//let mainLayer!: Tilemaps.TilemapLayer;
 		const collisionsLayer = map.getObjectLayer('collisions')
 		const spriteLayer = map.getObjectLayer('sprite-objects')
 		this.numLayers += map.layers.length
 		this.backgroundManager()
-		//this.scene.matter.add.image(79, 79, 'lotus')
 
 		map.getTileLayerNames().forEach((tileLayerName: string) => {
 			const layer = map.createLayer(tileLayerName, tileset)

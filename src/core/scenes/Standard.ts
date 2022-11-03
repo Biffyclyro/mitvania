@@ -22,7 +22,7 @@ export default class Standard extends Phaser.Scene {
 		this.setCamera()
 		this.sceneManager.buildPlayerAnims()
 		this.sceneManager.buildScene()
-		player.setSprite(this, {x:96, y:410, width: 24, height:32, scale: 1})
+		player.setSprite(this, {x: 96, y: 410, width: 24, height: 32, scale: 1})
 
 		player.normalSkill = 'lightning-bolt'
 		player.getSprite().setCollisionGroup(-1)

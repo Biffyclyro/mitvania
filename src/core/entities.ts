@@ -28,7 +28,7 @@ interface Sensors{
 	right: MatterJS.BodyType
 }
 
-export interface Item extends Physics.Matter.Image{
+export interface Item {
 	description: string
 	properties: any
 	dropRate: number

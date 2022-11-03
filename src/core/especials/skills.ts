@@ -5,12 +5,12 @@ interface Skill {
 	(se: SpriteEntity): void
 }
 
-const setSide = (sprite: Physics.Matter.Sprite): number => {
+export const setSide = (sprite: Physics.Matter.Sprite): number => {
 	return sprite.flipX ? -sprite.width/2 : sprite.width/2
 }
 
 //retornando a entidade quando uma colisão envolve um sprite
-const extractEntity = ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+export const extractEntity = ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
 	if (bodyA.label === 'sprite') {
 		return bodyA.gameObject.getData('entity')
 	}
@@ -20,15 +20,17 @@ const extractEntity = ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterColli
 	return undefined
 }
 
-const throwableSkill = (se: SpriteEntity, texture: string, velocity: number) => {
+const throwableSkill = (se: SpriteEntity, texture: string, velocity: number, damage: number) => {
 	const sprite = se.getSprite()
-	const fireBall = sprite.scene.matter.add.sprite(sprite.x + setSide(sprite), sprite.y, texture, 0, { frictionAir: 0, ignoreGravity: true, label: texture })
+	const fireBall = sprite.scene.matter.add.sprite(sprite.x + setSide(sprite), sprite.y, texture, 0, { frictionAir: 0, 
+																																																			ignoreGravity: true, 
+																																																			label: texture })
 	fireBall.setFixedRotation()
 	fireBall.type = 'skill'
 	fireBall.setOnCollide((pair: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
 		const entity = extractEntity(pair)
 		if (entity)	{
-			entity.takeDamage(1)
+			entity.takeDamage(damage * se.lvl)
 		}
 		fireBall.destroy()
 	})
@@ -42,10 +44,6 @@ const throwableSkill = (se: SpriteEntity, texture: string, velocity: number) => 
 
 export const skillsMap = new Map<string, Skill>()
 
-skillsMap.set('fire-ball', (se: SpriteEntity) => {
-	throwableSkill(se, 'fire-ball', 10)	
-})
+skillsMap.set('fire-ball', (se: SpriteEntity) => throwableSkill(se, 'fire-ball', 8, 5) )
 
-skillsMap.set('lightning-bolt', (se: SpriteEntity) => {
-	throwableSkill(se, 'lightning-bolt', 10)	
-})
+skillsMap.set('lightning-bolt', (se: SpriteEntity) => throwableSkill(se, 'lightning-bolt', 10, 3)	)

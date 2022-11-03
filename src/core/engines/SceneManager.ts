@@ -59,7 +59,7 @@ export default class SceneManager{
 	}
 
 	private spawnMob(obj: Phaser.Types.Tilemaps.TiledObject) {
-		const mob = new SpriteEntity(10, 10, 10, {}, obj.properties[0].value)
+		const mob = new SpriteEntity(25, 10, 10, {}, obj.properties[0].value)
 		mob.setSprite(this.scene, { x: obj.x!, y: obj.y!, width: 23, height: 32 })
 	}
 
@@ -88,6 +88,7 @@ export default class SceneManager{
 		this.scene.load.spritesheet('lightning-bolt', 'sprites/lightning-bolt.png', { frameWidth: 16, frameHeight: 16 })
 		this.scene.load.spritesheet('fire-ball', 'sprites/fire-ball.png', { frameWidth: 16, frameHeight: 16 })
 		this.scene.load.spritesheet('player', 'sprites/dino-sprite.png', { frameWidth: 48, frameHeight: 48 })
+		this.scene.load.spritesheet('sword', 'sprites/weapons/sword.png', { frameWidth: 24, frameHeight: 16 })
 	}
 
 	makeLayerSolid(layer: Tilemaps.TilemapLayer) {

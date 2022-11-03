@@ -1,5 +1,6 @@
 import {Scene, Physics } from "phaser"
-import { skillsMap } from "./especials/skills"
+import { gameItens } from "./especials/itens"
+import { extractEntity, skillsMap } from "./especials/skills"
 
 //provavelmente não será útil 
 export interface Entity {
@@ -29,9 +30,14 @@ interface Sensors{
 }
 
 export interface Item {
+	type: string
 	description: string
-	properties: any
+	properties: {dmg?: number, defLvl?: number, atkLvl?: number, atkInterval: number}
 	dropRate: number
+}
+
+export interface Weapon extends Item {
+	properties: {dmg: number, atkInterval: number}	
 }
 
 //ainda avaliando se isso realmente vai ser usado
@@ -144,16 +150,34 @@ export class SpriteEntity {
 		}
 	}
 
-	public takeDamage(attack: number) {
+	public takeDamage(damage: number) {
 		this.playAnims(`${this.baseTexture}-damage`)
-		this.life -= attack - this.def
-		this.sprite.destroy()
+		this.life -= damage / this.lvl
+		if (this.life < 1) {
+			this.sprite.destroy()
+		}
 	}
 }
 
 export class Player extends SpriteEntity {
 	sensors: Sensors
-	specialSkill: string = '' 
+	specialSkill: string = ''
+	weapon: string 
+	
+	attack() {
+		if (this.weapon) {
+			const wp = gameItens.get(this.weapon)
+			const x = this.sprite.x + this.sprite.width / 2
+			const weaponSprite = this.sprite.scene.matter.add.sprite(x, this.sprite.y, this.weapon, 0 )
+			weaponSprite.setOnCollide((pair: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+				const entity = extractEntity(pair)
+				if (entity) {
+					entity.takeDamage(wp!.properties.dmg)
+				}
+			})	
+			setTimeout(() => weaponSprite.destroy(), wp!.properties.atkInterval * 1000)
+		}
+	}
 
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
 		const Bodies = scene.matter.bodies 

@@ -168,14 +168,21 @@ export class Player extends SpriteEntity {
 		if (this.weapon) {
 			const wp = gameItens.get(this.weapon)
 			const x = this.sprite.x + this.sprite.width / 2
-			const weaponSprite = this.sprite.scene.matter.add.sprite(x, this.sprite.y, this.weapon, 0 )
+			const weaponSprite = this.sprite.scene.matter.add.sprite(x, this.sprite.y, this.weapon, 0, {ignorePointer: true})
+			weaponSprite.setFixedRotation()
+			weaponSprite.setCollisionGroup(-1)
+			//@ts-ignore
+			const t = this.sprite.scene.matter.add.constraint(this.sprite, weaponSprite)
 			weaponSprite.setOnCollide((pair: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
 				const entity = extractEntity(pair)
 				if (entity) {
 					entity.takeDamage(wp!.properties.dmg)
 				}
 			})	
-			setTimeout(() => weaponSprite.destroy(), wp!.properties.atkInterval * 1000)
+			setTimeout(() => {
+				weaponSprite.destroy()
+				this.sprite.scene.matter.world.removeConstraint(t)
+			}, wp!.properties.atkInterval * 1000)
 		}
 	}
 

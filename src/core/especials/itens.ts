@@ -4,7 +4,7 @@ export const gameItens = new Map<string, Item>()
 
 gameItens.set('sword', {type: 'weapon',
 												description: 'item de teste',
-												properties: {dmg: 10, atkInterval: 0.5},
+												properties: {dmg: 10, atkInterval: 0.3},
 												dropRate: 0.1	})
 
 gameItens.set('knife', {type: 'weapon',

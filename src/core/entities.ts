@@ -1,6 +1,7 @@
-import {Scene, Physics } from "phaser"
+import { BodyType } from "matter"
+import { Scene, Physics } from "phaser"
 import { gameItens } from "./especials/itens"
-import { extractEntity, skillsMap } from "./especials/skills"
+import { extractEntity, skillsMap, setSide } from "./especials/skills"
 
 //provavelmente não será útil 
 export interface Entity {
@@ -57,6 +58,7 @@ export class SpriteEntity {
 	velocity = 6
 	normalSkill: string = ''
 	inventory: string[] = []
+	attacking = false
 	defeat: (() => void) | undefined
 	protected sprite: Physics.Matter.Sprite
 	constructor(public life: number,
@@ -120,9 +122,10 @@ export class SpriteEntity {
 	}
 
 	move(direction: Direction) {
+		// durante o ataque não flipa o sprite
 		const movements = {
 			Left: () => {
-				this.sprite.setFlipX(true)
+				if (!this.attacking) {this.sprite.setFlipX(true)}
 				this.sprite.setVelocityX(-this.velocity)
 				if (this.jumping) {
 					this.playAnims(`${this.baseTexture}-jump`)
@@ -131,7 +134,8 @@ export class SpriteEntity {
 				}
 			},
 			Right: () => {
-				this.sprite.resetFlip()
+				if (!this.attacking) {this.sprite.resetFlip()}
+				
 				this.sprite.setVelocityX(this.velocity)
 				if (this.jumping) {
 					this.playAnims(`${this.baseTexture}-jump`)
@@ -165,14 +169,18 @@ export class Player extends SpriteEntity {
 	weapon: string 
 	
 	attack() {
-		if (this.weapon) {
+		if (this.weapon, !this.attacking) {
+			this.attacking = true
+			const scene = this.sprite.scene
 			const wp = gameItens.get(this.weapon)
-			const x = this.sprite.x + this.sprite.width / 2
-			const weaponSprite = this.sprite.scene.matter.add.sprite(x, this.sprite.y, this.weapon, 0, {ignorePointer: true})
+			const x = this.sprite.x + setSide(this.sprite)
+			const weaponSprite = this.sprite.scene.matter.add.sprite(x, this.sprite.y, this.weapon, 0, {ignoreGravity: true})
+			const pointsJoint = {pointA: this.sprite.getCenter(), pointB: weaponSprite.getCenter()} 
+			if (this.sprite.flipX) {weaponSprite.setFlipX(true)}
 			weaponSprite.setFixedRotation()
 			weaponSprite.setCollisionGroup(-1)
-			//@ts-ignore
-			const t = this.sprite.scene.matter.add.constraint(this.sprite, weaponSprite)
+			weaponSprite.setCollisionGroup(-2)
+			const joint = scene.matter.add.joint(weaponSprite.body as BodyType, this.sprite.body as BodyType, 0, 0, pointsJoint)
 			weaponSprite.setOnCollide((pair: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
 				const entity = extractEntity(pair)
 				if (entity) {
@@ -181,15 +189,16 @@ export class Player extends SpriteEntity {
 			})	
 			setTimeout(() => {
 				weaponSprite.destroy()
-				this.sprite.scene.matter.world.removeConstraint(t)
-			}, wp!.properties.atkInterval * 1000)
+				scene.matter.world.removeConstraint(joint)
+				this.attacking = false
+			}, wp!.properties.atkInterval * 500)
 		}
 	}
 
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
 		const Bodies = scene.matter.bodies 
 		this.sensors = {
-			bottom: Bodies.rectangle(width, height + (height/4), width/3, 1, {isSensor: true}),
+			bottom: Bodies.rectangle(width, height + (height/4), width/2, 1, {isSensor: true}),
 			left: Bodies.rectangle(width - (width/2), width, 1, width, {isSensor: true}),
 			right: Bodies.rectangle(width + (width/2), width, 1, width, {isSensor: true})
 		}

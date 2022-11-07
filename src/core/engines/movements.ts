@@ -2,7 +2,7 @@ import { Direction, Player, SpriteEntity } from "../entities"
 
 export interface Command {
 	//comportamento diferente do previsto
-	(sprite: SpriteEntity & Player): void
+	(sprite: Player & SpriteEntity): void
 }
 
 const jump = (sprite: SpriteEntity) => {

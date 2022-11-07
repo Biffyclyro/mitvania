@@ -127,8 +127,7 @@ export default class SceneManager{
 		}
 		//método sem typecast
 		// displayOrigin é o mesmo que centerOffset?????????
-		shapeObject.body.gameObject!.setPosition(shape.x + shape.displayOriginX, shape.y + shape.displayOriginY)
-
+		shapeObject.body.gameObject!.setPosition(shape.x + shape.displayOriginX, shape.y + shape.displayOriginY).setCollisionGroup(-2)
 		//shapeObject = shapeObject as Phaser.GameObjects.Polygon | Phaser.GameObjects.Ellipse | Phaser.GameObjects.Rectangle
 		//const offset = shape.body as BodyOffset
 		//console.log(shape.displayOriginX, 'shape body')

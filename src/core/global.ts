@@ -29,7 +29,8 @@ export interface playerSaveStatus {
 	inventory: string[]
 	normalSkill: string,
 	life: number,
-	mana: number
+	mana: number,
+	position: {x: number, y:number},
 }
 
 class SaveManager{
@@ -45,7 +46,6 @@ class SaveManager{
 
 	saveGame(saveInfos: SaveInfos) {
 		const event = new CustomEvent<SaveInfos>('save', { detail: saveInfos })
-		console.log(saveInfos)
 		window.dispatchEvent(event)
 	}
 }
@@ -67,12 +67,13 @@ class PlayerManager {
 
 	createPlayer(playerStatus?: playerSaveStatus) {
 		if (playerStatus) {
-			const { lvl, weapon, specialSkill, maxJumps, inventory, normalSkill, life, mana } = playerStatus
+			const { lvl, weapon, specialSkill, maxJumps, inventory, normalSkill, life, mana} = playerStatus
 			const player = new Player(lvl, life, mana, 10, {}, 'player')
 			player.specialSkill = specialSkill
 			player.weapon = weapon
 			player.maxJumps = maxJumps
 			player.inventory = inventory
+			player.normalSkill = normalSkill
 			this._player = player
 		} else {
 			this._player = new Player(1, 10, 10, 10, {}, 'player')
@@ -83,7 +84,6 @@ class PlayerManager {
 		return this._player
 	}
 }
-
 
 
 export const mainGameConfigManager = new MainGameConfigManager()

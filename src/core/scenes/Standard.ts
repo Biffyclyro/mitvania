@@ -25,7 +25,15 @@ export default class Standard extends Phaser.Scene {
 		this.setCamera()
 		this.sceneManager.buildPlayerAnims()
 		this.sceneManager.buildScene()
-		this.player.setSprite(this, {x: 96, y: 410, width: 24, height: 32, scale: 1})
+		if (saveManager.saveInfos.playerStatus) {
+			const {x, y} = saveManager.saveInfos.playerStatus.position
+			this.player.setSprite(this, {x, y, width: 24, height: 32, scale: 1})
+		} else {
+			this.player.setSprite(this, {x: 96, y: 410, width: 24, height: 32, scale: 1})
+		}
+
+		this.player.weapon = 'knife'
+		this.player.normalSkill = 'fire-ball'
 
 		//this.player.getSprite().setCollisionGroup(-1)
 		this.cameras.main.startFollow(this.player.getSprite(), true, 0.05, 0.05)

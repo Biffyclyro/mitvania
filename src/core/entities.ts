@@ -156,8 +156,14 @@ export class SpriteEntity {
 	}
 
 	public takeDamage(damage: number) {
+		const x = this.sprite.x 
+		const y = this.sprite.y 
 		this.playAnims(`${this.baseTexture}-damage`)
 		this.life -= damage / this.lvl
+		const text = this.sprite.scene.add.text(x, y - this.sprite.height, String(damage / this.lvl))
+		setTimeout(() => {
+			text.destroy()	
+		}, 1000);
 		if (this.life < 1) {
 			this.sprite.destroy()
 		}
@@ -170,7 +176,7 @@ export class Player extends SpriteEntity {
 	weapon: string 
 	
 	attack() {
-		if (this.weapon, !this.attacking) {
+		if (this.weapon && !this.attacking) {
 			this.attacking = true
 			const scene = this.sprite.scene
 			const wp = gameItens.get(this.weapon)
@@ -180,7 +186,6 @@ export class Player extends SpriteEntity {
 			if (this.sprite.flipX) {weaponSprite.setFlipX(true)}
 			weaponSprite.setFixedRotation()
 			weaponSprite.setCollisionGroup(-2)
-			weaponSprite.setCollisionGroup(-1)
 			const joint = scene.matter.add.joint(weaponSprite.body as BodyType, this.sprite.body as BodyType, 0, 0, pointsJoint)
 			weaponSprite.setOnCollide((pair: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
 				const entity = extractEntity(pair)
@@ -195,13 +200,13 @@ export class Player extends SpriteEntity {
 			}, wp!.properties.atkInterval * 500)
 		}
 	}
-
+	//muito cuidado com esse método e os valores dele
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
 		const Bodies = scene.matter.bodies 
 		this.sensors = {
-			bottom: Bodies.rectangle(width, height + (height/4), width/2, 1, {isSensor: true}),
-			left: Bodies.rectangle(width - (width/2), width, 1, width, {isSensor: true}),
-			right: Bodies.rectangle(width + (width/2), width, 1, width, {isSensor: true})
+			bottom: Bodies.rectangle(0, 0 + (height/2), width/2.5, 1, {isSensor: true}),
+			left: Bodies.rectangle(0 - (width/2), 0, 1, width, {isSensor: true}),
+			right: Bodies.rectangle(0 + (width/2), 0, 1, width, {isSensor: true})
 		}
 		this.sensors.bottom.onCollideActiveCallback = this.resetJump.bind(this)
 		this.sensors.bottom.onCollideEndCallback = () => {
@@ -210,12 +215,14 @@ export class Player extends SpriteEntity {
 		}
 
 		// ainda é necessário cuidar esses valores 
-		const body = Bodies.rectangle(width, width, width, height, { chamfer: { radius: 10 }})
+		const body = Bodies.rectangle(0, 0, width, height, {label: 'player', chamfer: { radius: 10 }})
 		const compoundBody = scene.matter.body.create({
 			parts: [body, this.sensors.bottom, this.sensors.left, this.sensors.right],
 		})
-		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 0, {label: 'sprite'})	
+		this.sprite = scene.matter.add.sprite(0, 0, this.baseTexture, 0)
 		this.sprite.setExistingBody(compoundBody)
+		this.sprite.setPosition(x,y)
+		this.sprite.setOrigin(0.5,0.5)
 		scale ? this.sprite.setScale(scale) : scale 
 		this.sprite.setFixedRotation()
 		this.sprite.setFriction(0)
@@ -233,7 +240,8 @@ export class Player extends SpriteEntity {
 			inventory: this.inventory,
 			normalSkill: this.normalSkill,
 			life: this.life,
-			mana: this.mana
+			mana: this.mana,
+			position: {x: this.getSprite().x, y: this.getSprite().y}
 		}
 	}
 }

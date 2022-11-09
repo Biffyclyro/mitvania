@@ -2,39 +2,42 @@ import { windowSize } from "../config"
 import { GameObjects, Scene, Tilemaps } from "phaser"
 import { SpriteEntity } from "../entities"
 import { mainGameConfigManager, playerManager, saveManager } from "../global"
+import { mobsConfigMap } from "../especials/mobsConfig"
 
 export default class SceneManager{
 	private numLayers = 1 
 	private readonly mainConfig = mainGameConfigManager.config
 	private readonly currentStage: string = saveManager.saveInfos.stage
+	private readonly player = playerManager.player
 
 	constructor(private readonly scene: Scene) {}
 
 	buildPlayerAnims() {
+		const texture = this.player.baseTexture
 		this.scene.anims.create({
 			key: 'player-idle',
 			frameRate: 5,
 			repeat: -1,
-			frames: this.scene.anims.generateFrameNumbers('player', { start: 0, end: 3 })
+			frames: this.scene.anims.generateFrameNumbers(texture, { start: 0, end: 3 })
 		})
 
 		this.scene.anims.create({
 			key: 'player-moving',
 			frameRate: 10,
-			frames: this.scene.anims.generateFrameNumbers('player', { start: 4, end: 9 })
+			frames: this.scene.anims.generateFrameNumbers(texture, { start: 4, end: 9 })
 		})
 
 		this.scene.anims.create({
 			key: 'player-jump',
 			frameRate: 5,
-			frames: this.scene.anims.generateFrameNumbers('player', { start: 10, end: 12 })
+			frames: this.scene.anims.generateFrameNumbers(texture, { start: 10, end: 12 })
 		})
 
 		this.scene.anims.create({
 			key: 'player-damage',
 			frameRate: 10,
 			repeat: 3,
-			frames: this.scene.anims.generateFrameNumbers('player', { start: 14, end: 16 })
+			frames: this.scene.anims.generateFrameNumbers(texture, { start: 14, end: 16 })
 		})
 	}
 	 
@@ -45,15 +48,13 @@ export default class SceneManager{
 			frames: this.scene.anims.generateFrameNames(mob, {start: 0, end:0})
 		})
 	}
-	//colisão da lotus do save sendo um grande problema
+
 	private buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
 		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus', 0, { isStatic: true, isSensor: true })
-		const player = playerManager.player
 		lotus.setVisible(true)
 		lotus.setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
-			if (bodyA.gameObject.getData('entity') || bodyB.gameObject.getData('entity')) {
-				saveManager.saveGame({ stage: this.currentStage, playerStatus: player.getSaveStatus() })
-				console.log('foi')
+			if (bodyA.label === 'player' || bodyB.label === 'player') {
+				saveManager.saveGame({ stage: this.currentStage, playerStatus: this.player.getSaveStatus() })
 			}
 		})
 	}
@@ -81,7 +82,14 @@ export default class SceneManager{
 		const mobs = this.mainConfig.stages[this.currentStage].mobs
 		if (mobs) { 
 			mobs.forEach(m => {
+				const mobConfig = mobsConfigMap.get(m)!
 				this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 48 ,frameHeight:32})
+				if (mobConfig.skill) {
+					this.scene.load.spritesheet(mobConfig.skill, `sprites/skills/${mobConfig.skill}.png`)
+				} 
+				mobConfig.inventory.forEach(item => {
+					this.scene.load.spritesheet(item, `sprites/itens/${item}.png`)
+				})
 			})
 		}
 		this.scene.load.image('background', `backgrounds/${this.currentStage}.png`)
@@ -91,10 +99,28 @@ export default class SceneManager{
 	}
 
 	loadPlayerAssets() {
-		this.scene.load.spritesheet('lightning-bolt', 'sprites/lightning-bolt.png', { frameWidth: 16, frameHeight: 16 })
-		this.scene.load.spritesheet('fire-ball', 'sprites/fire-ball.png', { frameWidth: 16, frameHeight: 16 })
-		this.scene.load.spritesheet('player', 'sprites/dino-sprite.png', { frameWidth: 48, frameHeight: 48 })
-		this.scene.load.spritesheet('sword', 'sprites/weapons/sword.png', { frameWidth: 24, frameHeight: 16 })
+		const specialSkill = this.player.specialSkill
+		const weapon = this.player.weapon
+		const normalSkill = this.player.normalSkill
+		const texture = this.player.baseTexture
+
+		this.scene.load.spritesheet(texture, `sprites/${texture}.png`, { frameWidth: 48, frameHeight: 48 })
+
+		if (specialSkill) {
+			this.scene.load.spritesheet(specialSkill, `sprites/skills/${specialSkill}.png`, { frameWidth: 16, frameHeight: 16 })
+		}
+		if (weapon) {
+			this.scene.load.spritesheet(weapon, `sprites/itens/${weapon}.png`, { frameWidth: 24, frameHeight: 16 })
+		}
+		if (normalSkill) {
+			this.scene.load.spritesheet(normalSkill, `sprites/skills/${normalSkill}.png`, { frameWidth: 16, frameHeight: 16 })
+		}
+		this.player.inventory.forEach(item => {
+			this.scene.load.spritesheet(item, `itens/${item}.png`, { frameWidth: 16, frameHeight: 16 })
+		})
+
+		this.scene.load.spritesheet('knife', `sprites/itens/knife.png`, { frameWidth: 24, frameHeight: 16 })
+		this.scene.load.spritesheet('fire-ball', `sprites/skills/fire-ball.png`, { frameWidth: 16, frameHeight: 16 })
 	}
 
 	makeLayerSolid(layer: Tilemaps.TilemapLayer) {
@@ -102,6 +128,7 @@ export default class SceneManager{
 		this.scene.matter.world.convertTilemapLayer(layer)
 	}
 
+	//metódo mais complexo até o momento
 	private shapeManager(shape: GameObjects.Polygon | 
 															GameObjects.Rectangle | 
 															GameObjects.Ellipse, 
@@ -176,7 +203,7 @@ export default class SceneManager{
 	//metódo provavelmente será o único público invocado dentro da cena
 	buildScene() {
 		const map = this.scene.make.tilemap({ key: 'map' })
-		const tileset = map.addTilesetImage('garden', 'tiles')
+		const tileset = map.addTilesetImage(this.currentStage, 'tiles')
 		const collisionsLayer = map.getObjectLayer('collisions')
 		const spriteLayer = map.getObjectLayer('sprite-objects')
 		this.numLayers += map.layers.length

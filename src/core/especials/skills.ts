@@ -6,15 +6,15 @@ interface Skill {
 }
 
 export const setSide = (sprite: Physics.Matter.Sprite): number => {
-	return sprite.flipX ? -sprite.width/2 : sprite.width/2
+	return sprite.flipX ? - sprite.width/2 - 1 : sprite.width/2 + 1
 }
 
 //retornando a entidade quando uma colisão envolve um sprite
 export const extractEntity = ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
-	if (bodyA.label === 'sprite') {
+	if (bodyA.label === 'sprite' || bodyA.label === 'player' ) {
 		return bodyA.gameObject.getData('entity')
 	}
-	if (bodyB.label === 'sprite') {
+	if (bodyB.label === 'sprite' || bodyB.label === 'player') {
 		return bodyB.gameObject.getData('entity')
 	}
 	return undefined

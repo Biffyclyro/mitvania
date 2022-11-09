@@ -18,6 +18,18 @@ interface MainGameConfig {
 
 interface SaveInfos {
 	stage: string 
+	playerStatus?: playerSaveStatus
+}
+
+export interface playerSaveStatus {
+	lvl: number
+	weapon: string
+	specialSkill: string
+	maxJumps: number
+	inventory: string[]
+	normalSkill: string,
+	life: number,
+	mana: number
 }
 
 class SaveManager{
@@ -33,6 +45,7 @@ class SaveManager{
 
 	saveGame(saveInfos: SaveInfos) {
 		const event = new CustomEvent<SaveInfos>('save', { detail: saveInfos })
+		console.log(saveInfos)
 		window.dispatchEvent(event)
 	}
 }
@@ -49,9 +62,33 @@ class MainGameConfigManager {
 	}
 }
 
+class PlayerManager {
+	private _player: Player
+
+	createPlayer(playerStatus?: playerSaveStatus) {
+		if (playerStatus) {
+			const { lvl, weapon, specialSkill, maxJumps, inventory, normalSkill, life, mana } = playerStatus
+			const player = new Player(lvl, life, mana, 10, {}, 'player')
+			player.specialSkill = specialSkill
+			player.weapon = weapon
+			player.maxJumps = maxJumps
+			player.inventory = inventory
+			this._player = player
+		} else {
+			this._player = new Player(1, 10, 10, 10, {}, 'player')
+		}
+	}
+	
+	get player() {
+		return this._player
+	}
+}
+
+
+
 export const mainGameConfigManager = new MainGameConfigManager()
 export const saveManager = new SaveManager()
-export const player = new Player(10, 10, 10, {}, 'player')
+export const playerManager =  new PlayerManager()
 
 //lambda de teste menos útil do que parecia quando foi pensada
 export const test = (fun:(...args: any) => any) => {

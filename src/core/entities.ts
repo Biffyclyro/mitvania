@@ -2,8 +2,8 @@ import { BodyType } from "matter"
 import { Scene, Physics } from "phaser"
 import { gameItens } from "./especials/itens"
 import { extractEntity, skillsMap, setSide } from "./especials/skills"
+import { playerSaveStatus } from "./global"
 
-//provavelmente não será útil 
 export interface Entity {
 	x: number
 	y: number
@@ -50,7 +50,6 @@ export interface Stats {
 }
 
 export class SpriteEntity {
-	lvl = 1
 	canMove = false
 	jumping = false
 	maxJumps = 1
@@ -61,7 +60,9 @@ export class SpriteEntity {
 	attacking = false
 	defeat: (() => void) | undefined
 	protected sprite: Physics.Matter.Sprite
-	constructor(public life: number,
+	constructor(
+		public lvl: number,
+		public life: number,
 		public mana: number,
 		public def: number,
 		public stats: Stats,
@@ -178,8 +179,8 @@ export class Player extends SpriteEntity {
 			const pointsJoint = {pointA: this.sprite.getCenter(), pointB: weaponSprite.getCenter()} 
 			if (this.sprite.flipX) {weaponSprite.setFlipX(true)}
 			weaponSprite.setFixedRotation()
-			weaponSprite.setCollisionGroup(-1)
 			weaponSprite.setCollisionGroup(-2)
+			weaponSprite.setCollisionGroup(-1)
 			const joint = scene.matter.add.joint(weaponSprite.body as BodyType, this.sprite.body as BodyType, 0, 0, pointsJoint)
 			weaponSprite.setOnCollide((pair: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
 				const entity = extractEntity(pair)
@@ -221,5 +222,18 @@ export class Player extends SpriteEntity {
 		this.sprite.setData('entity', this)
 		//scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
 		//scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
+	}
+
+	getSaveStatus(): playerSaveStatus {
+		return {
+			lvl: this.lvl, 
+			weapon: this.weapon,
+			specialSkill: this.specialSkill,
+			maxJumps: this.maxJumps, 
+			inventory: this.inventory,
+			normalSkill: this.normalSkill,
+			life: this.life,
+			mana: this.mana
+		}
 	}
 }

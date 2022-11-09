@@ -1,5 +1,5 @@
 import { Scene, Input } from "phaser"
-import { player } from "../global"
+import { playerManager } from "../global"
 import { commands } from "./movements"
 
 
@@ -40,6 +40,7 @@ export class InputManager {
 	}
 
 	keyboarHandler() {
+		const player = playerManager.player
 		if (this.inputs.keyboard.left.isDown) {
 			commands.get('ArrowLeft')!(player)
 		} else if (this.inputs.keyboard.right.isDown) {

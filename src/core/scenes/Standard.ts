@@ -1,14 +1,17 @@
 import "phaser"
 import SceneManager from "../engines/SceneManager"
 import { InputManager } from "../engines/command"
-import { player, saveManager } from "../global"
+import { playerManager, saveManager } from "../global"
+import { Player } from "../entities"
 
 export default class Standard extends Phaser.Scene {
 	private inputManager = new InputManager()
 	private readonly sceneManager: SceneManager 
+	private readonly player: Player
 
 	constructor() {
 		super(saveManager.saveInfos.stage)
+		this.player = playerManager.player
 		this.sceneManager = new SceneManager(this)
 	}
 
@@ -22,12 +25,10 @@ export default class Standard extends Phaser.Scene {
 		this.setCamera()
 		this.sceneManager.buildPlayerAnims()
 		this.sceneManager.buildScene()
-		player.setSprite(this, {x: 96, y: 410, width: 24, height: 32, scale: 1})
+		this.player.setSprite(this, {x: 96, y: 410, width: 24, height: 32, scale: 1})
 
-		player.normalSkill = 'lightning-bolt'
-		player.weapon = 'sword'
-		player.getSprite().setCollisionGroup(-1)
-		this.cameras.main.startFollow(player.getSprite(), true, 0.05, 0.05)
+		//this.player.getSprite().setCollisionGroup(-1)
+		this.cameras.main.startFollow(this.player.getSprite(), true, 0.05, 0.05)
 		//setTimeout(()=> test(player.takeDamage.bind(player)), 6000)
 		//saveManager.saveGame({stage: JSON.stringify(mainGameConfigManager.config.stages)})
 		//window.addEventListener('saved', (e) => console.log((e as CustomEvent).detail))

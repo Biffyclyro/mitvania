@@ -1,7 +1,7 @@
 import { windowSize } from "../config"
 import { GameObjects, Scene, Tilemaps } from "phaser"
 import { SpriteEntity } from "../entities"
-import { mainGameConfigManager, saveManager } from "../global"
+import { mainGameConfigManager, playerManager, saveManager } from "../global"
 
 export default class SceneManager{
 	private numLayers = 1 
@@ -45,11 +45,17 @@ export default class SceneManager{
 			frames: this.scene.anims.generateFrameNames(mob, {start: 0, end:0})
 		})
 	}
-
+	//colisão da lotus do save sendo um grande problema
 	private buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
-		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus',0, {isStatic: true})
-		lotus.setCollisionGroup(-1)
-		lotus.setOnCollide(() => saveManager.saveGame({stage: this.currentStage}))
+		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus', 0, { isStatic: true, isSensor: true })
+		const player = playerManager.player
+		lotus.setVisible(true)
+		lotus.setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+			if (bodyA.gameObject.getData('entity') || bodyB.gameObject.getData('entity')) {
+				saveManager.saveGame({ stage: this.currentStage, playerStatus: player.getSaveStatus() })
+				console.log('foi')
+			}
+		})
 	}
 
 	private setParallax(layer: GameObjects.Image | Tilemaps.TilemapLayer) {
@@ -59,7 +65,7 @@ export default class SceneManager{
 	}
 
 	private spawnMob(obj: Phaser.Types.Tilemaps.TiledObject) {
-		const mob = new SpriteEntity(25, 10, 10, {}, obj.properties[0].value)
+		const mob = new SpriteEntity(1, 25, 10, 10, {}, obj.properties[0].value)
 		mob.setSprite(this.scene, { x: obj.x!, y: obj.y!, width: 23, height: 32 })
 	}
 

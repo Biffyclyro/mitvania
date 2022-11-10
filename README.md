@@ -46,28 +46,16 @@ Tiled JSON Tilemap file with:
 
 
 ### To-dos
-[ ] Itens spwan
-
-[ ] Save dialog box
-
-[ ] Menus
-
-[ ] Drop itens/skills from mobs
-
-[ ] Sound effects
-
-[ ] Musics
-
-[x] Load all the assets dynamically
-
-[ ] Make all the tilesets and sprites
-
-[ ] XP system
-
-[ ] HUD
-
-[ ] Aura
-
-[ ] All inputs other than the keyboard
-
-[ ] AIs
+- [ ] Itens spwan
+- [ ] Save dialog box
+- [ ] Menus
+- [ ] Drop itens/skills from mobs
+- [ ] Sound effects
+- [ ] Musics
+- [x] Load all the assets dynamically
+- [ ] Make all the tilesets and sprites
+- [ ] XP system
+- [ ] HUD
+- [ ] Aura
+- [ ] All inputs other than the keyboard
+- [ ] AIs

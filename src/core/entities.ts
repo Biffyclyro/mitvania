@@ -65,7 +65,7 @@ export class SpriteEntity {
 		public life: number,
 		public mana: number,
 		public def: number,
-		public stats: Stats,
+		public isPlayer: boolean,
 		public baseTexture: string,
 		public direction: Direction = Direction.Right) {
 	}
@@ -160,13 +160,34 @@ export class SpriteEntity {
 		const y = this.sprite.y 
 		this.playAnims(`${this.baseTexture}-damage`)
 		this.life -= damage / this.lvl
+		//need to choose a text style 
 		const text = this.sprite.scene.add.text(x, y - this.sprite.height, String(damage / this.lvl))
+		const interval = setInterval(() => text.setPosition(text.x, text.y - 3), 100)	
 		setTimeout(() => {
+			clearInterval(interval)
 			text.destroy()	
 		}, 1000);
 		if (this.life < 1) {
+			this.dropItem(this.inventory[0])
 			this.sprite.destroy()
 		}
+	}
+
+	protected dropItem(itemKey: string) {
+		const fliped = this.sprite.flipX
+		const x = fliped ? this.sprite.x - this.sprite.width -5 : this.sprite.x + this.sprite.width + 5
+		const item = this.sprite.scene.matter.add.image(x, this.sprite.y, itemKey, 0, {label: 'item'} )
+		item.setVelocityX(fliped ? -5 : 5)
+		item.setFixedRotation()
+		item.setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+			const p = {bodyA: bodyA.parent, bodyB: bodyB.parent}
+			const entity = extractEntity(p)
+			if (entity && entity.getSprite().body.label === 'player') {
+				console.log(bodyA, bodyB)
+				item.destroy()
+				entity.switchItem(itemKey)
+			}
+		})
 	}
 }
 
@@ -215,20 +236,26 @@ export class Player extends SpriteEntity {
 		}
 
 		// ainda é necessário cuidar esses valores 
-		const body = Bodies.rectangle(0, 0, width, height, {label: 'player', chamfer: { radius: 10 }})
+		const body = Bodies.rectangle(0, 0, width, height, {chamfer: { radius: 10 }})
 		const compoundBody = scene.matter.body.create({
 			parts: [body, this.sensors.bottom, this.sensors.left, this.sensors.right],
+			label: 'player'
 		})
 		this.sprite = scene.matter.add.sprite(0, 0, this.baseTexture, 0)
 		this.sprite.setExistingBody(compoundBody)
 		this.sprite.setPosition(x,y)
-		this.sprite.setOrigin(0.5,0.5)
+		this.sprite.setOrigin(0.5, 0.5)
 		scale ? this.sprite.setScale(scale) : scale 
 		this.sprite.setFixedRotation()
 		this.sprite.setFriction(0)
 		this.sprite.setData('entity', this)
 		//scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
 		//scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
+	}
+
+	switchItem(newItem: string) {
+		this.dropItem(this.weapon)
+		this.weapon = newItem
 	}
 
 	getSaveStatus(): playerSaveStatus {

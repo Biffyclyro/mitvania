@@ -5,4 +5,4 @@ interface MobConfig {
 
 export const mobsConfigMap = new Map<string, MobConfig>()
 
-mobsConfigMap.set('mush', {skill: '', inventory: []})
+mobsConfigMap.set('mush', {skill: '', inventory: ['sword']})

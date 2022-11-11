@@ -1,3 +1,4 @@
+import { BodyType } from "matter"
 import { Physics } from "phaser"
 import { SpriteEntity } from "../entities"
 
@@ -9,8 +10,8 @@ export const setSide = (sprite: Physics.Matter.Sprite): number => {
 	return sprite.flipX ? - sprite.width/2 - 1 : sprite.width/2 + 1
 }
 
-//retornando a entidade quando uma colisão envolve um sprite
-export const extractEntity = ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+//retornando a entidade quando uma colisão envolve um sprite, tipagem trocada de pair para objeto com 2 BodyType
+export const extractEntity = ({ bodyA, bodyB }: {bodyA: BodyType, bodyB: BodyType}) => {
 	if (bodyA.label === 'sprite' || bodyA.label === 'player' ) {
 		return bodyA.gameObject.getData('entity')
 	}

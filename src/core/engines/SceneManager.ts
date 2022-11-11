@@ -66,7 +66,11 @@ export default class SceneManager{
 	}
 
 	private spawnMob(obj: Phaser.Types.Tilemaps.TiledObject) {
-		const mob = new SpriteEntity(1, 25, 10, 10, {}, obj.properties[0].value)
+		const mobKey = obj.properties[0].value
+		const mobConfig = mobsConfigMap.get(mobKey)
+		console.log(mobKey, mobConfig)
+		const mob = new SpriteEntity(1, 25, 10, 10, false, mobKey)
+		mob.inventory = mobConfig!.inventory
 		mob.setSprite(this.scene, { x: obj.x!, y: obj.y!, width: 23, height: 32 })
 	}
 
@@ -88,7 +92,7 @@ export default class SceneManager{
 					this.scene.load.spritesheet(mobConfig.skill, `sprites/skills/${mobConfig.skill}.png`)
 				} 
 				mobConfig.inventory.forEach(item => {
-					this.scene.load.spritesheet(item, `sprites/itens/${item}.png`)
+					this.scene.load.spritesheet(item, `sprites/itens/${item}.png`, {frameWidth: 24, frameHeight: 16})
 				})
 			})
 		}

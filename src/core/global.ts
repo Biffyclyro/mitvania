@@ -29,7 +29,6 @@ export interface playerSaveStatus {
 	inventory: string[]
 	normalSkill: string,
 	life: number,
-	mana: number,
 	position: {x: number, y:number},
 }
 
@@ -67,8 +66,8 @@ class PlayerManager {
 
 	createPlayer(playerStatus?: playerSaveStatus) {
 		if (playerStatus) {
-			const { lvl, weapon, specialSkill, maxJumps, inventory, normalSkill, life, mana} = playerStatus
-			const player = new Player(lvl, life, mana, 10, true, 'player')
+			const { lvl, weapon, specialSkill, maxJumps, inventory, normalSkill, life} = playerStatus
+			const player = new Player(lvl, life, 10, true, 'player')
 			player.specialSkill = specialSkill
 			player.weapon = weapon
 			player.maxJumps = maxJumps
@@ -76,7 +75,7 @@ class PlayerManager {
 			player.normalSkill = normalSkill
 			this._player = player
 		} else {
-			this._player = new Player(1, 10, 10, 10, true, 'player')
+			this._player = new Player(1, 10, 10, true, 'player')
 		}
 	}
 	

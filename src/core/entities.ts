@@ -58,16 +58,22 @@ export class SpriteEntity {
 	normalSkill: string = ''
 	inventory: string[] = []
 	attacking = false
+	private maxMana: number 
+	private maxLife: number 
+	mana: number 
 	defeat: (() => void) | undefined
 	protected sprite: Physics.Matter.Sprite
 	constructor(
 		public lvl: number,
 		public life: number,
-		public mana: number,
 		public def: number,
 		public isPlayer: boolean,
 		public baseTexture: string,
 		public direction: Direction = Direction.Right) {
+		this.maxMana = this.lvl * 10
+		this.mana = this.maxMana
+		this.maxLife = this.lvl * 10
+		this.life = this.maxLife
 	}
 
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
@@ -107,6 +113,10 @@ export class SpriteEntity {
 
 	lvlUp() {
 		this.lvl++
+		this.maxMana = this.lvl * 10
+		this.mana = this.maxMana
+		this.maxLife = this.lvl * 10
+		this.life = this.maxLife
 	}
 
 	jump() {
@@ -168,24 +178,28 @@ export class SpriteEntity {
 			text.destroy()	
 		}, 1000);
 		if (this.life < 1) {
-			this.dropItem(this.inventory[0])
+			if (!this.isPlayer) {
+				this.dropItem(this.inventory[0])
+			}
 			this.sprite.destroy()
 		}
 	}
 
 	protected dropItem(itemKey: string) {
 		const fliped = this.sprite.flipX
-		const x = fliped ? this.sprite.x - this.sprite.width -5 : this.sprite.x + this.sprite.width + 5
+		const x = fliped ? this.sprite.x - this.sprite.width * 1.5 : this.sprite.x + this.sprite.width * 1.5
 		const item = this.sprite.scene.matter.add.image(x, this.sprite.y, itemKey, 0, {label: 'item'} )
 		item.setVelocityX(fliped ? -5 : 5)
 		item.setFixedRotation()
+		setTimeout(() => item.destroy(), 5000)
 		item.setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
-			const p = {bodyA: bodyA.parent, bodyB: bodyB.parent}
-			const entity = extractEntity(p)
-			if (entity && entity.getSprite().body.label === 'player') {
-				console.log(bodyA, bodyB)
-				item.destroy()
-				entity.switchItem(itemKey)
+			if (!bodyA.isSensor && !bodyB.isSensor) {
+				const p = { bodyA: bodyA.parent, bodyB: bodyB.parent }
+				const entity = extractEntity(p)
+				if (entity && entity.getSprite().body.label === 'player') {
+					item.destroy()
+					entity.switchItem(itemKey)
+				}
 			}
 		})
 	}
@@ -234,6 +248,9 @@ export class Player extends SpriteEntity {
 			this.jumps--
 			this.jumping = true
 		}
+		// this.sensors.bottom.collisionFilter.group = -3
+		// this.sensors.left.collisionFilter.group = -3
+		// this.sensors.right.collisionFilter.group = -3
 
 		// ainda é necessário cuidar esses valores 
 		const body = Bodies.rectangle(0, 0, width, height, {chamfer: { radius: 10 }})
@@ -253,9 +270,14 @@ export class Player extends SpriteEntity {
 		//scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
 	}
 
-	switchItem(newItem: string) {
-		this.dropItem(this.weapon)
-		this.weapon = newItem
+	switchItem(newItem: string, isSkill=false) {
+		if (isSkill) {
+			this.dropItem(this.normalSkill)
+			this.normalSkill = newItem
+		} else {
+			this.dropItem(this.weapon)
+			this.weapon = newItem
+		}
 	}
 
 	getSaveStatus(): playerSaveStatus {
@@ -267,7 +289,6 @@ export class Player extends SpriteEntity {
 			inventory: this.inventory,
 			normalSkill: this.normalSkill,
 			life: this.life,
-			mana: this.mana,
 			position: {x: this.getSprite().x, y: this.getSprite().y}
 		}
 	}

@@ -68,8 +68,7 @@ export default class SceneManager{
 	private spawnMob(obj: Phaser.Types.Tilemaps.TiledObject) {
 		const mobKey = obj.properties[0].value
 		const mobConfig = mobsConfigMap.get(mobKey)
-		console.log(mobKey, mobConfig)
-		const mob = new SpriteEntity(1, 25, 10, 10, false, mobKey)
+		const mob = new SpriteEntity(1, 25, 10, false, mobKey)
 		mob.inventory = mobConfig!.inventory
 		mob.setSprite(this.scene, { x: obj.x!, y: obj.y!, width: 23, height: 32 })
 	}

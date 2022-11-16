@@ -49,13 +49,14 @@ Tiled JSON Tilemap file with:
 - [ ] Itens spwan
 - [ ] Save dialog box
 - [ ] Menus
-- [ ] Drop itens/skills from mobs
+- [x] Drop itens/skills from mobs
 - [ ] Sound effects
 - [ ] Musics
 - [x] Load all the assets dynamically
 - [ ] Make all the tilesets and sprites
 - [ ] XP system
 - [ ] HUD
+- [ ] Player status control
 - [ ] Aura
 - [ ] All inputs other than the keyboard
 - [ ] AIs

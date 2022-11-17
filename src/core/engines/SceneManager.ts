@@ -7,7 +7,7 @@ import { mobsConfigMap } from "../especials/mobsConfig"
 export default class SceneManager{
 	private numLayers = 1 
 	private readonly mainConfig = mainGameConfigManager.config
-	private readonly currentStage: string = saveManager.saveInfos.stage
+	readonly currentStage: string = saveManager.saveInfos.stage
 	private readonly player = playerManager.player
 
 	constructor(private readonly scene: Scene) {}
@@ -203,6 +203,22 @@ export default class SceneManager{
 		})
 	}
 
+	private buildeStatusBar() {
+		const lifeBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5, 200, 5, 50000)
+		const manaBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5 + 10, 200, 5, 5000)
+		lifeBar.setScrollFactor(0)
+		manaBar.setScrollFactor(0)
+		this.scene.events.on('player-damage', (damage: number) => {
+			lifeBar.width -= damage
+		})
+		this.scene.events.on('player-skill', (cost: number) => {
+			console.log('devia estar diminuindo')
+
+			manaBar.width -= cost * (manaBar.width / this.player.maxMana)
+		})
+
+	}
+
 	//metódo provavelmente será o único público invocado dentro da cena
 	buildScene() {
 		const map = this.scene.make.tilemap({ key: 'map' })
@@ -211,6 +227,13 @@ export default class SceneManager{
 		const spriteLayer = map.getObjectLayer('sprite-objects')
 		this.numLayers += map.layers.length
 		this.backgroundManager()
+		const stageName = this.scene.add.text(windowSize.width/2, windowSize.height/2, this.currentStage )
+		stageName.setScrollFactor(0, 0)
+		setTimeout(() => {
+			stageName.destroy()
+			this.player.canMove = true
+		}, 1000)
+
 
 		map.getTileLayerNames().forEach((tileLayerName: string) => {
 			const layer = map.createLayer(tileLayerName, tileset)
@@ -220,5 +243,6 @@ export default class SceneManager{
 		})
 		this.collisionsManager(collisionsLayer)
 		this.spriteLayerManager(spriteLayer)
+		this.buildeStatusBar()
 	}
 }

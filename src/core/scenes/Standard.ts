@@ -29,7 +29,7 @@ export default class Standard extends Phaser.Scene {
 			const {x, y} = saveManager.saveInfos.playerStatus.position
 			this.player.setSprite(this, {x, y, width: 24, height: 32, scale: 1})
 		} else {
-			this.player.setSprite(this, {x: 96, y: 410, width: 24, height: 32, scale: 1})
+			this.player.setSprite(this, {x: 96, y: 505, width: 24, height: 32, scale: 1})
 		}
 
 		this.player.weapon = 'knife'

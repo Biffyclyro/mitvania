@@ -18,13 +18,16 @@ export const extractEntity = ({ bodyA, bodyB }: { bodyA: BodyType, bodyB: BodyTy
 	if (bodyB.label === 'sprite' || bodyB.label === 'player') {
 		return bodyB.gameObject.getData('entity')
 	}
-	return undefined
+	return 
 }
 
 const throwableSkill = (se: SpriteEntity, texture: string, velocity: number, damage: number, manaCost: number) => {
 	const sprite = se.getSprite()
 	if (se.mana - manaCost >= 0) {
-		if (se.isPlayer) {se.mana -= manaCost}
+		if (se.isPlayer) {
+			se.mana -= manaCost
+			se.getSprite().scene.events.emit('player-skill', manaCost)
+		}
 
 		const fireBall = sprite.scene.matter.add.sprite(sprite.x + setSide(sprite), sprite.y, texture, 0, {
 			frictionAir: 0,

@@ -58,7 +58,7 @@ export class SpriteEntity {
 	normalSkill: string = ''
 	inventory: string[] = []
 	attacking = false
-	private maxMana: number 
+	maxMana: number 
 	private maxLife: number 
 	mana: number 
 	defeat: (() => void) | undefined
@@ -120,7 +120,7 @@ export class SpriteEntity {
 	}
 
 	jump() {
-		if (this.jumps > 0) {
+		if (this.jumps > 0 && this.canMove) {
 			this.jumps--
 			this.sprite.setVelocityY(-10)
 		}
@@ -155,13 +155,15 @@ export class SpriteEntity {
 				}
 			}
 		}
-		switch (direction) {
-			case Direction.Left:
-				movements.Left()
-				break
-			case Direction.Right:
-				movements.Right()
-				break
+		if (this.canMove) {
+			switch (direction) {
+				case Direction.Left:
+					movements.Left()
+					break
+				case Direction.Right:
+					movements.Right()
+					break
+			}
 		}
 	}
 
@@ -170,6 +172,7 @@ export class SpriteEntity {
 		const y = this.sprite.y 
 		this.playAnims(`${this.baseTexture}-damage`)
 		this.life -= damage / this.lvl
+		if (this.isPlayer) {this.sprite.scene.events.emit('player-damage', damage)}
 		//need to choose a text style 
 		const text = this.sprite.scene.add.text(x, y - this.sprite.height, String(damage / this.lvl))
 		const interval = setInterval(() => text.setPosition(text.x, text.y - 3), 100)	

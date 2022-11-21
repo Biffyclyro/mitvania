@@ -59,13 +59,13 @@ export class SpriteEntity {
 	inventory: string[] = []
 	attacking = false
 	maxMana: number 
-	private maxLife: number 
+	life: number
+	maxLife: number 
 	mana: number 
 	defeat: (() => void) | undefined
 	protected sprite: Physics.Matter.Sprite
 	constructor(
 		public lvl: number,
-		public life: number,
 		public def: number,
 		public isPlayer: boolean,
 		public baseTexture: string,
@@ -134,6 +134,7 @@ export class SpriteEntity {
 
 	move(direction: Direction) {
 		// durante o ataque não flipa o sprite
+		
 		const movements = {
 			Left: () => {
 				if (!this.attacking) {this.sprite.setFlipX(true)}
@@ -167,14 +168,15 @@ export class SpriteEntity {
 		}
 	}
 
-	public takeDamage(damage: number) {
+	public takeDamage(hit: number) {
 		const x = this.sprite.x 
 		const y = this.sprite.y 
 		this.playAnims(`${this.baseTexture}-damage`)
-		this.life -= damage / this.lvl
+		const damage = hit / this.lvl
+		this.life -= damage 
 		if (this.isPlayer) {this.sprite.scene.events.emit('player-damage', damage)}
 		//need to choose a text style 
-		const text = this.sprite.scene.add.text(x, y - this.sprite.height, String(damage / this.lvl))
+		const text = this.sprite.scene.add.text(x, y - this.sprite.height, String(damage))
 		const interval = setInterval(() => text.setPosition(text.x, text.y - 3), 100)	
 		setTimeout(() => {
 			clearInterval(interval)
@@ -183,8 +185,11 @@ export class SpriteEntity {
 		if (this.life < 1) {
 			if (!this.isPlayer) {
 				this.dropItem(this.inventory[0])
+				this.sprite.destroy()
+			} else {
+				this.sprite.scene.scene.stop()
 			}
-			this.sprite.destroy()
+			//this.canMove = false
 		}
 	}
 
@@ -291,7 +296,6 @@ export class Player extends SpriteEntity {
 			maxJumps: this.maxJumps, 
 			inventory: this.inventory,
 			normalSkill: this.normalSkill,
-			life: this.life,
 			position: {x: this.getSprite().x, y: this.getSprite().y}
 		}
 	}

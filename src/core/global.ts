@@ -28,7 +28,6 @@ export interface playerSaveStatus {
 	maxJumps: number
 	inventory: string[]
 	normalSkill: string,
-	life: number,
 	position: {x: number, y:number},
 }
 
@@ -66,8 +65,8 @@ class PlayerManager {
 
 	createPlayer(playerStatus?: playerSaveStatus) {
 		if (playerStatus) {
-			const { lvl, weapon, specialSkill, maxJumps, inventory, normalSkill, life} = playerStatus
-			const player = new Player(lvl, life, 10, true, 'player')
+			const { lvl, weapon, specialSkill, maxJumps, inventory, normalSkill} = playerStatus
+			const player = new Player(lvl, 10, true, 'player')
 			player.specialSkill = specialSkill
 			player.weapon = weapon
 			player.maxJumps = maxJumps
@@ -75,7 +74,7 @@ class PlayerManager {
 			player.normalSkill = normalSkill
 			this._player = player
 		} else {
-			this._player = new Player(1, 10, 10, true, 'player')
+			this._player = new Player(1, 10, true, 'player')
 		}
 	}
 	
@@ -90,6 +89,6 @@ export const saveManager = new SaveManager()
 export const playerManager =  new PlayerManager()
 
 //lambda de teste menos útil do que parecia quando foi pensada
-export const test = (fun:(...args: any) => any) => {
+export const test = (fun: (...args: any) => any) => {
 	fun()
 }

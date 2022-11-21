@@ -1,6 +1,6 @@
 import { windowSize } from "../config"
 import { GameObjects, Scene, Tilemaps } from "phaser"
-import { SpriteEntity } from "../entities"
+import { Player, SpriteEntity } from "../entities"
 import { mainGameConfigManager, playerManager, saveManager } from "../global"
 import { mobsConfigMap } from "../especials/mobsConfig"
 
@@ -68,9 +68,15 @@ export default class SceneManager{
 	private spawnMob(obj: Phaser.Types.Tilemaps.TiledObject) {
 		const mobKey = obj.properties[0].value
 		const mobConfig = mobsConfigMap.get(mobKey)
-		const mob = new SpriteEntity(1, 25, 10, false, mobKey)
+		const mob = new SpriteEntity(1, 25, false, mobKey)
 		mob.inventory = mobConfig!.inventory
 		mob.setSprite(this.scene, { x: obj.x!, y: obj.y!, width: 23, height: 32 })
+		mob.getSprite().setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+			const hit = (player: Player) => {player.takeDamage(mob.lvl)}
+			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
+				bodyA.label === 'player' ? hit(bodyA.gameObject.getData('entity')) : hit(bodyB.gameObject.getData('entity'))
+			}
+		})
 	}
 
 	private backgroundManager() {
@@ -124,6 +130,7 @@ export default class SceneManager{
 
 		this.scene.load.spritesheet('knife', `sprites/itens/knife.png`, { frameWidth: 24, frameHeight: 16 })
 		this.scene.load.spritesheet('fire-ball', `sprites/skills/fire-ball.png`, { frameWidth: 16, frameHeight: 16 })
+		this.scene.load.spritesheet('lightning-bolt', `sprites/skills/lightning-bolt.png`, { frameWidth: 16, frameHeight: 16 })
 	}
 
 	makeLayerSolid(layer: Tilemaps.TilemapLayer) {
@@ -188,7 +195,6 @@ export default class SceneManager{
 	private collisionsManager(collisionsLayer: Tilemaps.ObjectLayer) {
 		collisionsLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
 			if (obj.height === 0 && obj.width === 0) {
-				
 				if (obj.polygon) {
 					this.shapeManager(this.scene.add.polygon(obj.x, obj.y, obj.polygon), obj.ellipse, obj.polygon!)
 				}
@@ -203,18 +209,17 @@ export default class SceneManager{
 		})
 	}
 
-	private buildeStatusBar() {
-		const lifeBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5, 200, 5, 50000)
-		const manaBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5 + 10, 200, 5, 5000)
+	private buildStatusBar() {
+		const barWidth = 200
+		const lifeBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5, barWidth , 5, 50000)
+		const manaBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5 + 10, barWidth, 5, 5000)
 		lifeBar.setScrollFactor(0)
 		manaBar.setScrollFactor(0)
 		this.scene.events.on('player-damage', (damage: number) => {
-			lifeBar.width -= damage
+			lifeBar.width -= damage * (barWidth / this.player.maxLife)
 		})
 		this.scene.events.on('player-skill', (cost: number) => {
-			console.log('devia estar diminuindo')
-
-			manaBar.width -= cost * (manaBar.width / this.player.maxMana)
+			manaBar.width -= cost * (barWidth / this.player.maxMana)
 		})
 
 	}
@@ -243,6 +248,6 @@ export default class SceneManager{
 		})
 		this.collisionsManager(collisionsLayer)
 		this.spriteLayerManager(spriteLayer)
-		this.buildeStatusBar()
+		this.buildStatusBar()
 	}
 }

@@ -1,11 +1,14 @@
 import "phaser"
 import SceneManager from "../engines/SceneManager"
-import { InputManager } from "../engines/command"
+import { InputManager } from "../engines/inputs"
 import { playerManager, saveManager } from "../global"
 import { Player } from "../entities"
+import GameMenu from "../engines/GameMenu"
+
 
 export default class Standard extends Phaser.Scene {
-	private inputManager = new InputManager()
+	private readonly inputManager = new InputManager()
+	private readonly menu = new GameMenu()
 	private readonly sceneManager: SceneManager 
 	private readonly player: Player
 
@@ -13,11 +16,13 @@ export default class Standard extends Phaser.Scene {
 		super(saveManager.saveInfos.stage)
 		this.player = playerManager.player
 		this.sceneManager = new SceneManager(this)
+		this.menu.scene = this
 	}
 
 	preload() {
 		this.sceneManager.loadSceneAssets()
 		this.sceneManager.loadPlayerAssets()
+		this.menu.loadMenuAssets()
 	}
 
 	create() {
@@ -33,7 +38,7 @@ export default class Standard extends Phaser.Scene {
 		}
 
 		this.player.weapon = 'knife'
-		this.player.normalSkill = 'fire-ball'
+		this.player.normalSkill = 'lightning-bolt'
 
 		//this.player.getSprite().setCollisionGroup(-1)
 		this.cameras.main.startFollow(this.player.getSprite(), true, 0.05, 0.05)

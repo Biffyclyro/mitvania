@@ -1,6 +1,6 @@
 import { BodyType } from "matter"
 import { Physics } from "phaser"
-import { Player, SpriteEntity } from "../entities"
+import { SpriteEntity } from "../entities"
 
 interface Skill {
 	(se: SpriteEntity): void

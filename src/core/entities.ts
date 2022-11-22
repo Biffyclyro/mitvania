@@ -89,7 +89,7 @@ export class SpriteEntity {
 
 	useNormalSkill() {
 		const skill = skillsMap.get(this.normalSkill)
-		if (skill) {
+		if (skill && this.canMove) {
 			skill(this)
 		}
 	}
@@ -219,7 +219,7 @@ export class Player extends SpriteEntity {
 	weapon: string 
 	
 	attack() {
-		if (this.weapon && !this.attacking) {
+		if (this.weapon && !this.attacking && this.canMove) {
 			this.attacking = true
 			const scene = this.sprite.scene
 			const wp = gameItens.get(this.weapon)

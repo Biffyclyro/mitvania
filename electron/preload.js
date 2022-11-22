@@ -13,3 +13,5 @@ contextBridge.exposeInMainWorld('receiver', {
 window.addEventListener('save', (e) => {
 	ipcRenderer.send('save', e.detail)
 }) 
+
+window.onresize = () => location.reload()

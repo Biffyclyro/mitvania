@@ -1,6 +1,8 @@
 import { Direction, Player, SpriteEntity } from "../entities"
 import GameMenu from "./GameMenu"
 
+const menu = new GameMenu()
+
 export interface Command {
 	//comportamento diferente do previsto
 	(sprite: Player & SpriteEntity): void
@@ -34,7 +36,6 @@ const baseAttack = (sprite: Player) => {
 	sprite.attack()
 }
 
-const menu = new GameMenu()
 
 export const commands = new Map<string, Command>();
 commands.set('ArrowLeft', moveLeft)
@@ -44,4 +45,4 @@ commands.set('ArrowDown', moveDown)
 commands.set('stop', stop)
 commands.set('normalSkill', normalSkill)
 commands.set('baseAttack', baseAttack)
-commands.set('menu', menu.commandHandler)
+commands.set('menu', () => menu.commandHandler())

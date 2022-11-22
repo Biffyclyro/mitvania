@@ -53,7 +53,8 @@ export default class SceneManager{
 		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus', 0, { isStatic: true, isSensor: true })
 		lotus.setVisible(true)
 		lotus.setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
-			if (bodyA.label === 'player' || bodyB.label === 'player') {
+			console.log(bodyA, bodyB)
+			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
 				saveManager.saveGame({ stage: this.currentStage, playerStatus: this.player.getSaveStatus() })
 			}
 		})
@@ -224,21 +225,23 @@ export default class SceneManager{
 
 	}
 
+	private setCamera() {
+		this.scene.cameras.main.setBounds(0, 0, 1920 * 2, 1080 * 2)
+		this.scene.matter.world.setBounds(0, 0, 1920 * 2, 1080 * 2)
+		this.scene.cameras.main.zoom = 1.5
+	}
+
 	//metódo provavelmente será o único público invocado dentro da cena
 	buildScene() {
+		this.setCamera()
+		const screenWiew = this.scene.cameras.main.worldView
 		const map = this.scene.make.tilemap({ key: 'map' })
 		const tileset = map.addTilesetImage(this.currentStage, 'tiles')
 		const collisionsLayer = map.getObjectLayer('collisions')
 		const spriteLayer = map.getObjectLayer('sprite-objects')
 		this.numLayers += map.layers.length
 		this.backgroundManager()
-		const stageName = this.scene.add.text(windowSize.width/2, windowSize.height/2, this.currentStage )
-		stageName.setScrollFactor(0, 0)
-		setTimeout(() => {
-			stageName.destroy()
-			this.player.canMove = true
-		}, 1000)
-
+		
 
 		map.getTileLayerNames().forEach((tileLayerName: string) => {
 			const layer = map.createLayer(tileLayerName, tileset)
@@ -249,5 +252,13 @@ export default class SceneManager{
 		this.collisionsManager(collisionsLayer)
 		this.spriteLayerManager(spriteLayer)
 		this.buildStatusBar()
+		
+		const stageName = this.scene.add.text(screenWiew.centerX, screenWiew.centerY /2, this.currentStage )
+		stageName.setOrigin(0.5)
+		stageName.setScrollFactor(0, 0)
+		setTimeout(() => {
+			stageName.destroy()
+			this.player.canMove = true
+		}, 1000)
 	}
 }

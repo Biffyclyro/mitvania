@@ -4,10 +4,10 @@ import { commands } from "./command"
 
 
 interface KeyboardKeys {
-	up:Input.Keyboard.Key
-	down:Input.Keyboard.Key
-	left:Input.Keyboard.Key
-	right:Input.Keyboard.Key
+	up: Input.Keyboard.Key
+	down: Input.Keyboard.Key
+	left: Input.Keyboard.Key
+	right: Input.Keyboard.Key
 	normalSkill: Input.Keyboard.Key
 	baseAttack: Input.Keyboard.Key
 	menu: Input.Keyboard.Key
@@ -36,7 +36,7 @@ export class InputManager {
 				right: scene.input.keyboard.addKey('Right'),
 				normalSkill: scene.input.keyboard.addKey('z'),
 				baseAttack: scene.input.keyboard.addKey('x'),
-				menu: scene.input.keyboard.addKey('esq')
+				menu: scene.input.keyboard.addKey('Esc')
 			}
 		}	
 	}
@@ -61,7 +61,7 @@ export class InputManager {
 		}
 
 		if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.menu)) {
-			
+			commands.get('menu')!(player)
 		}
 
 		// if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.up)) {

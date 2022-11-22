@@ -27,7 +27,6 @@ export default class Standard extends Phaser.Scene {
 
 	create() {
 		this.inputManager.buildInput(this)
-		this.setCamera()
 		this.sceneManager.buildPlayerAnims()
 		this.sceneManager.buildScene()
 		if (saveManager.saveInfos.playerStatus) {
@@ -40,20 +39,14 @@ export default class Standard extends Phaser.Scene {
 		this.player.weapon = 'knife'
 		this.player.normalSkill = 'lightning-bolt'
 
-		//this.player.getSprite().setCollisionGroup(-1)
 		this.cameras.main.startFollow(this.player.getSprite(), true, 0.05, 0.05)
 		//setTimeout(()=> test(player.takeDamage.bind(player)), 6000)
 		//saveManager.saveGame({stage: JSON.stringify(mainGameConfigManager.config.stages)})
 		//window.addEventListener('saved', (e) => console.log((e as CustomEvent).detail))
+		//this.input.keyboard.on('keydown', console.log)
 	}
 
 	update() {
 		this.inputManager.inputHandler()
-	}
-
-	private setCamera() {
-		this.cameras.main.setBounds(0, 0, 1920 * 2, 1080 * 2)
-		this.matter.world.setBounds(0, 0, 1920 * 2, 1080 * 2)
-		this.cameras.main.zoom = 1.5
 	}
 }

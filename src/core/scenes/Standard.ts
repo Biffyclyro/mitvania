@@ -48,5 +48,6 @@ export default class Standard extends Phaser.Scene {
 
 	update() {
 		this.inputManager.inputHandler()
+		this.sceneManager.moveEntities()
 	}
 }

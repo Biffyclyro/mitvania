@@ -54,7 +54,7 @@ Tiled JSON Tilemap file with:
 - [ ] Musics
 - [x] Load all the assets dynamically
 - [ ] Make all the tilesets and sprites
-- [ ] XP system
+- [X] XP system
 - [ ] HUD
 - [ ] Player status control
 - [ ] Aura

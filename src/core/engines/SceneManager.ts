@@ -1,14 +1,16 @@
 import { windowSize } from "../config"
-import { GameObjects, Scene, Tilemaps } from "phaser"
-import { Player, SpriteEntity } from "../entities"
-import { mainGameConfigManager, playerManager, saveManager } from "../global"
+import { GameObjects, Physics, Scene, Tilemaps } from "phaser"
+import { Item, Player, SpriteEntity } from "../entities"
+import {  mainGameConfigManager, playerManager, saveManager } from "../global"
 import { mobsConfigMap } from "../especials/mobsConfig"
+import { extractEntity } from "../especials/skills"
 
 export default class SceneManager{
 	private numLayers = 1 
 	private readonly mainConfig = mainGameConfigManager.config
 	readonly currentStage: string = saveManager.saveInfos.stage
 	private readonly player = playerManager.player
+	private readonly entitiesList: SpriteEntity[] = []
 
 	constructor(private readonly scene: Scene) {}
 
@@ -72,10 +74,27 @@ export default class SceneManager{
 		const mob = new SpriteEntity(1, 25, false, mobKey)
 		mob.inventory = mobConfig!.inventory
 		mob.setSprite(this.scene, { x: obj.x!, y: obj.y!, width: 23, height: 32 })
+		mob.autoMovement = {distance: 100, velocity: 6, initPos: mob.getSprite().x}
 		mob.getSprite().setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
 			const hit = (player: Player) => {player.takeDamage(mob.lvl)}
 			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
 				bodyA.label === 'player' ? hit(bodyA.gameObject.getData('entity')) : hit(bodyB.gameObject.getData('entity'))
+			}
+		})
+		//mob.getSprite().setOnCollide(() => mob.autoMovement!.velocity = mob.autoMovement!.velocity * -1)
+		this.entitiesList.push(mob)
+	}
+
+	moveEntities() {
+		this.entitiesList.forEach(se => {
+			const sprite = se.getSprite()
+			if (sprite) {
+				sprite.setVelocityX(se.autoMovement!.velocity)
+				if (sprite.x >= se.autoMovement!.initPos + se.autoMovement!.distance || sprite.x <= se.autoMovement!.initPos - se.autoMovement!.distance && se.canMove) {
+					se.autoMovement!.velocity = se.autoMovement!.velocity * -1
+				}
+			} else {
+				this.entitiesList.
 			}
 		})
 	}

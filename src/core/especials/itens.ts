@@ -2,6 +2,12 @@ import { Item } from "../entities";
 
 export const gameItens = new Map<string, Item>() 
 
+
+gameItens.set('mana-potion', {type: 'mana-potion',
+															description: 'Mana Potion',
+															properties:{power: 4},
+															dropRate: 0.1})
+
 gameItens.set('sword', {type: 'weapon',
 												description: 'item de teste',
 												properties: {dmg: 10, atkInterval: 0.3},

@@ -2,7 +2,7 @@ import { BodyType } from "matter"
 import { Scene, Physics } from "phaser"
 import { gameItens } from "./especials/itens"
 import { extractEntity, skillsMap, setSide } from "./especials/skills"
-import { playerSaveStatus } from "./global"
+import { playerManager, playerSaveStatus } from "./global"
 
 export interface Entity {
 	x: number
@@ -33,7 +33,7 @@ interface Sensors{
 export interface Item {
 	type: string
 	description: string
-	properties: {dmg?: number, defLvl?: number, atkLvl?: number, atkInterval: number}
+	properties: {dmg?: number, defLvl?: number, atkLvl?: number, atkInterval?: number, power?: number}
 	dropRate: number
 }
 
@@ -62,7 +62,8 @@ export class SpriteEntity {
 	life: number
 	maxLife: number 
 	mana: number 
-	defeat: (() => void) | undefined
+	xp: number
+	autoMovement: {distance: number, velocity: number, initPos: number} | undefined
 	protected sprite: Physics.Matter.Sprite
 	constructor(
 		public lvl: number,
@@ -74,6 +75,7 @@ export class SpriteEntity {
 		this.mana = this.maxMana
 		this.maxLife = this.lvl * 10
 		this.life = this.maxLife
+		this.isPlayer ? this.xp = 0 : this.xp = this.lvl * 10
 	}
 
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
@@ -109,14 +111,6 @@ export class SpriteEntity {
 	idle() {
 		this.sprite.setVelocityX(0)
 		this.playAnims(`${this.baseTexture}-idle`)
-	}
-
-	lvlUp() {
-		this.lvl++
-		this.maxMana = this.lvl * 10
-		this.mana = this.maxMana
-		this.maxLife = this.lvl * 10
-		this.life = this.maxLife
 	}
 
 	jump() {
@@ -183,12 +177,7 @@ export class SpriteEntity {
 			text.destroy()	
 		}, 1000);
 		if (this.life < 1) {
-			if (!this.isPlayer) {
-				this.dropItem(this.inventory[0])
-				this.sprite.destroy()
-			} else {
-				this.sprite.scene.scene.stop()
-			}
+			this.defeat()	
 			//this.canMove = false
 		}
 	}
@@ -196,9 +185,11 @@ export class SpriteEntity {
 	protected dropItem(itemKey: string) {
 		const fliped = this.sprite.flipX
 		const x = fliped ? this.sprite.x - this.sprite.width * 1.5 : this.sprite.x + this.sprite.width * 1.5
+		
 		const item = this.sprite.scene.matter.add.image(x, this.sprite.y, itemKey, 0, {label: 'item'} )
 		item.setVelocityX(fliped ? -5 : 5)
 		item.setFixedRotation()
+		item.setAngle(135)
 		setTimeout(() => item.destroy(), 5000)
 		item.setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
 			if (!bodyA.isSensor && !bodyB.isSensor) {
@@ -211,12 +202,48 @@ export class SpriteEntity {
 			}
 		})
 	}
+
+	private defeat() {
+		if (!this.isPlayer) {
+			this.dropItem(this.inventory[0])
+			this.sprite.destroy()
+			playerManager.player.collectXp(this.xp)
+		} else {
+			this.sprite.scene.scene.stop()
+		}
+	}
 }
 
 export class Player extends SpriteEntity {
 	sensors: Sensors
 	specialSkill: string = ''
 	weapon: string 
+	
+	collectXp(xp: number) {
+		const total = this.xp + xp
+		if (total >= this.lvl * 100) {
+			this.xp = total - this.lvl * 100 
+			this.lvlUp()
+		} else {
+			this.xp += xp
+		}
+	}
+
+	lvlUp() {
+		const scene = this.sprite.scene
+		this.lvl++
+		this.maxMana = this.lvl * 10
+		this.mana = this.maxMana
+		this.maxLife = this.lvl * 10
+		this.life = this.maxLife
+		scene.matter.pause()
+		const lvlUpText = scene.add.text(this.sprite.x, this.sprite.y - this.sprite.height, 'LVL UP') 
+		lvlUpText.setOrigin(0.5)
+		setTimeout(() => {
+			lvlUpText.destroy()
+			scene.matter.resume()
+		}, 3000)
+	}
 	
 	attack() {
 		if (this.weapon && !this.attacking && this.canMove) {
@@ -240,7 +267,7 @@ export class Player extends SpriteEntity {
 				weaponSprite.destroy()
 				scene.matter.world.removeConstraint(joint)
 				this.attacking = false
-			}, wp!.properties.atkInterval * 500)
+			}, wp!.properties.atkInterval! * 500)
 		}
 	}
 	//muito cuidado com esse método e os valores dele

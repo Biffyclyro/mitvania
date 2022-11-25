@@ -14,4 +14,4 @@ window.addEventListener('save', (e) => {
 	ipcRenderer.send('save', e.detail)
 }) 
 
-window.onresize = () => location.reload()
+//window.onresize = () => location.reload()

@@ -1,5 +1,5 @@
 import { BodyType } from "matter"
-import { Scene, Physics } from "phaser"
+import { Scene, Physics, RIGHT } from "phaser"
 import { gameItens } from "./especials/itens"
 import { extractEntity, skillsMap, setSide } from "./especials/skills"
 import { playerManager, playerSaveStatus } from "./global"
@@ -204,6 +204,7 @@ export class SpriteEntity {
 	}
 
 	private defeat() {
+		this.canMove = false
 		if (!this.isPlayer) {
 			this.dropItem(this.inventory[0])
 			this.sprite.destroy()

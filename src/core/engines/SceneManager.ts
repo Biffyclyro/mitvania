@@ -75,6 +75,7 @@ export default class SceneManager{
 		mob.inventory = mobConfig!.inventory
 		mob.setSprite(this.scene, { x: obj.x!, y: obj.y!, width: 23, height: 32 })
 		mob.autoMovement = {distance: 100, velocity: 6, initPos: mob.getSprite().x}
+		mob.canMove = true
 		mob.getSprite().setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
 			const hit = (player: Player) => {player.takeDamage(mob.lvl)}
 			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
@@ -88,15 +89,16 @@ export default class SceneManager{
 	moveEntities() {
 		this.entitiesList.forEach(se => {
 			const sprite = se.getSprite()
-			if (sprite) {
+			if (sprite && se.canMove) {
 				sprite.setVelocityX(se.autoMovement!.velocity)
 				if (sprite.x >= se.autoMovement!.initPos + se.autoMovement!.distance || sprite.x <= se.autoMovement!.initPos - se.autoMovement!.distance && se.canMove) {
 					se.autoMovement!.velocity = se.autoMovement!.velocity * -1
 				}
 			} else {
-				this.entitiesList.
+				const index = this.entitiesList.indexOf(se)
+				this.entitiesList.splice(index, 1)
 			}
-		})
+		}) 
 	}
 
 	private backgroundManager() {

@@ -52,6 +52,8 @@ Tiled JSON Tilemap file with:
 - [x] Drop itens/skills from mobs
 - [ ] Sound effects
 - [ ] Musics
+- [X] Fix items overlapping the wall
+- [ ] Flying mobs
 - [x] Load all the assets dynamically
 - [ ] Make all the tilesets and sprites
 - [X] XP system

@@ -1,5 +1,5 @@
 import { BodyType } from "matter"
-import { Scene, Physics, RIGHT } from "phaser"
+import { Scene, Physics, RIGHT, GameObjects } from "phaser"
 import { gameItens } from "./especials/itens"
 import { extractEntity, skillsMap, setSide } from "./especials/skills"
 import { playerManager, playerSaveStatus } from "./global"
@@ -63,7 +63,7 @@ export class SpriteEntity {
 	maxLife: number 
 	mana: number 
 	xp: number
-	autoMovement: {distance: number, velocity: number, initPos: number} | undefined
+	autoMovement: {distance: number, initPos: number} | undefined
 	protected sprite: Physics.Matter.Sprite
 	constructor(
 		public lvl: number,
@@ -184,9 +184,15 @@ export class SpriteEntity {
 
 	protected dropItem(itemKey: string) {
 		const fliped = this.sprite.flipX
-		const x = fliped ? this.sprite.x - this.sprite.width * 1.5 : this.sprite.x + this.sprite.width * 1.5
+		const spriteOffset = this.sprite.width * 1.5
+		const x = fliped ? this.sprite.x - spriteOffset : this.sprite.x + spriteOffset
 		
 		const item = this.sprite.scene.matter.add.image(x, this.sprite.y, itemKey, 0, {label: 'item'} )
+
+		if (this.sprite.scene.matter.overlap(item)) {
+			item.setX(fliped ? this.sprite.x + spriteOffset : this.sprite.x - spriteOffset )
+		}
+		
 		item.setVelocityX(fliped ? -5 : 5)
 		item.setFixedRotation()
 		item.setAngle(135)
@@ -198,7 +204,7 @@ export class SpriteEntity {
 				if (entity && entity.getSprite().body.label === 'player') {
 					item.destroy()
 					entity.switchItem(itemKey)
-				}
+				} 
 			}
 		})
 	}

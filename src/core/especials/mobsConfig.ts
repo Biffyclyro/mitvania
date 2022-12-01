@@ -1,4 +1,4 @@
-interface MobConfig {
+export interface MobConfig {
 	skill: string
 	inventory: string[] 
 }

@@ -1,9 +1,10 @@
 import { windowSize } from "../config"
-import { GameObjects, Physics, Scene, Tilemaps } from "phaser"
-import { Item, Player, SpriteEntity } from "../entities"
-import {  mainGameConfigManager, playerManager, saveManager } from "../global"
+import { GameObjects, Scene, Tilemaps } from "phaser"
+import { Direction, Player, SpriteEntity } from "../entities"
+import { mainGameConfigManager, playerManager, saveManager } from "../global"
 import { mobsConfigMap } from "../especials/mobsConfig"
-import { extractEntity } from "../especials/skills"
+import { commands } from "./command"
+import MobSpawner from "./MobSpawner"
 
 export default class SceneManager{
 	private numLayers = 1 
@@ -11,6 +12,7 @@ export default class SceneManager{
 	readonly currentStage: string = saveManager.saveInfos.stage
 	private readonly player = playerManager.player
 	private readonly entitiesList: SpriteEntity[] = []
+	private readonly mobSpawners: MobSpawner[] = []
 
 	constructor(private readonly scene: Scene) {}
 
@@ -72,14 +74,25 @@ export default class SceneManager{
 		const mobKey = obj.properties[0].value
 		const mobConfig = mobsConfigMap.get(mobKey)
 		const mob = new SpriteEntity(1, 25, false, mobKey)
+		mob.velocity = 3
 		mob.inventory = mobConfig!.inventory
 		mob.setSprite(this.scene, { x: obj.x!, y: obj.y!, width: 23, height: 32 })
-		mob.autoMovement = {distance: 100, velocity: 6, initPos: mob.getSprite().x}
+		mob.autoMovement = {distance: 1000, initPos: mob.getSprite().x}
 		mob.canMove = true
 		mob.getSprite().setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
 			const hit = (player: Player) => {player.takeDamage(mob.lvl)}
 			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
-				bodyA.label === 'player' ? hit(bodyA.gameObject.getData('entity')) : hit(bodyB.gameObject.getData('entity'))
+				bodyA.parent.label === 'player' ? hit(bodyA.gameObject.getData('entity')) : hit(bodyB.gameObject.getData('entity'))
+			} else {
+				if (bodyA.isStatic || bodyB.isStatic) {
+					const velocityX = mob.getSprite().body.velocity.x
+					if (mob.direction === Direction.Right && velocityX > 0) {
+						mob.direction = Direction.Left
+					}
+					if (mob.direction === Direction.Left && velocityX < 0) {
+						mob.direction = Direction.Right
+					}
+				}
 			}
 		})
 		//mob.getSprite().setOnCollide(() => mob.autoMovement!.velocity = mob.autoMovement!.velocity * -1)
@@ -87,12 +100,16 @@ export default class SceneManager{
 	}
 
 	moveEntities() {
+		this.mobSpawners.forEach(ms => ms.moveMobs())
 		this.entitiesList.forEach(se => {
 			const sprite = se.getSprite()
 			if (sprite && se.canMove) {
-				sprite.setVelocityX(se.autoMovement!.velocity)
-				if (sprite.x >= se.autoMovement!.initPos + se.autoMovement!.distance || sprite.x <= se.autoMovement!.initPos - se.autoMovement!.distance && se.canMove) {
-					se.autoMovement!.velocity = se.autoMovement!.velocity * -1
+					commands.get('move')!(se)
+				if (sprite.x >= se.autoMovement!.initPos + se.autoMovement!.distance) {
+					se.direction = Direction.Left
+				}
+				if (sprite.x <= se.autoMovement!.initPos - se.autoMovement!.distance) {
+					se.direction = Direction.Right
 				}
 			} else {
 				const index = this.entitiesList.indexOf(se)
@@ -204,10 +221,13 @@ export default class SceneManager{
 		if (spriteLayer) {
 			spriteLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
 				if (obj.point) {
-					if (obj.properties && obj.properties[0].name === 'mob') {
+					//if (obj.properties && obj.properties[0].name === 'mob') {
+					if (obj.name === 'mob') {
 						this.spawnMob(obj)
 					} else if (obj.name === 'lotus') {
 						this.buildSaveLotus(obj)
+					} else if (obj.name === 'spawner') {
+						this.mobSpawners.push(new MobSpawner(this.scene, obj))	
 					}
 				}
 			})
@@ -275,11 +295,13 @@ export default class SceneManager{
 		this.buildStatusBar()
 		
 		const stageName = this.scene.add.text(screenWiew.centerX, screenWiew.centerY /2, this.currentStage )
+		this.scene.matter.pause()
 		stageName.setOrigin(0.5)
 		stageName.setScrollFactor(0, 0)
 		setTimeout(() => {
 			stageName.destroy()
 			this.player.canMove = true
+			this.scene.matter.resume()
 		}, 1000)
 	}
 }

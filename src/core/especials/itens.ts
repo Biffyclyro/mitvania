@@ -1,7 +1,30 @@
+import { Physics, Scene } from "phaser";
 import { Item } from "../entities";
+import { extractEntity } from "./skills";
+
+
+export const itemFactory = (scene: Scene, x: number, y: number, itemKey: string, volatile = false): Physics.Matter.Image => {
+	const item = scene.matter.add.image(x, y, itemKey, 0, { label: 'special' })
+	item.setVisible(true)
+	item.setCollisionGroup(-5)
+	item.setOnCollide(({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+		if (!bodyA.isSensor && !bodyB.isSensor) {
+			const p = { bodyA: bodyA.parent, bodyB: bodyB.parent }
+			const entity = extractEntity(p)
+			if (entity && entity.getSprite().body.label === 'player') {
+				item.destroy()
+				entity.switchItem(itemKey)
+			}
+		}
+	})
+	if (volatile) {
+		setTimeout(() => item.destroy(), 5000)
+	}
+	return item
+}
+
 
 export const gameItens = new Map<string, Item>() 
-
 
 gameItens.set('mana-potion', {type: 'mana-potion',
 															description: 'Mana Potion',

@@ -1,7 +1,7 @@
 import { BodyType } from "matter"
 import { Scene, Physics } from "phaser"
-import { gameItens } from "./especials/itens"
-import { BehaveInfos } from "./especials/mobsConfig"
+import { gameItens, itemFactory } from "./especials/itens"
+import { BehaviorInfos } from "./especials/mobsConfig"
 import { extractEntity, skillsMap, setSide } from "./especials/skills"
 import { playerManager, playerSaveStatus } from "./global"
 
@@ -64,7 +64,7 @@ export class SpriteEntity {
 	maxLife: number 
 	mana: number 
 	xp: number
-	behaveor: BehaveInfos | undefined
+	behaveor: BehaviorInfos | undefined
 	protected sprite: Physics.Matter.Sprite
 	constructor(
 		public lvl: number,
@@ -150,6 +150,14 @@ export class SpriteEntity {
 				} else {
 					this.playAnims(`${this.baseTexture}-moving`)
 				}
+			},
+			Up: () => {
+				this.sprite.setVelocityY(-this.velocity)
+				this.playAnims(`${this.baseTexture}-moving`)
+			},
+			Down: () => {
+				this.sprite.setVelocityY(this.velocity)
+				this.playAnims(`${this.baseTexture}-moving`)
 			}
 		}
 		if (this.canMove) {
@@ -159,6 +167,14 @@ export class SpriteEntity {
 					break
 				case Direction.Right:
 					movements.Right()
+					break
+				
+				case Direction.Up: 
+					movements.Up()
+					break
+				
+				case Direction.Down:
+					movements.Down()
 					break
 			}
 		}
@@ -189,9 +205,11 @@ export class SpriteEntity {
 		const spriteOffset = this.sprite.width * 1.5
 		const x = fliped ? this.sprite.x - spriteOffset : this.sprite.x + spriteOffset
 		
-		const item = this.sprite.scene.matter.add.image(x, this.sprite.y, itemKey, 0, {label: 'special'} )
-		item.setVisible(true)
-		item.setCollisionGroup(-5)
+		// const item = this.sprite.scene.matter.add.image(x, this.sprite.y, itemKey, 0, {label: 'special'} )
+		// item.setVisible(true)
+		// item.setCollisionGroup(-5)
+
+		const item = itemFactory(this.sprite.scene, x, this.sprite.y, itemKey, true )
 
 		if (this.sprite.scene.matter.overlap(item)) {
 			item.setX(fliped ? this.sprite.x + spriteOffset : this.sprite.x - spriteOffset )
@@ -200,23 +218,28 @@ export class SpriteEntity {
 		item.setVelocityX(fliped ? -5 : 5)
 		item.setFixedRotation()
 		item.setAngle(135)
-		setTimeout(() => item.destroy(), 5000)
-		item.setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
-			if (!bodyA.isSensor && !bodyB.isSensor) {
-				const p = { bodyA: bodyA.parent, bodyB: bodyB.parent }
-				const entity = extractEntity(p)
-				if (entity && entity.getSprite().body.label === 'player') {
-					item.destroy()
-					entity.switchItem(itemKey)
-				} 
-			}
-		})
+		// setTimeout(() => item.destroy(), 5000)
+		// item.setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+		// 	if (!bodyA.isSensor && !bodyB.isSensor) {
+		// 		const p = { bodyA: bodyA.parent, bodyB: bodyB.parent }
+		// 		const entity = extractEntity(p)
+		// 		if (entity && entity.getSprite().body.label === 'player') {
+		// 			item.destroy()
+		// 			entity.switchItem(itemKey)
+		// 		} 
+		// 	}
+		// })
 	}
 
 	private defeat() {
 		this.canMove = false
+		
 		if (!this.isPlayer) {
-			this.dropItem(this.inventory[0])
+			const itemKey = this.inventory[0]
+			const dropRate = gameItens.get(itemKey)!.dropRate
+			if (Math.random() <= dropRate) {
+				this.dropItem(itemKey)
+			}
 			this.sprite.destroy()
 			playerManager.player.collectXp(this.xp)
 		} else {

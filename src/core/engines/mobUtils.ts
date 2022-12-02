@@ -88,7 +88,6 @@ export const mobFactory = (scene: Scene,
 													 x: number,
 													 y: number): SpriteEntity => {
 
-	console.log(mobKey)
 	const rnd = Math.random()
 	const mobConfigs = mobsConfigMap.get(mobKey)!
 	const mob = new SpriteEntity(lvl, 25, false, mobKey)
@@ -121,3 +120,4 @@ export const mobFactory = (scene: Scene,
 	})
 	return mob
 }
+

@@ -16,8 +16,12 @@ const jump = (sprite: SpriteEntity) => {
 	sprite.jump()
 }
 
+const moveUp = (sprite: SpriteEntity) => {
+	sprite.move(Direction.Up)
+}
+
 const moveDown = (sprite: SpriteEntity) => {
-	console.log('down')
+	sprite.move(Direction.Down)
 }
 
 const moveLeft = (sprite: SpriteEntity) => {

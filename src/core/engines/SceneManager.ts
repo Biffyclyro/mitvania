@@ -118,12 +118,23 @@ export default class SceneManager{
 			const sprite = se.getSprite()
 			if (sprite && se.canMove) {
 					commands.get('move')!(se)
+
 				if (sprite.x >= se.behaveor!.initPos! + se.behaveor!.distance) {
 					se.direction = Direction.Left
 				}
 				if (sprite.x <= se.behaveor!.initPos! - se.behaveor!.distance) {
 					se.direction = Direction.Right
 				}
+
+				if (se.behaveor!.fly) {
+					if (sprite.y >= se.behaveor!.initPos! + se.behaveor!.fly) {
+						se.direction = Direction.Down
+					}
+					if (sprite.y <= se.behaveor!.initPos! - se.behaveor!.fly) {
+						se.direction = Direction.Up
+					}
+				}
+
 			} else {
 				const index = this.entitiesList.indexOf(se)
 				this.entitiesList.splice(index, 1)

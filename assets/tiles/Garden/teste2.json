@@ -5,20 +5,55 @@
         {
          "draworder":"topdown",
          "id":14,
-         "name":"sprite-objects",
-         "objects":[
+         "name": "sprite-objects",
+         "objects": [
+            {
+               "class": "",
+               "height": 0,
+               "id": 22,
+               "name": "mob",
+               "point": true,
+               "properties": [
+                  {
+                     "name": "mob",
+                     "type": "string",
+                     "value": "pato"
+                  },
+                  {
+                     "name": "lvl",
+                     "type": "number",
+                     "value": 1
+                  }
+               ],
+               "rotation": 0,
+               "visible": true,
+               "width": 0,
+               "x": 252.666666666667,
+               "y": 302.666666666667
+            },
                 {
                  "class":"",
                  "height":0,
                  "id":22,
-                 "name":"mob",
+                 "name":"spawner",
                  "point":true,
                  "properties":[
                         {
                          "name":"mob",
                          "type":"string",
-                         "value":"mush"
-                        }],
+                         "value":"pato"
+                        },
+                        {
+                           "name":"qtd",
+                         "type":"number",
+                         "value": 3
+                        },
+                        {
+                           "name":"lvl",
+                         "type":"number",
+                         "value": 1
+                        }
+                         ],
                  "rotation":0,
                  "visible":true,
                  "width":0,

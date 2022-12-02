@@ -29,32 +29,36 @@ const throwableSkill = (se: SpriteEntity, texture: string, velocity: number, dam
 			se.getSprite().scene.events.emit('player-skill', manaCost)
 		}
 
-		const fireBall = sprite.scene.matter.add.sprite(sprite.x + setSide(sprite), sprite.y, texture, 0, {
+		const skill = sprite.scene.matter.add.sprite(sprite.x + setSide(sprite), sprite.y, texture, 0, {
 			frictionAir: 0,
 			ignoreGravity: true,
-			label: texture
+			label: texture,
+			isSensor: true
 		})
-
-		fireBall.setFixedRotation()
-		fireBall.type = 'skill'
-		fireBall.setOnCollide((pair: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+		skill.setVisible(true)
+		skill.setFixedRotation()
+		skill.type = 'skill'
+		skill.setOnCollide((pair: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
 			const entity = extractEntity(pair)
 			if (entity) {
 				entity.takeDamage(damage * se.lvl)
 			}
-			fireBall.destroy()
+
+			if (pair.bodyA.label !== 'special' && pair.bodyB.label !== 'special') {
+				skill.destroy()
+			}
 		})
 		if (sprite.flipX) {
-			fireBall.setFlipX(true)
-			fireBall.setVelocityX(-velocity)
+			skill.setFlipX(true)
+			skill.setVelocityX(-velocity)
 		} else {
-			fireBall.setVelocityX(velocity)
+			skill.setVelocityX(velocity)
 		}
 	}
 }
 
 export const skillsMap = new Map<string, Skill>()
 
-skillsMap.set('fire-ball', (se: SpriteEntity) => throwableSkill(se, 'fire-ball', 8, 5, 3) )
+skillsMap.set('fire-ball', (se: SpriteEntity) => throwableSkill(se, 'fire-ball', 8, 5, 3))
 
-skillsMap.set('lightning-bolt', (se: SpriteEntity) => throwableSkill(se, 'lightning-bolt', 10, 3, 1)	)
+skillsMap.set('lightning-bolt', (se: SpriteEntity) => throwableSkill(se, 'lightning-bolt', 10, 3, 1))

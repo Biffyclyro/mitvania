@@ -1,10 +1,10 @@
 import { windowSize } from "../config"
 import { GameObjects, Scene, Tilemaps } from "phaser"
-import { Direction, Player, SpriteEntity } from "../entities"
+import { Direction, SpriteEntity } from "../entities"
 import { mainGameConfigManager, playerManager, saveManager } from "../global"
 import { mobsConfigMap } from "../especials/mobsConfig"
 import { commands } from "./command"
-import MobSpawner from "./MobSpawner"
+import { mobFactory, MobSpawner } from "./mobUtils"
 
 export default class SceneManager{
 	private numLayers = 1 
@@ -54,7 +54,9 @@ export default class SceneManager{
 	}
 
 	private buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
-		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus', 0, { isStatic: true, isSensor: true })
+		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus', 0, { isStatic: true, 
+																																						 isSensor: true,
+																																						 label: 'special' })
 		lotus.setVisible(true)
 		lotus.setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
 			console.log(bodyA, bodyB)
@@ -71,32 +73,43 @@ export default class SceneManager{
 	}
 
 	private spawnMob(obj: Phaser.Types.Tilemaps.TiledObject) {
+		const {x, y} = obj
 		const mobKey = obj.properties[0].value
-		const mobConfig = mobsConfigMap.get(mobKey)
-		const mob = new SpriteEntity(1, 25, false, mobKey)
-		mob.velocity = 3
-		mob.inventory = mobConfig!.inventory
-		mob.setSprite(this.scene, { x: obj.x!, y: obj.y!, width: 23, height: 32 })
-		mob.autoMovement = {distance: 1000, initPos: mob.getSprite().x}
-		mob.canMove = true
-		mob.getSprite().setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
-			const hit = (player: Player) => {player.takeDamage(mob.lvl)}
-			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
-				bodyA.parent.label === 'player' ? hit(bodyA.gameObject.getData('entity')) : hit(bodyB.gameObject.getData('entity'))
-			} else {
-				if (bodyA.isStatic || bodyB.isStatic) {
-					const velocityX = mob.getSprite().body.velocity.x
-					if (mob.direction === Direction.Right && velocityX > 0) {
-						mob.direction = Direction.Left
-					}
-					if (mob.direction === Direction.Left && velocityX < 0) {
-						mob.direction = Direction.Right
-					}
-				}
-			}
-		})
+		const lvl = obj.properties[1].value
+		// const rnd = Math.random()
+		// const mobKey = obj.properties[0].value
+		// const mobConfig = mobsConfigMap.get(mobKey)
+		// const mob = new SpriteEntity(1, 25, false, mobKey)
+		// mob.velocity = 3
+		// mob.inventory = mobConfig!.inventory
+		// mob.setSprite(this.scene, { x: obj.x!, y: obj.y!, width: 23, height: 32 })
+		// mob.behaveor= {distance: 1000, initPos: mob.getSprite().x}
+		// mob.canMove = true
+		// rnd > 0.5 ? mob.direction = Direction.Right : mob.direction = Direction.Left
+		// const sprite = mob.getSprite()
+		// const changeDirection = () => {
+		// 	const velocityX = mob.getSprite().body.velocity.x
+		// 	if (mob.direction === Direction.Right && velocityX > 0) {
+		// 		mob.direction = Direction.Left
+		// 	}
+		// 	if (mob.direction === Direction.Left && velocityX < 0) {
+		// 		mob.direction = Direction.Right
+		// 	}
+		// }
+		// sprite.setCollisionGroup(-5)
+		// sprite.setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+		// 	const hit = (player: Player) => {player.takeDamage(mob.lvl)}
+		// 	if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
+		// 		bodyA.parent.label === 'player' ? hit(bodyA.gameObject.getData('entity')) : hit(bodyB.gameObject.getData('entity'))
+		// 		changeDirection()
+		// 	}
+		// 	if (bodyA.isStatic || bodyB.isStatic) {
+		// 		changeDirection()
+		// 	}
+		// })
 		//mob.getSprite().setOnCollide(() => mob.autoMovement!.velocity = mob.autoMovement!.velocity * -1)
-		this.entitiesList.push(mob)
+		this.entitiesList.push(mobFactory(this.scene, mobKey, lvl, x!, y!))
+		//this.entitiesList.push(mob)
 	}
 
 	moveEntities() {
@@ -105,10 +118,10 @@ export default class SceneManager{
 			const sprite = se.getSprite()
 			if (sprite && se.canMove) {
 					commands.get('move')!(se)
-				if (sprite.x >= se.autoMovement!.initPos + se.autoMovement!.distance) {
+				if (sprite.x >= se.behaveor!.initPos! + se.behaveor!.distance) {
 					se.direction = Direction.Left
 				}
-				if (sprite.x <= se.autoMovement!.initPos - se.autoMovement!.distance) {
+				if (sprite.x <= se.behaveor!.initPos! - se.behaveor!.distance) {
 					se.direction = Direction.Right
 				}
 			} else {
@@ -131,7 +144,9 @@ export default class SceneManager{
 		if (mobs) { 
 			mobs.forEach(m => {
 				const mobConfig = mobsConfigMap.get(m)!
-				this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 48 ,frameHeight:32})
+				console.log(m)
+				//this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 48 ,frameHeight:32})
+				this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 43,frameHeight:64 })
 				if (mobConfig.skill) {
 					this.scene.load.spritesheet(mobConfig.skill, `sprites/skills/${mobConfig.skill}.png`)
 				} 

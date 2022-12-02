@@ -1,6 +1,7 @@
 import { BodyType } from "matter"
-import { Scene, Physics, RIGHT, GameObjects } from "phaser"
+import { Scene, Physics } from "phaser"
 import { gameItens } from "./especials/itens"
+import { BehaveInfos } from "./especials/mobsConfig"
 import { extractEntity, skillsMap, setSide } from "./especials/skills"
 import { playerManager, playerSaveStatus } from "./global"
 
@@ -63,7 +64,7 @@ export class SpriteEntity {
 	maxLife: number 
 	mana: number 
 	xp: number
-	autoMovement: {distance: number, initPos: number} | undefined
+	behaveor: BehaveInfos | undefined
 	protected sprite: Physics.Matter.Sprite
 	constructor(
 		public lvl: number,
@@ -79,9 +80,10 @@ export class SpriteEntity {
 	}
 
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
-		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture, 69)
+		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture)
 		if (width && height) {
 			this.sprite.setRectangle(width, height, {label: 'sprite'})
+			//this.sprite.setDisplaySize(width * 3, height * 3)
 			scale ? this.sprite.setScale(scale) : scale
 			this.sprite.setFixedRotation()
 		}
@@ -187,7 +189,9 @@ export class SpriteEntity {
 		const spriteOffset = this.sprite.width * 1.5
 		const x = fliped ? this.sprite.x - spriteOffset : this.sprite.x + spriteOffset
 		
-		const item = this.sprite.scene.matter.add.image(x, this.sprite.y, itemKey, 0, {label: 'item'} )
+		const item = this.sprite.scene.matter.add.image(x, this.sprite.y, itemKey, 0, {label: 'special'} )
+		item.setVisible(true)
+		item.setCollisionGroup(-5)
 
 		if (this.sprite.scene.matter.overlap(item)) {
 			item.setX(fliped ? this.sprite.x + spriteOffset : this.sprite.x - spriteOffset )

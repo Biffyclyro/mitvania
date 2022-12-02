@@ -1,7 +1,7 @@
 {
 	"stages": {
 		"Garden": {
-			"mobs": ["mush"]
+			"mobs": [ "pato"]
 		}
 	}	
 }

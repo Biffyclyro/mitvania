@@ -57,6 +57,7 @@ Tiled JSON Tilemap file with:
 - [x] Load all the assets dynamically
 - [ ] Make all the tilesets and sprites
 - [X] XP system
+- [X] Mob Factory
 - [ ] HUD
 - [ ] Player status control
 - [ ] Aura

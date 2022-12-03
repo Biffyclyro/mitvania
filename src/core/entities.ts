@@ -5,6 +5,7 @@ import { BehaviorInfos } from "./especials/mobsConfig"
 import { extractEntity, skillsMap, setSide } from "./especials/skills"
 import { playerManager, playerSaveStatus } from "./global"
 
+
 export interface Entity {
 	x: number
 	y: number
@@ -102,6 +103,8 @@ export class SpriteEntity {
 		return this.sprite
 	}
 
+
+
 	private playAnims(anim: string) {
 		if (!this.sprite.anims.isPlaying) {
 			this.sprite.anims.play(anim, true)
@@ -122,7 +125,7 @@ export class SpriteEntity {
 		}
 		this.playAnims(`${this.baseTexture}-jump`)
 	}
-
+	
 	resetJump() {
 		this.jumps = this.maxJumps
 		this.jumping = false
@@ -180,7 +183,7 @@ export class SpriteEntity {
 		}
 	}
 
-	public takeDamage(hit: number) {
+	takeDamage(hit: number) {
 		const x = this.sprite.x 
 		const y = this.sprite.y 
 		this.playAnims(`${this.baseTexture}-damage`)

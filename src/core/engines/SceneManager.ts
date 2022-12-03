@@ -4,7 +4,7 @@ import { Direction, SpriteEntity } from "../entities"
 import { mainGameConfigManager, playerManager, saveManager } from "../global"
 import { mobsConfigMap } from "../especials/mobsConfig"
 import { commands } from "./command"
-import { mobFactory, MobSpawner } from "./mobUtils"
+import { fly, mobFactory, MobSpawner } from "./mobUtils"
 
 export default class SceneManager{
 	private numLayers = 1 
@@ -127,12 +127,7 @@ export default class SceneManager{
 				}
 
 				if (se.behaveor!.fly) {
-					if (sprite.y >= se.behaveor!.initPos! + se.behaveor!.fly) {
-						se.direction = Direction.Down
-					}
-					if (sprite.y <= se.behaveor!.initPos! - se.behaveor!.fly) {
-						se.direction = Direction.Up
-					}
+					fly(se)	
 				}
 
 			} else {

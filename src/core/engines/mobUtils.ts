@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import { Direction, Entity, Player, SpriteEntity } from "../entities";
+import { Direction, Player, SpriteEntity } from "../entities";
 import { MobConfig, mobsConfigMap } from "../especials/mobsConfig";
 import { commands } from "./command";
 
@@ -67,8 +67,22 @@ export class MobSpawner {
 			const sprite = mob.getSprite()
 			if (sprite && mob.canMove) {
 				commands.get('move')!(mob)
+				if (mob.behaveor?.fly) {
+					
+					fly(mob)
+					if (sprite.y <= mob.behaveor.fly.initHight! - mob.behaveor.fly.distance && sprite.body.velocity.y <0 ){
+						mob.behaveor.fly.speed *= -1
+					}
+					if (sprite.y >= mob.behaveor.fly.initHight! + mob.behaveor.fly.distance && sprite.body.velocity.y >0) {
+
+						mob.behaveor.fly.speed *= -1
+					}
+					
+				}
 				if (sprite.x >= mob.behaveor!.initPos! + mob.behaveor!.distance) {
 					mob.direction = Direction.Left
+
+					
 				}
 				if (sprite.x <= mob.behaveor!.initPos! - mob.behaveor!.distance) {
 					mob.direction = Direction.Right
@@ -95,9 +109,14 @@ export const mobFactory = (scene: Scene,
 	mob.inventory = mobConfigs.inventory
 	mob.setSprite(scene, { x, y, width: 23, height: 32 })
 	mob.behaveor = mobConfigs.behaveInfos
+	const sprite = mob.getSprite()
+	if (mob.behaveor.fly){
+		sprite.setIgnoreGravity(true)
+		mob.behaveor.fly.initHight = y
+		mob.behaveor.fly.speed = Math.random() > 0.5 ? mob.behaveor.fly.speed : mob.behaveor.fly.speed *-1
+	}
 	mob.canMove = true
 	rnd > 0.5 ? mob.direction = Direction.Right : mob.direction = Direction.Left
-	const sprite = mob.getSprite()
 	sprite.setCollisionGroup(-5)
 	const changeDirection = () => {
 		const velocityX = mob.getSprite().body.velocity.x
@@ -116,8 +135,18 @@ export const mobFactory = (scene: Scene,
 		} 
 		if (bodyA.isStatic || bodyB.isStatic) {
 			changeDirection()
+			if (mob.behaveor?.fly){
+				mob.behaveor.fly.speed *= -1
+			}
 		}
 	})
 	return mob
 }
+
+export const fly = (se: SpriteEntity) => {
+	const sprite = se.getSprite()
+	const movement = se.behaveor!.fly!.speed 
+	sprite.setVelocityY(movement)
+}
+
 

@@ -9,14 +9,16 @@ export class MobSpawner {
 	private readonly mobKey: string
 	private readonly qtd: number
 	private readonly mobLvl: number
+	private readonly respawn: boolean
 
 	constructor(private readonly scene: Scene,
 							private readonly obj: Phaser.Types.Tilemaps.TiledObject) {
 							
-			this.mobKey = this.obj.properties[0].value
+			this.mobKey = this.obj.properties[1].value
 			this.mobConfig = mobsConfigMap.get(this.mobKey)!
-			this.qtd = this.obj.properties[1].value
-			this.mobLvl = this.obj.properties[2].value
+			this.qtd = this.obj.properties[2].value
+			this.mobLvl = this.obj.properties[0].value
+			this.respawn = this.obj.properties[3].value
 
 			for (let i = 0; i < this.qtd; i++) {
 				this.moblist.push(this.spawnMob())
@@ -84,7 +86,9 @@ export class MobSpawner {
 			} else {
 				const index = this.moblist.indexOf(mob)
 				this.moblist.splice(index, 1)
-				setTimeout(() => this.moblist.push(this.spawnMob()), 5000)
+				if (this.respawn) {
+					setTimeout(() => this.moblist.push(this.spawnMob()), 5000)
+				}
 			}
 		})
 	}

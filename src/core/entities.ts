@@ -353,12 +353,14 @@ export class Player extends SpriteEntity {
 	}
 
 	drinkPotion(item: Item) {
+		const scene = this.sprite.scene
 		if (item.type === 'life-potion' && item.properties.power) {
 			const total = this.life + item.properties.power
 			total > this.maxLife ? this.life = this.maxLife : this.life += item.properties.power
 		} else if (item.type === 'mana-potion' && item.properties.power ){
 			const total = this.mana + item.properties.power
 			total > this.maxMana ? this.mana = this.maxMana : this.mana += item.properties.power
+			scene.events.emit('mana-potion', item.properties.power)
 		}
 	}
 

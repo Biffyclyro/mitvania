@@ -5,6 +5,7 @@ import { mainGameConfigManager, playerManager, saveManager } from "../global"
 import { mobsConfigMap } from "../especials/mobsConfig"
 import { commands } from "./command"
 import { autoFly, mobFactory, MobSpawner } from "./mobUtils"
+import { itemFactory } from "../especials/itens"
 
 export default class SceneManager{
 	private numLayers = 1 
@@ -74,8 +75,8 @@ export default class SceneManager{
 
 	private spawnMob(obj: Phaser.Types.Tilemaps.TiledObject) {
 		const {x, y} = obj
-		const mobKey = obj.properties[0].value
-		const lvl = obj.properties[1].value
+		const mobKey = obj.properties[1].value
+		const lvl = obj.properties[0].value
 		// const rnd = Math.random()
 		// const mobKey = obj.properties[0].value
 		// const mobConfig = mobsConfigMap.get(mobKey)
@@ -249,6 +250,8 @@ export default class SceneManager{
 						this.buildSaveLotus(obj)
 					} else if (obj.name === 'spawner') {
 						this.mobSpawners.push(new MobSpawner(this.scene, obj))	
+					} else if (obj.name === 'potion') {
+						itemFactory(this.scene, obj.x!, obj.y!, obj.properties[0].value )
 					}
 				}
 			})
@@ -284,7 +287,12 @@ export default class SceneManager{
 		this.scene.events.on('player-skill', (cost: number) => {
 			manaBar.width -= cost * (barWidth / this.player.maxMana)
 		})
-
+		this.scene.events.on('mana-potion', (power: number) => {
+			manaBar.width += power * (barWidth / this.player.maxMana) 
+		})
+		this.scene.events.on('life-potion', (power: number) => {
+			lifeBar.width += power * (barWidth / this.player.maxLife) 
+		})
 	}
 
 	private setCamera() {

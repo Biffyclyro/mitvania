@@ -37,7 +37,7 @@ export const gameItens = new Map<string, Item>()
 
 gameItens.set('mana-potion', {type: 'mana-potion',
 															description: 'Mana Potion',
-															properties:{power: 4},
+															properties:{power: 5},
 															dropRate: 0.1})
 
 gameItens.set('sword', {type: 'weapon',

@@ -4,7 +4,7 @@ import { Direction, SpriteEntity } from "../entities"
 import { mainGameConfigManager, playerManager, saveManager } from "../global"
 import { mobsConfigMap } from "../especials/mobsConfig"
 import { commands } from "./command"
-import { fly, mobFactory, MobSpawner } from "./mobUtils"
+import { autoFly, mobFactory, MobSpawner } from "./mobUtils"
 
 export default class SceneManager{
 	private numLayers = 1 
@@ -126,8 +126,8 @@ export default class SceneManager{
 					se.direction = Direction.Right
 				}
 
-				if (se.behaveor!.fly) {
-					fly(se)	
+				if (se.behaveor?.fly) {
+					autoFly(se)	
 				}
 
 			} else {

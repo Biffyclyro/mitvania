@@ -69,14 +69,8 @@ export class MobSpawner {
 				commands.get('move')!(mob)
 				if (mob.behaveor?.fly) {
 					
-					fly(mob)
-					if (sprite.y <= mob.behaveor.fly.initHight! - mob.behaveor.fly.distance && sprite.body.velocity.y <0 ){
-						mob.behaveor.fly.speed *= -1
-					}
-					if (sprite.y >= mob.behaveor.fly.initHight! + mob.behaveor.fly.distance && sprite.body.velocity.y >0) {
-
-						mob.behaveor.fly.speed *= -1
-					}
+					autoFly(mob)
+					
 					
 				}
 				if (sprite.x >= mob.behaveor!.initPos! + mob.behaveor!.distance) {
@@ -143,10 +137,18 @@ export const mobFactory = (scene: Scene,
 	return mob
 }
 
-export const fly = (se: SpriteEntity) => {
-	const sprite = se.getSprite()
-	const movement = se.behaveor!.fly!.speed 
-	sprite.setVelocityY(movement)
+export const autoFly = (se: SpriteEntity) => {
+	if (se.behaveor?.fly) {
+		const sprite = se.getSprite()
+		const movement = se.behaveor!.fly!.speed
+		sprite.setVelocityY(movement)
+		if (sprite.y <= se.behaveor.fly.initHight! - se.behaveor.fly.distance && sprite.body.velocity.y < 0) {
+			se.behaveor.fly.speed *= -1
+		}
+		if (sprite.y >= se.behaveor.fly.initHight! + se.behaveor.fly.distance && sprite.body.velocity.y > 0) {
+			se.behaveor.fly.speed *= -1
+		}
+	}
 }
 
 

@@ -5,6 +5,7 @@ import { extractEntity } from "./skills";
 
 export const itemFactory = (scene: Scene, x: number, y: number, itemKey: string, volatile = false): Physics.Matter.Image => {
 	const item = scene.matter.add.image(x, y, itemKey, 0, { label: 'special' })
+	const itemConfig = gameItens.get(itemKey)
 	item.setVisible(true)
 	item.setCollisionGroup(-5)
 	item.setOnCollide(({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
@@ -13,7 +14,15 @@ export const itemFactory = (scene: Scene, x: number, y: number, itemKey: string,
 			const entity = extractEntity(p)
 			if (entity && entity.getSprite().body.label === 'player') {
 				item.destroy()
-				entity.switchItem(itemKey)
+				switch(itemConfig?.type) {
+					case 'weapon':
+						entity.switchItem(itemKey)
+						break
+
+					case 'mana-potion' || 'life-potion':
+						entity.drinkPotion(itemConfig)
+						break
+				}
 			}
 		}
 	})

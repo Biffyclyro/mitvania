@@ -40,6 +40,4 @@ mobsConfigMap.set('pato',{
 														}
 													},
 													velocity: 3
-
-
 			})

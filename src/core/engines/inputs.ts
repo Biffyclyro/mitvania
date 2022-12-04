@@ -1,7 +1,7 @@
 import { Scene, Input } from "phaser"
 import { Direction } from "../entities"
 import { playerManager } from "../global"
-import { commands } from "./command"
+import { command, commands } from "./command"
 
 
 interface KeyboardKeys {
@@ -47,26 +47,26 @@ export class InputManager {
 		if (this.inputs.keyboard.left.isDown) {
 			//commands.get('left')!(player)
 			player.direction = Direction.Left
-			commands.get('move')!(player)
+			command['move'](player)
 		} else if (this.inputs.keyboard.right.isDown) {
 			player.direction = Direction.Right
-			commands.get('move')!(player)
+			command['move'](player)
 			//commands.get('right')!(player)
 		} else {
-			commands.get('stop')!(player)
+			command['stop'](player)
 		}
 		if (this.inputs.keyboard.up.isDown) {
-			commands.get('ArrowUp')!(player)
+			command['jump'](player)
 		}
 		if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.normalSkill)) {
-			commands.get('normalSkill')!(player)
+			command['normalSkill'](player)
 		}
 		if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.baseAttack)) {
-			commands.get('baseAttack')!(player)
+			command['baseAttack'](player)
 		}
 
 		if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.menu)) {
-			commands.get('menu')!(player)
+			command['menu']()
 		}
 
 		// if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.up)) {

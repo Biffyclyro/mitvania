@@ -84,7 +84,6 @@ export class SpriteEntity {
 		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture)
 		if (width && height) {
 			this.sprite.setRectangle(width, height, {label: 'sprite'})
-			//this.sprite.setDisplaySize(width * 3, height * 3)
 			scale ? this.sprite.setScale(scale) : scale
 			this.sprite.setFixedRotation()
 		}
@@ -102,8 +101,6 @@ export class SpriteEntity {
 	getSprite(): Physics.Matter.Sprite {
 		return this.sprite
 	}
-
-
 
 	private playAnims(anim: string) {
 		if (!this.sprite.anims.isPlaying) {
@@ -133,7 +130,6 @@ export class SpriteEntity {
 
 	move(direction: Direction) {
 		// durante o ataque não flipa o sprite
-		
 		const movements = {
 			Left: () => {
 				if (!this.attacking) {this.sprite.setFlipX(true)}
@@ -162,7 +158,6 @@ export class SpriteEntity {
 				case Direction.Right:
 					movements.Right()
 					break
-				
 			}
 		}
 	}

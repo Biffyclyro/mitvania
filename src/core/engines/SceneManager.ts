@@ -152,7 +152,6 @@ export default class SceneManager{
 		if (mobs) { 
 			mobs.forEach(m => {
 				const mobConfig = mobsConfigMap.get(m)!
-				console.log(m)
 				//this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 48 ,frameHeight:32})
 				this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 43,frameHeight:64 })
 				if (mobConfig.skill) {
@@ -166,7 +165,7 @@ export default class SceneManager{
 		this.scene.load.image('background', `backgrounds/${this.currentStage}.png`)
 		this.scene.load.image('tiles', `tiles/${this.currentStage}/Tiles.png`)
 		this.scene.load.image('lotus', 'sprites/lotus.png')
-		this.scene.load.tilemapTiledJSON('map', `tiles/${this.currentStage}/teste2.json`)
+		this.scene.load.tilemapTiledJSON('map', `tiles/${this.currentStage}/tilemap.json`)
 		this.scene.load.image('life-potion', 'sprites/life-potion.png' )
 		this.scene.load.image('mana-potion', 'sprites/mana-potion.png' )
 	}

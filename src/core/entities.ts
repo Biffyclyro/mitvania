@@ -146,7 +146,6 @@ export class SpriteEntity {
 			},
 			Right: () => {
 				if (!this.attacking) {this.sprite.resetFlip()}
-				
 				this.sprite.setVelocityX(this.velocity)
 				if (this.jumping) {
 					this.playAnims(`${this.baseTexture}-jump`)
@@ -154,14 +153,6 @@ export class SpriteEntity {
 					this.playAnims(`${this.baseTexture}-moving`)
 				}
 			},
-			Up: () => {
-				this.sprite.setVelocityY(-this.velocity)
-				this.playAnims(`${this.baseTexture}-moving`)
-			},
-			Down: () => {
-				this.sprite.setVelocityY(this.velocity)
-				this.playAnims(`${this.baseTexture}-moving`)
-			}
 		}
 		if (this.canMove) {
 			switch (direction) {
@@ -172,13 +163,6 @@ export class SpriteEntity {
 					movements.Right()
 					break
 				
-				case Direction.Up: 
-					movements.Up()
-					break
-				
-				case Direction.Down:
-					movements.Down()
-					break
 			}
 		}
 	}
@@ -357,10 +341,11 @@ export class Player extends SpriteEntity {
 		if (item.type === 'life-potion' && item.properties.power) {
 			const total = this.life + item.properties.power
 			total > this.maxLife ? this.life = this.maxLife : this.life += item.properties.power
+			scene.events.emit('life-potion')
 		} else if (item.type === 'mana-potion' && item.properties.power ){
 			const total = this.mana + item.properties.power
 			total > this.maxMana ? this.mana = this.maxMana : this.mana += item.properties.power
-			scene.events.emit('mana-potion', item.properties.power)
+			scene.events.emit('mana-potion')
 		}
 	}
 

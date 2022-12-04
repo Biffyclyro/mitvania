@@ -77,6 +77,8 @@ export default class SceneManager{
 		const {x, y} = obj
 		const mobKey = obj.properties[1].value
 		const lvl = obj.properties[0].value
+		const mob = mobFactory(this.scene, mobKey, lvl, x!, y!)
+		mob.behaveor!.initPos = x
 		// const rnd = Math.random()
 		// const mobKey = obj.properties[0].value
 		// const mobConfig = mobsConfigMap.get(mobKey)
@@ -109,8 +111,7 @@ export default class SceneManager{
 		// 	}
 		// })
 		//mob.getSprite().setOnCollide(() => mob.autoMovement!.velocity = mob.autoMovement!.velocity * -1)
-		this.entitiesList.push(mobFactory(this.scene, mobKey, lvl, x!, y!))
-		//this.entitiesList.push(mob)
+		this.entitiesList.push(mob)
 	}
 
 	moveEntities() {
@@ -166,6 +167,8 @@ export default class SceneManager{
 		this.scene.load.image('tiles', `tiles/${this.currentStage}/Tiles.png`)
 		this.scene.load.image('lotus', 'sprites/lotus.png')
 		this.scene.load.tilemapTiledJSON('map', `tiles/${this.currentStage}/teste2.json`)
+		this.scene.load.image('life-potion', 'sprites/life-potion.png' )
+		this.scene.load.image('mana-potion', 'sprites/mana-potion.png' )
 	}
 
 	loadPlayerAssets() {
@@ -276,22 +279,24 @@ export default class SceneManager{
 	}
 
 	private buildStatusBar() {
-		const barWidth = 200
-		const lifeBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5, barWidth , 5, 50000)
-		const manaBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5 + 10, barWidth, 5, 5000)
+		const maxBarWidth = 200
+		const sectionLife = this.player.life / this.player.maxLife
+		const sectionMana = this.player.mana/ this.player.maxMana
+		const lifeBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5, maxBarWidth * sectionLife, 5, 50000)
+		const manaBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5 + 10, maxBarWidth  * sectionMana, 5, 5000)
 		lifeBar.setScrollFactor(0)
 		manaBar.setScrollFactor(0)
 		this.scene.events.on('player-damage', (damage: number) => {
-			lifeBar.width -= damage * (barWidth / this.player.maxLife)
+			lifeBar.width -= damage * (maxBarWidth / this.player.maxLife)
 		})
 		this.scene.events.on('player-skill', (cost: number) => {
-			manaBar.width -= cost * (barWidth / this.player.maxMana)
+			manaBar.width -= cost * (maxBarWidth / this.player.maxMana)
 		})
-		this.scene.events.on('mana-potion', (power: number) => {
-			manaBar.width += power * (barWidth / this.player.maxMana) 
+		this.scene.events.on('mana-potion', () => {
+			manaBar.width = maxBarWidth *  this.player.mana / this.player.maxMana
 		})
-		this.scene.events.on('life-potion', (power: number) => {
-			lifeBar.width += power * (barWidth / this.player.maxLife) 
+		this.scene.events.on('life-potion', () => {
+			lifeBar.width = maxBarWidth * this.player.life / this.player.maxLife 
 		})
 	}
 

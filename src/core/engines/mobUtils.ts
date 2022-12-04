@@ -61,6 +61,7 @@ export class MobSpawner {
 		// 	//}
 		// })
 		const mob = mobFactory(this.scene, this.mobKey, this.mobLvl, x, this.obj.y!)
+		mob.behaveor!.initPos = this.obj.x!
 		return mob
 	}
 
@@ -70,15 +71,10 @@ export class MobSpawner {
 			if (sprite && mob.canMove) {
 				commands.get('move')!(mob)
 				if (mob.behaveor?.fly) {
-					
 					autoFly(mob)
-					
-					
 				}
 				if (sprite.x >= mob.behaveor!.initPos! + mob.behaveor!.distance) {
 					mob.direction = Direction.Left
-
-					
 				}
 				if (sprite.x <= mob.behaveor!.initPos! - mob.behaveor!.distance) {
 					mob.direction = Direction.Right

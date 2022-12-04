@@ -37,7 +37,7 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":877.333666666667,
+                 "x":877.334,
                  "y":492.667
                 }, 
                 {
@@ -72,8 +72,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":239.333333333333,
-                 "y":502.666666666667
+                 "x":239.333,
+                 "y":502.667
                 }, 
                 {
                  "class":"potion",
@@ -85,13 +85,13 @@
                         {
                          "name":"type",
                          "type":"string",
-                         "value":"mana-potion"
+                         "value":"life-potion"
                         }],
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":589.333333333333,
-                 "y":399.333333333333
+                 "x":589.333,
+                 "y":399.333
                 }],
          "opacity":1,
          "type":"objectgroup",

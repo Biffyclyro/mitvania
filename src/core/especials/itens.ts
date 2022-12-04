@@ -19,7 +19,7 @@ export const itemFactory = (scene: Scene, x: number, y: number, itemKey: string,
 						entity.switchItem(itemKey)
 						break
 
-					case 'mana-potion' || 'life-potion':
+					case 'mana-potion': case 'life-potion':
 						entity.drinkPotion(itemConfig)
 						break
 				}
@@ -37,6 +37,11 @@ export const gameItens = new Map<string, Item>()
 
 gameItens.set('mana-potion', {type: 'mana-potion',
 															description: 'Mana Potion',
+															properties:{power: 5},
+															dropRate: 0.1})
+
+gameItens.set('life-potion', {type: 'life-potion',
+															description: 'Life Potion',
 															properties:{power: 5},
 															dropRate: 0.1})
 

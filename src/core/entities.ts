@@ -78,6 +78,7 @@ export class SpriteEntity {
 		this.maxLife = this.lvl * 10
 		this.life = this.maxLife
 		this.isPlayer ? this.xp = 0 : this.xp = this.lvl * 10
+		console.log(this.baseTexture)
 	}
 
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {

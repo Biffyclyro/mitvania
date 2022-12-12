@@ -126,8 +126,10 @@ export const mobFactory = (scene: Scene,
 		if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
 			bodyA.parent.label === 'player' ? hit(bodyA.gameObject.getData('entity')) : hit(bodyB.gameObject.getData('entity'))
 			changeDirection()
+			console.log('ta colidingo com player em tese')
 		} 
 		if (bodyA.isStatic || bodyB.isStatic) {
+			console.log(bodyA, bodyB)
 			changeDirection()
 			if (mob.behaveor?.fly){
 				mob.behaveor.fly.speed *= -1
@@ -140,13 +142,17 @@ export const mobFactory = (scene: Scene,
 export const autoFly = (se: SpriteEntity) => {
 	if (se.behaveor?.fly) {
 		const sprite = se.getSprite()
-		const movement = se.behaveor!.fly!.speed
-		sprite.setVelocityY(movement)
+		sprite.setVelocityY(se.behaveor.fly.speed)
 		if (sprite.y <= se.behaveor.fly.initHight! - se.behaveor.fly.distance && sprite.body.velocity.y < 0) {
 			se.behaveor.fly.speed *= -1
+			console.log('deveria descer', se.behaveor.fly.speed)
+			//movement *= -1
 		}
 		if (sprite.y >= se.behaveor.fly.initHight! + se.behaveor.fly.distance && sprite.body.velocity.y > 0) {
 			se.behaveor.fly.speed *= -1
+			
+			console.log('deveria subir', se.behaveor.fly.speed)
+			//movement *= -1
 		}
 	}
 }

@@ -47,11 +47,18 @@ export default class SceneManager{
 	}
 	 
 	buildAllMobsAnims(mob: string) {
-		this.scene.anims.create({
-			key: `${mob}-idle`,
-			frameRate: 5,
-			frames: this.scene.anims.generateFrameNames(mob, {start: 0, end:0})
-		})
+		if (!this.scene.anims.exists(`${mob}-idle`)) {
+			this.scene.anims.create({
+				key: `${mob}-idle`,
+				frameRate: 5,
+				frames: this.scene.anims.generateFrameNames(mob, { start: 0, end: 0 })
+			})
+			this.scene.anims.create({
+				key: `${mob}-moving`,
+				frameRate: 5,
+				frames: this.scene.anims.generateFrameNames(mob, { start: 0, end: 0 })
+			})
+		}
 	}
 
 	private buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
@@ -247,10 +254,12 @@ export default class SceneManager{
 				if (obj.point) {
 					//if (obj.properties && obj.properties[0].name === 'mob') {
 					if (obj.name === 'mob') {
+						this.buildAllMobsAnims(obj.properties[1].value)
 						this.spawnMob(obj)
 					} else if (obj.name === 'lotus') {
 						this.buildSaveLotus(obj)
 					} else if (obj.name === 'spawner') {
+						this.buildAllMobsAnims(obj.properties[1].value)
 						this.mobSpawners.push(new MobSpawner(this.scene, obj))	
 					} else if (obj.name === 'potion') {
 						itemFactory(this.scene, obj.x!, obj.y!, obj.properties[0].value )

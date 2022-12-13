@@ -1,7 +1,7 @@
 import { Scene, Input } from "phaser"
 import { Direction } from "../entities"
 import { playerManager } from "../global"
-import { command, commands } from "./command"
+import { command } from "./command"
 
 
 interface KeyboardKeys {
@@ -55,7 +55,10 @@ export class InputManager {
 		} else {
 			command['stop'](player)
 		}
-		if (this.inputs.keyboard.up.isDown) {
+		// if (this.inputs.keyboard.up.isDown) {
+		// 	command['jump'](player)
+		// }
+		if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.up)) {
 			command['jump'](player)
 		}
 		if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.normalSkill)) {

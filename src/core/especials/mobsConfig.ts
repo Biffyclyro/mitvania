@@ -8,6 +8,8 @@ export interface MobConfig {
 export interface BehaviorInfos {
 	distance: number
 	initPos?: number
+	seekPlayer: boolean
+	seeking?: boolean
 	fly?: {
 		initHight?: number
 		distance:number
@@ -17,14 +19,15 @@ export interface BehaviorInfos {
 
 export const mobsConfigMap = new Map<string, MobConfig>()
 
-mobsConfigMap.set('test', {skill: '', 
+mobsConfigMap.set('teste', {skill: '', 
 													inventory: ['sword'],
 													behaveInfos:{
 														distance: 1000,
-														fly:{
-															distance: 300,
+														seekPlayer: true,
+fly: {
+															distance: 150,
 															speed: 3
-														} 
+														}
 													},
 													velocity: 3 
 })
@@ -33,7 +36,8 @@ mobsConfigMap.set('pato',{
 													skill: '',
 													inventory: ['sword'],
 													behaveInfos: {
-														distance: 150,
+														distance: 1000,
+														seekPlayer: true,
 														fly: {
 															distance: 150,
 															speed: 3

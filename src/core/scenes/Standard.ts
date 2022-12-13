@@ -1,4 +1,3 @@
-import "phaser"
 import SceneManager from "../engines/SceneManager"
 import { InputManager } from "../engines/inputs"
 import { playerManager, saveManager } from "../global"

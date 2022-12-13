@@ -1,4 +1,3 @@
-import "phaser";
 import Standard from "./scenes/Standard";
 
 export const windowSize = {

@@ -1,5 +1,5 @@
-import { BodyType } from "matter"
 import { Physics } from "phaser"
+import { extractEntity } from "../engines/entitiesHandler"
 import { SpriteEntity } from "../entities"
 
 interface Skill {
@@ -8,17 +8,6 @@ interface Skill {
 
 export const setSide = (sprite: Physics.Matter.Sprite): number => {
 	return sprite.flipX ? - sprite.width/2 - 1 : sprite.width/2 + 1
-}
-
-//retornando a entidade quando uma colisão envolve um sprite, tipagem trocada de pair para objeto com 2 BodyType
-export const extractEntity = ({ bodyA, bodyB }: { bodyA: BodyType, bodyB: BodyType }) => {
-	if (bodyA.label === 'sprite' || bodyA.label === 'player') {
-		return bodyA.gameObject.getData('entity')
-	}
-	if (bodyB.label === 'sprite' || bodyB.label === 'player') {
-		return bodyB.gameObject.getData('entity')
-	}
-	return 
 }
 
 const throwableSkill = (se: SpriteEntity, texture: string, velocity: number, damage: number, manaCost: number) => {
@@ -44,7 +33,9 @@ const throwableSkill = (se: SpriteEntity, texture: string, velocity: number, dam
 				entity.takeDamage(damage * se.lvl)
 			}
 
-			if (pair.bodyA.label !== 'special' && pair.bodyB.label !== 'special') {
+			//if (pair.bodyA.label !== 'special' && pair.bodyB.label !== 'special') {
+
+			if (!pair.bodyA.isSensor || !pair.bodyB.isSensor) {
 				skill.destroy()
 			}
 		})

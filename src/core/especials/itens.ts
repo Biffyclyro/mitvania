@@ -1,6 +1,6 @@
 import { Physics, Scene } from "phaser";
+import { extractEntity } from "../engines/entitiesHandler";
 import { Item } from "../entities";
-import { extractEntity } from "./skills";
 
 
 export const itemFactory = (scene: Scene, x: number, y: number, itemKey: string, volatile = false): Physics.Matter.Image => {

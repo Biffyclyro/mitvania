@@ -1,8 +1,9 @@
 import { BodyType } from "matter"
 import { Scene, Physics } from "phaser"
+import { extractEntity } from "./engines/entitiesHandler"
 import { gameItens, itemFactory } from "./especials/itens"
 import { BehaviorInfos } from "./especials/mobsConfig"
-import { extractEntity, skillsMap, setSide } from "./especials/skills"
+import { skillsMap, setSide } from "./especials/skills"
 import { playerManager, playerSaveStatus } from "./global"
 
 
@@ -65,6 +66,7 @@ export class SpriteEntity {
 	maxLife: number 
 	mana: number 
 	xp: number
+	alive = true
 	behaveor: BehaviorInfos | undefined
 	protected sprite: Physics.Matter.Sprite
 	constructor(
@@ -78,7 +80,6 @@ export class SpriteEntity {
 		this.maxLife = this.lvl * 10
 		this.life = this.maxLife
 		this.isPlayer ? this.xp = 0 : this.xp = this.lvl * 10
-		console.log(this.baseTexture)
 	}
 
 	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
@@ -88,7 +89,7 @@ export class SpriteEntity {
 			scale ? this.sprite.setScale(scale) : scale
 			this.sprite.setFixedRotation()
 		}
-		scene.matter.world.on('collisionactive', this.resetJump.bind(this))
+		scene.matter.world.on('collisionactive', (pair: Phaser.Types.Physics.Matter.MatterCollisionPair) => this.resetJump.bind(this))
 		this.sprite.setData('entity', this)
 	}
 
@@ -124,9 +125,13 @@ export class SpriteEntity {
 		this.playAnims(`${this.baseTexture}-jump`)
 	}
 	
-	resetJump() {
-		this.jumps = this.maxJumps
-		this.jumping = false
+	resetJump({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionPair) {
+
+		if (!(bodyA.isSensor && bodyB.isSensor)) {
+
+			this.jumps = this.maxJumps
+			this.jumping = false
+		}
 	}
 
 	move(direction: Direction) {
@@ -216,7 +221,6 @@ export class SpriteEntity {
 
 	private defeat() {
 		this.canMove = false
-		
 		if (!this.isPlayer) {
 			const itemKey = this.inventory[0]
 			const dropRate = gameItens.get(itemKey)!.dropRate
@@ -224,6 +228,7 @@ export class SpriteEntity {
 				this.dropItem(itemKey)
 			}
 			this.sprite.destroy()
+			this.alive = false 
 			playerManager.player.collectXp(this.xp)
 		} else {
 			this.sprite.scene.scene.stop()

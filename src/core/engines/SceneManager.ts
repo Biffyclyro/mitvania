@@ -1,19 +1,19 @@
 import { windowSize } from "../config"
 import { GameObjects, Scene, Tilemaps } from "phaser"
-import { Direction, SpriteEntity } from "../entities"
+import { SpriteEntity } from "../entities"
 import { mainGameConfigManager, playerManager, saveManager } from "../global"
 import { mobsConfigMap } from "../especials/mobsConfig"
-import { commands } from "./command"
-import { autoFly, mobFactory, MobSpawner } from "./mobUtils"
+import { MobBehaviorController, mobFactory, MobSpawner } from "./mobUtils"
 import { itemFactory } from "../especials/itens"
 
 export default class SceneManager{
 	private numLayers = 1 
 	private readonly mainConfig = mainGameConfigManager.config
-	readonly currentStage: string = saveManager.saveInfos.stage
+	private readonly currentStage: string = saveManager.saveInfos.stage
 	private readonly player = playerManager.player
 	private readonly entitiesList: SpriteEntity[] = []
 	private readonly mobSpawners: MobSpawner[] = []
+	private readonly mobController = new MobBehaviorController()
 
 	constructor(private readonly scene: Scene) {}
 
@@ -67,7 +67,6 @@ export default class SceneManager{
 																																						 label: 'special' })
 		lotus.setVisible(true)
 		lotus.setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
-			console.log(bodyA, bodyB)
 			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
 				saveManager.saveGame({ stage: this.currentStage, playerStatus: this.player.getSaveStatus() })
 			}
@@ -124,21 +123,23 @@ export default class SceneManager{
 	moveEntities() {
 		this.mobSpawners.forEach(ms => ms.moveMobs())
 		this.entitiesList.forEach(se => {
-			const sprite = se.getSprite()
-			if (sprite && se.canMove) {
-					commands.get('move')!(se)
+		// const sprite = se.getSprite()
+		// 	if (sprite && se.canMove) {
+		// 			commands.get('move')!(se)
 
-				if (sprite.x >= se.behaveor!.initPos! + se.behaveor!.distance) {
-					se.direction = Direction.Left
-				}
-				if (sprite.x <= se.behaveor!.initPos! - se.behaveor!.distance) {
-					se.direction = Direction.Right
-				}
+		// 		if (sprite.x >= se.behaveor!.initPos! + se.behaveor!.distance) {
+		// 			se.direction = Direction.Left
+		// 		}
+		// 		if (sprite.x <= se.behaveor!.initPos! - se.behaveor!.distance) {
+		// 			se.direction = Direction.Right
+		// 		}
 
-				if (se.behaveor?.fly) {
-					autoFly(se)	
-				}
-
+		// 		if (se.behaveor?.fly) {
+		// 			autoFly(se)	
+		// 		}
+			//	this.mobController.moveMob(se)
+			if (se.getSprite() && se.alive) { 
+				this.mobController.moveMob(se)
 			} else {
 				const index = this.entitiesList.indexOf(se)
 				this.entitiesList.splice(index, 1)

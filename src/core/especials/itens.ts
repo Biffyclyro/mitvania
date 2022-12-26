@@ -1,4 +1,4 @@
-import { Physics, Scene } from "phaser";
+import { Physics, Scene, Types } from "phaser";
 import { extractEntity } from "../engines/entitiesHandler";
 import { Item } from "../entities";
 
@@ -8,7 +8,7 @@ export const itemFactory = (scene: Scene, x: number, y: number, itemKey: string,
 	const itemConfig = gameItens.get(itemKey)
 	item.setVisible(true)
 	item.setCollisionGroup(-5)
-	item.setOnCollide(({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+	item.setOnCollide(({ bodyA, bodyB }: Types.Physics.Matter.MatterCollisionPair) => {
 		if (!bodyA.isSensor && !bodyB.isSensor) {
 			const p = { bodyA: bodyA.parent, bodyB: bodyB.parent }
 			const entity = extractEntity(p)

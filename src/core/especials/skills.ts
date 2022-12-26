@@ -1,4 +1,4 @@
-import { Physics } from "phaser"
+import { Physics, Types } from "phaser"
 import { extractEntity } from "../engines/entitiesHandler"
 import { SpriteEntity } from "../entities"
 
@@ -27,7 +27,7 @@ const throwableSkill = (se: SpriteEntity, texture: string, velocity: number, dam
 		skill.setVisible(true)
 		skill.setFixedRotation()
 		skill.type = 'skill'
-		skill.setOnCollide((pair: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+		skill.setOnCollide((pair: Types.Physics.Matter.MatterCollisionPair) => {
 			const entity = extractEntity(pair)
 			if (entity) {
 				entity.takeDamage(damage * se.lvl)

@@ -1,7 +1,14 @@
 {
 	"stages": {
 		"Garden": {
-			"mobs": [ "pato"]
+			"mobs": [
+				"pato"
+			]
+		},
+		"Forest": {
+			"mobs": [
+				"pato"
+			]
 		}
-	}	
+	}
 }

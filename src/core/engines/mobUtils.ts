@@ -1,8 +1,8 @@
-import { Scene } from "phaser";
+import { Scene, Types } from "phaser";
 import { Direction, Player, SpriteEntity } from "../entities";
 import { MobConfig, mobsConfigMap } from "../especials/mobsConfig";
 import { playerManager } from "../global";
-import { commands } from "./command";
+import { command } from "./command";
 
 export class MobSpawner {
 	private readonly moblist: SpriteEntity[] = []
@@ -14,7 +14,7 @@ export class MobSpawner {
 	private readonly mobController = new MobBehaviorController()
 
 	constructor(private readonly scene: Scene,
-		private readonly obj: Phaser.Types.Tilemaps.TiledObject) {
+		private readonly obj: Types.Tilemaps.TiledObject) {
 
 		this.mobKey = this.obj.properties[1].value
 		this.mobConfig = mobsConfigMap.get(this.mobKey)!
@@ -107,21 +107,27 @@ export const mobFactory = (scene: Scene,
 	const mobController = new MobBehaviorController()
 	mob.velocity = mobConfigs.velocity
 	mob.inventory = mobConfigs.inventory
-	mob.setSprite(scene, { x, y, width: 23, height: 32 })
 	mob.behaveor = mobConfigs.behaveInfos
+
+	if (mob.behaveor.seekPlayer) {
+		mob.setSprite(scene, { x, y, width: 23, height: 32 }, mob.behaveor.distance / 3)
+		mobController.seekPlayer(mob)
+	} else {
+		mob.setSprite(scene, { x, y, width: 23, height: 32 })
+	}
+
 	const sprite = mob.getSprite()
-	if (mob.behaveor.fly){
+
+	if (mob.behaveor.fly) {
 		sprite.setIgnoreGravity(true)
 		mob.behaveor.fly.initHight = y
-		mob.behaveor.fly.speed = Math.random() > 0.5 ? mob.behaveor.fly.speed : mob.behaveor.fly.speed *-1
+		mob.behaveor.fly.speed = Math.random() > 0.5 ? mob.behaveor.fly.speed : mob.behaveor.fly.speed * -1
 	}
-	if (mob.behaveor.seekPlayer) {
-		 mobController.seekPlayer(mob)
-	}
+	
 
 	mob.canMove = true
 	rnd > 0.5 ? mob.direction = Direction.Right : mob.direction = Direction.Left
-	sprite.setCollisionGroup(-5)
+	//sprite.setCollisionGroup(-5)
 	
 	// sprite.setOnCollide(({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
 	// 	console.log('ue')
@@ -138,8 +144,8 @@ export const mobFactory = (scene: Scene,
 	// 	}
 	// })
 
-	sprite.setOnCollide(mobController.mobCollisionHandler.bind(mobController))
-	
+	//sprite.setOnCollide(mobController.mobCollisionHandler.bind(mobController))
+	mob.mainBody.onCollideCallback =  mobController.mobCollisionHandler.bind(mobController) 
 	return mob
 }
 
@@ -155,7 +161,7 @@ export class MobBehaviorController {
 	moveMob(mob: SpriteEntity) {
 			const sprite = mob.getSprite()
 			if (mob.canMove) {
-				commands.get('move')!(mob)
+				command['move'](mob)
 				if (mob.behaveor?.fly) {
 					this.autoFly(mob)
 				}
@@ -169,39 +175,30 @@ export class MobBehaviorController {
 	}
 
 	seekPlayer(mob: SpriteEntity)  {
+		
 		const sprite = mob.getSprite()
-		const seek = ({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
-			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
-				const playerSprite = playerManager.player.getSprite()
-				 if (playerSprite.x > sprite.x) {
-					mob.direction = Direction.Right
-				 } else if (playerSprite.x < sprite.x) {
-
-					mob.direction = Direction.Left
-				 } 
-			}
-		}
-
-		const scene = sprite.scene
+		// const scene = sprite.scene
 	
-		const Bodies = scene.matter.bodies 
+		// const Bodies = scene.matter.bodies 
 
-		const areaSensor = Bodies.circle(0, 0, 100, { isSensor: true })
+		// const areaSensor = Bodies.circle(0, 0, 100, { isSensor: true })
 
-		areaSensor.onCollideCallback = seek
+	 //areaSensor.onCollideCallback = seek
 
-		const body = Bodies.rectangle(0, 0, 23, 32,)
+		// const body = Bodies.rectangle(0, 0, 23, 32,)
 
-		body.onCollideCallback = this.mobCollisionHandler.bind(this)
-		const compoundBody = scene.matter.body.create({
-			parts: [body, areaSensor ],
-			label: 'sprite'
-		})
-		const {x,y} = sprite
-		sprite.setExistingBody(compoundBody)
-		sprite.setPosition(x,y)
-		sprite.setOrigin(0.5, 0.5)
-		sprite.setFixedRotation()
+		//mob.mainBody.onCollideCallback = this.mobCollisionHandler.bind(this)
+		sprite.setOnCollide(this.mobCollisionHandler.bind(this))
+
+		// const compoundBody = scene.matter.body.create({
+		// 	parts: [body, areaSensor ],
+		// 	label: 'sprite'
+		// })
+		// const {x,y} = sprite
+		// sprite.setExistingBody(compoundBody)
+		// sprite.setPosition(x,y)
+		// sprite.setOrigin(0.5, 0.5)
+		// sprite.setFixedRotation()
 
 		//onst baseObj = scene.add.circle(sprite.x, sprite.y, 100)
 		// const areaSensor = scene.matter.add.gameObject(baseObj,
@@ -220,17 +217,32 @@ export class MobBehaviorController {
 		// 		areaSensor.destroy()
 		// 	}
 		// })
+		const seek = ({ bodyA, bodyB }: Types.Physics.Matter.MatterCollisionPair) => {
+			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
+				const playerSprite = playerManager.player.getSprite()
+				if (playerSprite && sprite &&  mob.alive) {
+					if (playerSprite.x > sprite.x) {
+						mob.direction = Direction.Right
+					} else if (playerSprite.x < sprite.x) {
 
+						mob.direction = Direction.Left
+					}
+				}
+			}
+		}
+
+		mob.sensors.areaSensor!.onCollideActiveCallback = seek 
 	}
 
-	mobCollisionHandler({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionPair) {
+	mobCollisionHandler({ bodyA, bodyB }: Types.Physics.Matter.MatterCollisionPair) {
 			const mob = bodyA.parent.label === 'sprite' ? bodyA.gameObject.getData('entity') : bodyB.gameObject.getData('entity')
 			const hit = (player: Player) => { player.takeDamage(mob.lvl) }
 			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
 				bodyA.parent.label === 'player' ? hit(bodyA.gameObject.getData('entity')) : hit(bodyB.gameObject.getData('entity'))
 				this.changeDirection(mob)
 			}
-			if (bodyA.isStatic || bodyB.isStatic) {
+			console.log(mob.sensors.left, bodyA, bodyB)
+			if ((bodyA.isStatic || bodyB.isStatic) ) {
 				this.changeDirection(mob)
 				if (mob.behaveor?.fly) {
 					mob.behaveor.fly.speed *= -1

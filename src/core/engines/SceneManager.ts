@@ -1,5 +1,5 @@
 import { windowSize } from "../config"
-import { GameObjects, Scene, Tilemaps } from "phaser"
+import { GameObjects, Scene, Tilemaps, Types } from "phaser"
 import { SpriteEntity } from "../entities"
 import { mainGameConfigManager, playerManager, saveManager } from "../global"
 import { mobsConfigMap } from "../especials/mobsConfig"
@@ -61,13 +61,17 @@ export default class SceneManager{
 		}
 	}
 
-	private buildSaveLotus(obj: Phaser.Types.Tilemaps.TiledObject) {
+	private buildSaveLotus(obj: Types.Tilemaps.TiledObject) {
 		const lotus = this.scene.matter.add.sprite(obj.x!, obj.y!, 'lotus', 0, { isStatic: true, 
 																																						 isSensor: true,
 																																						 label: 'special' })
 		lotus.setVisible(true)
-		lotus.setOnCollide(({bodyA, bodyB}: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+		lotus.setOnCollide(({bodyA, bodyB}: Types.Physics.Matter.MatterCollisionPair) => {
 			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
+				this.player.life = this.player.maxLife
+				this.player.mana = this.player.maxMana
+				this.scene.events.emit('update-life')
+				this.scene.events.emit('update-mana')
 				saveManager.saveGame({ stage: this.currentStage, playerStatus: this.player.getSaveStatus() })
 			}
 		})
@@ -79,7 +83,7 @@ export default class SceneManager{
 		this.numLayers--
 	}
 
-	private spawnMob(obj: Phaser.Types.Tilemaps.TiledObject) {
+	private spawnMob(obj: Types.Tilemaps.TiledObject) {
 		const {x, y} = obj
 		const mobKey = obj.properties[1].value
 		const lvl = obj.properties[0].value
@@ -171,7 +175,7 @@ export default class SceneManager{
 			})
 		}
 		this.scene.load.image('background', `backgrounds/${this.currentStage}.png`)
-		this.scene.load.image('tiles', `tiles/${this.currentStage}/Tiles.png`)
+		this.scene.load.image('tiles', `tiles/${this.currentStage}/Tiles2.png`)
 		this.scene.load.image('lotus', 'sprites/lotus.png')
 		this.scene.load.tilemapTiledJSON('map', `tiles/${this.currentStage}/tilemap.json`)
 		this.scene.load.image('life-potion', 'sprites/life-potion.png' )
@@ -214,7 +218,7 @@ export default class SceneManager{
 															GameObjects.Rectangle | 
 															GameObjects.Ellipse, 
 															ellipse?: boolean,
-															polygon?: Phaser.Types.Math.Vector2Like[]) {
+															polygon?: Types.Math.Vector2Like[]) {
 								
 		let shapeObject: GameObjects.GameObject 
 																
@@ -251,7 +255,7 @@ export default class SceneManager{
 
 	private spriteLayerManager(spriteLayer: Tilemaps.ObjectLayer) {
 		if (spriteLayer) {
-			spriteLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
+			spriteLayer.objects.forEach((obj: Types.Tilemaps.TiledObject) => {
 				if (obj.point) {
 					//if (obj.properties && obj.properties[0].name === 'mob') {
 					if (obj.name === 'mob') {
@@ -271,7 +275,7 @@ export default class SceneManager{
 	}
 
 	private collisionsManager(collisionsLayer: Tilemaps.ObjectLayer) {
-		collisionsLayer.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
+		collisionsLayer.objects.forEach((obj: Types.Tilemaps.TiledObject) => {
 			if (obj.height === 0 && obj.width === 0) {
 				if (obj.polygon) {
 					this.shapeManager(this.scene.add.polygon(obj.x, obj.y, obj.polygon), obj.ellipse, obj.polygon!)
@@ -301,10 +305,10 @@ export default class SceneManager{
 		this.scene.events.on('player-skill', (cost: number) => {
 			manaBar.width -= cost * (maxBarWidth / this.player.maxMana)
 		})
-		this.scene.events.on('mana-potion', () => {
+		this.scene.events.on('update-mana', () => {
 			manaBar.width = maxBarWidth *  this.player.mana / this.player.maxMana
 		})
-		this.scene.events.on('life-potion', () => {
+		this.scene.events.on('update-life', () => {
 			lifeBar.width = maxBarWidth * this.player.life / this.player.maxLife 
 		})
 	}

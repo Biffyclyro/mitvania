@@ -59,6 +59,7 @@ Tiled JSON Tilemap file with:
 - [X] XP system
 - [X] Mob Factory
 - [ ] HUD
+- [X] Mobs follow player
 - [ ] Player status control
 - [ ] Aura
 - [ ] All inputs other than the keyboard

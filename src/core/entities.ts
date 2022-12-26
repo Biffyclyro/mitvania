@@ -1,5 +1,5 @@
 import { BodyType } from "matter"
-import { Scene, Physics } from "phaser"
+import { Scene, Physics, Types } from "phaser"
 import { extractEntity } from "./engines/entitiesHandler"
 import { gameItens, itemFactory } from "./especials/itens"
 import { BehaviorInfos } from "./especials/mobsConfig"
@@ -31,6 +31,7 @@ interface Sensors{
 	bottom: MatterJS.BodyType
 	left: MatterJS.BodyType
 	right: MatterJS.BodyType
+	areaSensor?: MatterJS.BodyType
 }
 
 export interface Item {
@@ -68,6 +69,8 @@ export class SpriteEntity {
 	xp: number
 	alive = true
 	behaveor: BehaviorInfos | undefined
+	sensors: Sensors
+	mainBody: BodyType
 	protected sprite: Physics.Matter.Sprite
 	constructor(
 		public lvl: number,
@@ -82,16 +85,61 @@ export class SpriteEntity {
 		this.isPlayer ? this.xp = 0 : this.xp = this.lvl * 10
 	}
 
-	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
-		this.sprite = scene.matter.add.sprite(x, y, this.baseTexture)
-		if (width && height) {
-			this.sprite.setRectangle(width, height, {label: 'sprite'})
-			scale ? this.sprite.setScale(scale) : scale
-			this.sprite.setFixedRotation()
+	//setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
+		// this.sprite = scene.matter.add.sprite(x, y, this.baseTexture)
+		// if (width && height) {
+		// 	this.sprite.setRectangle(width, height, {label: 'sprite'})
+		// 	scale ? this.sprite.setScale(scale) : scale
+		// 	this.sprite.setFixedRotation()
+		// }
+		// scene.matter.world.on('collisionactive', (pair: Types.Physics.Matter.MatterCollisionPair) => this.resetJump.bind(this))
+		// this.sprite.setData('entity', this)
+
+	// 	this.createBody(scene, {x, y, width, height, scale})
+	// }
+
+	setSprite(scene: Scene, { x, y, width, height, scale }: Entity, areaSensorSize=0) {
+		const Bodies = scene.matter.bodies 
+		this.sensors = {
+			bottom: Bodies.rectangle(0, 0 + (height/2), width/2.5, 1, {isSensor: true}),
+			left: Bodies.rectangle(-1 - (width/2), 0, 1, width/2, {isSensor: true}),
+			right: Bodies.rectangle(1 + (width/2), 0, 1, width/2, {isSensor: true})
 		}
-		scene.matter.world.on('collisionactive', (pair: Phaser.Types.Physics.Matter.MatterCollisionPair) => this.resetJump.bind(this))
+		if (areaSensorSize > 0 ) {
+			this.sensors.areaSensor = Bodies.circle(0, 0, areaSensorSize, { isSensor: true })
+		}
+		this.sensors.bottom.onCollideActiveCallback = this.resetJump.bind(this)
+		this.sensors.bottom.onCollideEndCallback = () => {
+			this.jumps--
+			this.jumping = true
+		}
+		// this.sensors.bottom.collisionFilter.group = -3
+		// this.sensors.left.collisionFilter.group = -3
+		// this.sensors.right.collisionFilter.group = -3
+
+		// ainda é necessário cuidar esses valores 
+		this.mainBody = Bodies.rectangle(0, 0, width, height, {chamfer: { radius: 10 }})
+		const bodyParts = [this.mainBody, this.sensors.bottom, this.sensors.left, this.sensors.right]
+
+		if (this.sensors.areaSensor) {bodyParts.push(this.sensors.areaSensor)}
+
+		const compoundBody = scene.matter.body.create({
+			parts: bodyParts,
+			label: this.isPlayer ? 'player' : 'sprite'
+		})
+		this.sprite = scene.matter.add.sprite(0, 0, this.baseTexture, 0)
+		this.sprite.setExistingBody(compoundBody)
+		this.sprite.setPosition(x,y)
+		this.sprite.setOrigin(0.5, 0.5)
+		scale ? this.sprite.setScale(scale) : scale 
+		this.sprite.setFixedRotation()
+		this.sprite.setFriction(0)
 		this.sprite.setData('entity', this)
+		//scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
+		//scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
 	}
+
+
 
 	useNormalSkill() {
 		const skill = skillsMap.get(this.normalSkill)
@@ -125,7 +173,7 @@ export class SpriteEntity {
 		this.playAnims(`${this.baseTexture}-jump`)
 	}
 	
-	resetJump({ bodyA, bodyB }: Phaser.Types.Physics.Matter.MatterCollisionPair) {
+	resetJump({ bodyA, bodyB }: Types.Physics.Matter.MatterCollisionPair) {
 
 		if (!(bodyA.isSensor && bodyB.isSensor)) {
 
@@ -237,7 +285,8 @@ export class SpriteEntity {
 }
 
 export class Player extends SpriteEntity {
-	sensors: Sensors
+	//sensors: Sensors
+	//mainBody: BodyType
 	specialSkill: string = ''
 	weapon: string 
 	
@@ -279,7 +328,7 @@ export class Player extends SpriteEntity {
 			weaponSprite.setFixedRotation()
 			weaponSprite.setCollisionGroup(-2)
 			const joint = scene.matter.add.joint(weaponSprite.body as BodyType, this.sprite.body as BodyType, 0, 0, pointsJoint)
-			weaponSprite.setOnCollide((pair: Phaser.Types.Physics.Matter.MatterCollisionPair) => {
+			weaponSprite.setOnCollide((pair: Types.Physics.Matter.MatterCollisionPair) => {
 				const entity = extractEntity(pair)
 				if (entity) {
 					entity.takeDamage(wp!.properties.dmg)
@@ -293,39 +342,40 @@ export class Player extends SpriteEntity {
 		}
 	}
 	//muito cuidado com esse método e os valores dele
-	setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
-		const Bodies = scene.matter.bodies 
-		this.sensors = {
-			bottom: Bodies.rectangle(0, 0 + (height/2), width/2.5, 1, {isSensor: true}),
-			left: Bodies.rectangle(0 - (width/2), 0, 1, width, {isSensor: true}),
-			right: Bodies.rectangle(0 + (width/2), 0, 1, width, {isSensor: true})
-		}
-		this.sensors.bottom.onCollideActiveCallback = this.resetJump.bind(this)
-		this.sensors.bottom.onCollideEndCallback = () => {
-			this.jumps--
-			this.jumping = true
-		}
-		// this.sensors.bottom.collisionFilter.group = -3
-		// this.sensors.left.collisionFilter.group = -3
-		// this.sensors.right.collisionFilter.group = -3
+	// setSprite(scene: Scene, { x, y, width, height, scale }: Entity) {
+	// 	const Bodies = scene.matter.bodies 
+	// 	this.sensors = {
+	// 		bottom: Bodies.rectangle(0, 0 + (height/2), width/2.5, 1, {isSensor: true}),
+	// 		left: Bodies.rectangle(0 - (width/2), 0, 1, width, {isSensor: true}),
+	// 		right: Bodies.rectangle(0 + (width/2), 0, 1, width, {isSensor: true})
+	// 	}
+	// 	this.sensors.bottom.onCollideActiveCallback = this.resetJump.bind(this)
+	// 	this.sensors.bottom.onCollideEndCallback = () => {
+	// 		this.jumps--
+	// 		this.jumping = true
+	// 	}
+	// 	// this.sensors.bottom.collisionFilter.group = -3
+	// 	// this.sensors.left.collisionFilter.group = -3
+	// 	// this.sensors.right.collisionFilter.group = -3
 
-		// ainda é necessário cuidar esses valores 
-		const body = Bodies.rectangle(0, 0, width, height, {chamfer: { radius: 10 }})
-		const compoundBody = scene.matter.body.create({
-			parts: [body, this.sensors.bottom, this.sensors.left, this.sensors.right],
-			label: 'player'
-		})
-		this.sprite = scene.matter.add.sprite(0, 0, this.baseTexture, 0)
-		this.sprite.setExistingBody(compoundBody)
-		this.sprite.setPosition(x,y)
-		this.sprite.setOrigin(0.5, 0.5)
-		scale ? this.sprite.setScale(scale) : scale 
-		this.sprite.setFixedRotation()
-		this.sprite.setFriction(0)
-		this.sprite.setData('entity', this)
-		//scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
-		//scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
-	}
+	// 	// ainda é necessário cuidar esses valores 
+	// 	const body = Bodies.rectangle(0, 0, width, height, {chamfer: { radius: 10 }})
+	// 	this.mainBody = body
+	// 	const compoundBody = scene.matter.body.create({
+	// 		parts: [body, this.sensors.bottom, this.sensors.left, this.sensors.right],
+	// 		label: 'player'
+	// 	})
+	// 	this.sprite = scene.matter.add.sprite(0, 0, this.baseTexture, 0)
+	// 	this.sprite.setExistingBody(compoundBody)
+	// 	this.sprite.setPosition(x,y)
+	// 	this.sprite.setOrigin(0.5, 0.5)
+	// 	scale ? this.sprite.setScale(scale) : scale 
+	// 	this.sprite.setFixedRotation()
+	// 	this.sprite.setFriction(0)
+	// 	this.sprite.setData('entity', this)
+	// 	//scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
+	// 	//scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
+	// }
 
 	switchItem(newItem: string, isSkill=false) {
 		if (isSkill) {
@@ -342,11 +392,11 @@ export class Player extends SpriteEntity {
 		if (item.type === 'life-potion' && item.properties.power) {
 			const total = this.life + item.properties.power
 			total > this.maxLife ? this.life = this.maxLife : this.life += item.properties.power
-			scene.events.emit('life-potion')
+			scene.events.emit('update-life')
 		} else if (item.type === 'mana-potion' && item.properties.power ){
 			const total = this.mana + item.properties.power
 			total > this.maxMana ? this.mana = this.maxMana : this.mana += item.properties.power
-			scene.events.emit('mana-potion')
+			scene.events.emit('update-mana')
 		}
 	}
 

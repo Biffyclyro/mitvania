@@ -37,11 +37,11 @@ mobsConfigMap.set('pato',{
 													inventory: ['sword'],
 													behaveInfos: {
 														distance: 1000,
-														seekPlayer: true,
-														fly: {
-															distance: 150,
-															speed: 3
-														}
+														seekPlayer:false,
+														// fly: {
+														// 	distance: 150,
+														// 	speed: 3
+														// }
 													},
 													velocity: 3
 			})

@@ -39,6 +39,7 @@ export default class Standard extends Phaser.Scene {
 		this.player.normalSkill = 'lightning-bolt'
 
 		this.cameras.main.startFollow(this.player.getSprite(), true, 0.05, 0.05)
+
 		//setTimeout(()=> test(player.takeDamage.bind(player)), 6000)
 		//saveManager.saveGame({stage: JSON.stringify(mainGameConfigManager.config.stages)})
 		//window.addEventListener('saved', (e) => console.log((e as CustomEvent).detail))

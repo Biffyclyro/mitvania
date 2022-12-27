@@ -38,10 +38,10 @@ mobsConfigMap.set('pato',{
 													behaveInfos: {
 														distance: 1000,
 														seekPlayer:false,
-														// fly: {
-														// 	distance: 150,
-														// 	speed: 3
-														// }
+														fly: {
+															distance: 150,
+															speed: 3
+														}
 													},
 													velocity: 3
 			})

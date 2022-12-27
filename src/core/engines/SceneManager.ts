@@ -5,6 +5,7 @@ import { mainGameConfigManager, playerManager, saveManager } from "../global"
 import { mobsConfigMap } from "../especials/mobsConfig"
 import { MobBehaviorController, mobFactory, MobSpawner } from "./mobUtils"
 import { itemFactory } from "../especials/itens"
+import { extractEntity } from "./entitiesHandler"
 
 export default class SceneManager{
 	private numLayers = 1 
@@ -217,8 +218,10 @@ export default class SceneManager{
 	private shapeManager(shape: GameObjects.Polygon | 
 															GameObjects.Rectangle | 
 															GameObjects.Ellipse, 
+															objectType: string,
 															ellipse?: boolean,
-															polygon?: Types.Math.Vector2Like[]) {
+															polygon?: Types.Math.Vector2Like[]
+															) {
 								
 		let shapeObject: GameObjects.GameObject 
 																
@@ -245,7 +248,23 @@ export default class SceneManager{
 		}
 		//método sem typecast
 		// displayOrigin é o mesmo que centerOffset?????????
-		shapeObject.body.gameObject!.setPosition(shape.x + shape.displayOriginX, shape.y + shape.displayOriginY).setCollisionGroup(-2)
+		const block = shapeObject.body.gameObject!.setPosition(shape.x + shape.displayOriginX, shape.y + shape.displayOriginY)
+
+		if (objectType === 'passable') {
+			block.setCollisionGroup(-7)
+		} else {
+			block.setCollisionGroup(-2) 
+			if (objectType === 'kill-sprite') {
+				block.setOnCollide((pair: Types.Physics.Matter.MatterCollisionPair) => {
+					const entity = extractEntity(pair)
+					console.log(entity)
+					 if (entity) {
+						entity.defeat()
+					 }
+				})
+			}
+		}
+
 		//shapeObject = shapeObject as Phaser.GameObjects.Polygon | Phaser.GameObjects.Ellipse | Phaser.GameObjects.Rectangle
 		//const offset = shape.body as BodyOffset
 		//console.log(shape.displayOriginX, 'shape body')
@@ -276,16 +295,17 @@ export default class SceneManager{
 
 	private collisionsManager(collisionsLayer: Tilemaps.ObjectLayer) {
 		collisionsLayer.objects.forEach((obj: Types.Tilemaps.TiledObject) => {
+			const objType = obj.name 
 			if (obj.height === 0 && obj.width === 0) {
 				if (obj.polygon) {
-					this.shapeManager(this.scene.add.polygon(obj.x, obj.y, obj.polygon), obj.ellipse, obj.polygon!)
+					this.shapeManager(this.scene.add.polygon(obj.x, obj.y, obj.polygon), objType, obj.ellipse, obj.polygon!)
 				}
 
 			} else {
 				if (obj.ellipse) {
-					this.shapeManager(this.scene.add.ellipse(obj.x, obj.y, obj.width, obj.height, 0), obj.ellipse)
+					this.shapeManager(this.scene.add.ellipse(obj.x, obj.y, obj.width, obj.height, 0), objType, obj.ellipse)
 				} else {
-					this.shapeManager(this.scene.add.rectangle(obj.x, obj.y, obj.width, obj.height))
+					this.shapeManager(this.scene.add.rectangle(obj.x, obj.y, obj.width, obj.height), objType)
 				}
 			}
 		})

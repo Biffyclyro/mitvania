@@ -13,7 +13,8 @@ export const command = {
 	},
 
 	'moveDown': (sprite: SpriteEntity) => {
-		sprite.move(Direction.Down)
+		console.log('blalbla bla')
+		sprite.getSprite().setCollisionGroup(-7)
 	},
 
 	'moveLeft': (sprite: SpriteEntity) => {

@@ -15,10 +15,10 @@ shape: { type: 'fromVerts',
 
 //retornando a entidade quando uma colisão envolve um sprite, tipagem trocada de pair para objeto com 2 BodyType
 export const extractEntity = ({ bodyA, bodyB }: { bodyA: BodyType, bodyB: BodyType }) => {
-	if (bodyA.label === 'sprite' || bodyA.label === 'player' || bodyA.parent.label === 'sprite' && !bodyA.isSensor) {
+	if ((bodyA.label === 'sprite' || bodyA.label === 'player' || bodyA.parent.label === 'sprite' || bodyA.parent.label === 'player') && !bodyA.isSensor) {
 		return bodyA.gameObject.getData('entity')
 	}
-	if (bodyB.label === 'sprite' || bodyB.label === 'player' || bodyB.parent.label === 'sprite' && !bodyA.isSensor) {
+	if ((bodyB.label === 'sprite' || bodyB.label === 'player' || bodyB.parent.label === 'sprite' || bodyB.parent.label === 'player') && !bodyB.isSensor) {
 		return bodyB.gameObject.getData('entity')
 	}
 	return 

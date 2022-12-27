@@ -81,6 +81,18 @@ class PlayerManager {
 	get player() {
 		return this._player
 	}
+
+	playerCanPassThrough() {
+		const velocityY = this.player.getSprite().body.velocity.y
+		if (velocityY > 5) {
+			
+			this.player.getSprite().setCollisionGroup(7)
+	
+		} else if (velocityY < -5) {
+
+			this.player.getSprite().setCollisionGroup(-7)
+		}
+	}
 }
 
 

@@ -12,6 +12,7 @@ interface KeyboardKeys {
 	normalSkill: Input.Keyboard.Key
 	baseAttack: Input.Keyboard.Key
 	menu: Input.Keyboard.Key
+	jump: Input.Keyboard.Key
 }
 
 export interface Inputs {
@@ -37,7 +38,8 @@ export class InputManager {
 				right: scene.input.keyboard.addKey('Right'),
 				normalSkill: scene.input.keyboard.addKey('z'),
 				baseAttack: scene.input.keyboard.addKey('x'),
-				menu: scene.input.keyboard.addKey('Esc')
+				menu: scene.input.keyboard.addKey('Esc'),
+				jump: scene.input.keyboard.addKey('Space')
 			}
 		}	
 	}
@@ -59,6 +61,7 @@ export class InputManager {
 		// 	command['jump'](player)
 		// }
 		if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.up)) {
+			//player.getSprite().setCollisionGroup(-7)
 			command['jump'](player)
 		}
 		if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.normalSkill)) {
@@ -72,9 +75,13 @@ export class InputManager {
 			command['menu']()
 		}
 
-		// if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.up)) {
-		// 	commands.get('ArrowUp')!(player)
-		// }
+		if (Phaser.Input.Keyboard.JustDown(this.inputs.keyboard.jump)) {
+			if (this.inputs.keyboard.down.isDown) {
+				command['moveDown'](player)
+			} else {
+				command['jump'](player)
+			}
+		}
 	}
 
 	inputHandler() {

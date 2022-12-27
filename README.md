@@ -11,7 +11,6 @@
 Tiled JSON Tilemap file with:
 
 {
- "height":20,
  "infinite":true,
  "layers":[
         {
@@ -34,6 +33,85 @@ Tiled JSON Tilemap file with:
          "x":0,
          "y":0
         },
+       { 
+       "name":"sprite-objects",
+         "objects":[
+                {
+                 "name":"potion",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"life-potion" | "mana-potion"
+                        }],
+                 "rotation":0,
+                 "visible":true,
+                 "width":0,
+                 "x":847.03,
+                 "y":534.182
+                }, 
+                {
+                 "name":"lotus",
+                 "point":true,
+                 "visible":true,
+                 "x":1
+                 "y":
+                }, 
+               {
+                 "name":"mob",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"lvl",
+                         "type":"int",
+                         "value":
+                        }, 
+                        {
+                         "name":"name",
+                         "type":"string",
+                         "value":""
+                        }],
+                 "visible":true,
+                 "x":,
+                 "y":
+                },
+
+                {
+                 "name":"spawner",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"lvl",
+                         "type":"int",
+                         "value":
+                        }, 
+                        {
+                         "name":"mob",
+                         "type":"string",
+                         "value":""
+                        }, 
+                        {
+                         "name":"qtd",
+                         "type":"int",
+                         "value":
+                        }, 
+                        {
+                         "name":"respawn",
+                         "type":"bool",
+                         "value":
+                        }],
+                 "visible":true,
+                 "x":,
+                 "y":
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        ]
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tilesets":[
@@ -44,6 +122,7 @@ Tiled JSON Tilemap file with:
  "type":"map",
 }
 
+collision object names: passable, kill-sprite
 
 ### To-dos
 - [ ] Itens spwan

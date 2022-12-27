@@ -25,7 +25,6 @@ export default class GameMenu {
 	}
 
 	private openMenu() {
-		//this._scene.scene.pause()
 		this._scene.matter.pause()
 		this._scene.cameras.main.stopFollow()
 		const screenWiew = this._scene.cameras.main.worldView

@@ -135,10 +135,10 @@ export class SpriteEntity {
 		this.sprite.setFixedRotation()
 		this.sprite.setFriction(0)
 		this.sprite.setData('entity', this)
+		
 		//scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
 		//scene.matter.world.on('collisionend', this.verifyCollision.bind(this))
 	}
-
 
 
 	useNormalSkill() {
@@ -174,9 +174,7 @@ export class SpriteEntity {
 	}
 	
 	resetJump({ bodyA, bodyB }: Types.Physics.Matter.MatterCollisionPair) {
-
 		if (!(bodyA.isSensor && bodyB.isSensor)) {
-
 			this.jumps = this.maxJumps
 			this.jumping = false
 		}
@@ -322,11 +320,12 @@ export class Player extends SpriteEntity {
 			const scene = this.sprite.scene
 			const wp = gameItens.get(this.weapon)
 			const x = this.sprite.x + setSide(this.sprite)
-			const weaponSprite = this.sprite.scene.matter.add.sprite(x, this.sprite.y, this.weapon, 0, {ignoreGravity: true})
+			const weaponSprite = this.sprite.scene.matter.add.sprite(x, this.sprite.y, this.weapon, 0, {ignoreGravity: true, isSensor: true})
 			const pointsJoint = {pointA: this.sprite.getCenter(), pointB: weaponSprite.getCenter()} 
 			if (this.sprite.flipX) {weaponSprite.setFlipX(true)}
 			weaponSprite.setFixedRotation()
-			weaponSprite.setCollisionGroup(-2)
+			weaponSprite.setVisible(true)
+			//weaponSprite.setCollisionGroup(-2)
 			const joint = scene.matter.add.joint(weaponSprite.body as BodyType, this.sprite.body as BodyType, 0, 0, pointsJoint)
 			weaponSprite.setOnCollide((pair: Types.Physics.Matter.MatterCollisionPair) => {
 				const entity = extractEntity(pair)

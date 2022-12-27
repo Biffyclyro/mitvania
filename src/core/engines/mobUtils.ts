@@ -14,7 +14,7 @@ export class MobSpawner {
 	private readonly mobController = new MobBehaviorController()
 
 	constructor(private readonly scene: Scene,
-		private readonly obj: Types.Tilemaps.TiledObject) {
+							private readonly obj: Types.Tilemaps.TiledObject) {
 
 		this.mobKey = this.obj.properties[1].value
 		this.mobConfig = mobsConfigMap.get(this.mobKey)!
@@ -28,12 +28,12 @@ export class MobSpawner {
 	}
 
 	private spawnMob(): SpriteEntity {
-		 const rnd = Math.random()
+		const rnd = Math.random()
 		// const mob = new SpriteEntity(1, 25, false, this.mobKey)
 		// mob.velocity = 3
 		// mob.inventory = this.mobConfig.inventory
-		 const distRange = rnd * this.mobConfig.behaveInfos.distance 
-		 const x = rnd > 0.5 ? this.obj.x! + distRange :this.obj.x! + distRange * -1
+		const distRange = rnd * this.mobConfig.behaveInfos.distance 
+		const  x = rnd > 0.5 ? this.obj.x! + distRange : this.obj.x! + distRange * -1
 		// mob.setSprite(this.scene, { x, y: this.obj.y!, width: 23, height: 32 })
 		// mob.behaveor = {distance: 1000, initPos: mob.getSprite().x}
 		// mob.canMove = true
@@ -62,7 +62,7 @@ export class MobSpawner {
 		// 	//}
 		// })
 		const mob = mobFactory(this.scene, this.mobKey, this.mobLvl, x, this.obj.y!)
-		mob.behaveor!.initPos = this.obj.x!
+		mob.behaveor!.initPos = x!
 		return mob
 	}
 
@@ -123,7 +123,6 @@ export const mobFactory = (scene: Scene,
 		mob.behaveor.fly.initHight = y
 		mob.behaveor.fly.speed = Math.random() > 0.5 ? mob.behaveor.fly.speed : mob.behaveor.fly.speed * -1
 	}
-	
 
 	mob.canMove = true
 	rnd > 0.5 ? mob.direction = Direction.Right : mob.direction = Direction.Left
@@ -145,7 +144,9 @@ export const mobFactory = (scene: Scene,
 	// })
 
 	//sprite.setOnCollide(mobController.mobCollisionHandler.bind(mobController))
-	mob.mainBody.onCollideCallback =  mobController.mobCollisionHandler.bind(mobController) 
+	//mob.mainBody.onCollideCallback =  mobController.mobCollisionHandler.bind(mobController) 
+	mob.sensors.left.onCollideCallback = mobController.mobCollisionHandler.bind(mobController)
+	mob.sensors.right.onCollideCallback = mobController.mobCollisionHandler.bind(mobController)
 	return mob
 }
 
@@ -159,19 +160,19 @@ export class MobBehaviorController {
 	}
 
 	moveMob(mob: SpriteEntity) {
-			const sprite = mob.getSprite()
-			if (mob.canMove) {
-				command['move'](mob)
-				if (mob.behaveor?.fly) {
-					this.autoFly(mob)
-				}
-				if (sprite.x >= mob.behaveor!.initPos! + mob.behaveor!.distance) {
-					mob.direction = Direction.Left
-				}
-				if (sprite.x <= mob.behaveor!.initPos! - mob.behaveor!.distance) {
-					mob.direction = Direction.Right
-				}
+		const sprite = mob.getSprite()
+		if (mob.canMove) {
+			command['move'](mob)
+			if (mob.behaveor?.fly) {
+				this.autoFly(mob)
 			}
+			if (sprite.x >= mob.behaveor!.initPos! + mob.behaveor!.distance) {
+				mob.direction = Direction.Left
+			}
+			if (sprite.x <= mob.behaveor!.initPos! - mob.behaveor!.distance) {
+				mob.direction = Direction.Right
+			}
+		}
 	}
 
 	seekPlayer(mob: SpriteEntity)  {
@@ -188,7 +189,7 @@ export class MobBehaviorController {
 		// const body = Bodies.rectangle(0, 0, 23, 32,)
 
 		//mob.mainBody.onCollideCallback = this.mobCollisionHandler.bind(this)
-		sprite.setOnCollide(this.mobCollisionHandler.bind(this))
+		//sprite.setOnCollide(this.mobCollisionHandler.bind(this))
 
 		// const compoundBody = scene.matter.body.create({
 		// 	parts: [body, areaSensor ],
@@ -230,7 +231,6 @@ export class MobBehaviorController {
 				}
 			}
 		}
-
 		mob.sensors.areaSensor!.onCollideActiveCallback = seek 
 	}
 
@@ -241,7 +241,6 @@ export class MobBehaviorController {
 				bodyA.parent.label === 'player' ? hit(bodyA.gameObject.getData('entity')) : hit(bodyB.gameObject.getData('entity'))
 				this.changeDirection(mob)
 			}
-			console.log(mob.sensors.left, bodyA, bodyB)
 			if ((bodyA.isStatic || bodyB.isStatic) ) {
 				this.changeDirection(mob)
 				if (mob.behaveor?.fly) {

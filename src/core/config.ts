@@ -1,4 +1,4 @@
-import Standard from "./scenes/Standard";
+import StandardScene from "./scenes/Standard";
 
 export const windowSize = {
 	width: window.innerWidth,
@@ -8,7 +8,7 @@ export const windowSize = {
 export const phaserConfig = {
 	width: windowSize.width,
 	height: windowSize.height,
-	scene: [Standard],
+	scene: [StandardScene],
 	loader: {
 		path: "../assets/"
 	},

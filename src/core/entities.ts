@@ -386,6 +386,18 @@ export class Player extends SpriteEntity {
 		}
 	}
 
+	playerCanPassThrough() {
+		const velocityY = this.sprite.body.velocity.y
+		if (velocityY > 5) {
+
+			this.sprite.setCollisionGroup(7)
+
+		} else if (velocityY < -5) {
+
+			this.sprite.setCollisionGroup(-7)
+		}
+	}
+
 	drinkPotion(item: Item) {
 		const scene = this.sprite.scene
 		if (item.type === 'life-potion' && item.properties.power) {

@@ -10,13 +10,15 @@ import { extractEntity } from "./entitiesHandler"
 export default class SceneManager{
 	private numLayers = 1 
 	private readonly mainConfig = mainGameConfigManager.config
-	private readonly currentStage: string = saveManager.saveInfos.stage
+	private currentStage: string 
 	private readonly player = playerManager.player
 	private readonly entitiesList: SpriteEntity[] = []
 	private readonly mobSpawners: MobSpawner[] = []
 	private readonly mobController = new MobBehaviorController()
 
-	constructor(private readonly scene: Scene) {}
+	constructor(private readonly scene: Scene) {
+		this.currentStage = mainGameConfigManager.currentStage
+	}
 
 	buildPlayerAnims() {
 		const texture = this.player.baseTexture
@@ -151,6 +153,11 @@ export default class SceneManager{
 			}
 		}) 
 	}
+	
+	stopAllEntities() {
+		this.mobSpawners.forEach(ms => ms.stopAllMobs())
+		this.entitiesList.forEach(e => e.canMove = false)
+	}
 
 	private backgroundManager() {
 		const bg = this.scene.add.image(0, 0, 'background')
@@ -257,9 +264,14 @@ export default class SceneManager{
 			if (objectType === 'kill-sprite') {
 				block.setOnCollide((pair: Types.Physics.Matter.MatterCollisionPair) => {
 					const entity = extractEntity(pair)
-					console.log(entity)
 					 if (entity) {
 						entity.defeat()
+					 }
+				})
+			} else if (objectType === 'gateway') {
+				block.setOnCollide((pair: Types.Physics.Matter.MatterCollisionPair) => {
+					const entity = extractEntity(pair)
+					 if (entity && entity.isPlayer ) {
 					 }
 				})
 			}
@@ -296,19 +308,64 @@ export default class SceneManager{
 	private collisionsManager(collisionsLayer: Tilemaps.ObjectLayer) {
 		collisionsLayer.objects.forEach((obj: Types.Tilemaps.TiledObject) => {
 			const objType = obj.name 
-			if (obj.height === 0 && obj.width === 0) {
-				if (obj.polygon) {
-					this.shapeManager(this.scene.add.polygon(obj.x, obj.y, obj.polygon), objType, obj.ellipse, obj.polygon!)
-				}
+			let shape: GameObjects.Polygon | GameObjects.Rectangle | GameObjects.Ellipse
+			let shapeObject: GameObjects.GameObject 
+			//if (obj.height === 0 && obj.width === 0) {
+			if (obj.polygon) {
+				shape = this.scene.add.polygon(obj.x, obj.y, obj.polygon)
+				//}
+				shapeObject = this.scene.matter.add.gameObject(shape, {
+					shape: {
+						type: 'fromVerts',
+						verts: obj.polygon!,
+						//flagInternal: false
+					},
+					isStatic: true,
+					friction: 0
+				}) 
 
 			} else {
 				if (obj.ellipse) {
-					this.shapeManager(this.scene.add.ellipse(obj.x, obj.y, obj.width, obj.height, 0), objType, obj.ellipse)
+					shape = this.scene.add.ellipse(obj.x, obj.y, obj.width, obj.height, 0)
+					let radius
+					if (shape.width > shape.height) {
+						radius = shape.width
+					} else {
+						radius = shape.height
+					}
+					shapeObject = this.scene.matter.add.gameObject(shape, { circleRadius: radius / 2, isStatic: true })
 				} else {
-					this.shapeManager(this.scene.add.rectangle(obj.x, obj.y, obj.width, obj.height), objType)
+					shape = this.scene.add.rectangle(obj.x, obj.y, obj.width, obj.height)
+					shapeObject = this.scene.matter.add.gameObject(shape, {isStatic: true})
+				}
+			}
+
+			const block = shapeObject.body.gameObject!.setPosition(shape.x + shape.displayOriginX, shape.y + shape.displayOriginY)
+
+			if (obj.name) {
+				if (obj.name === 'passable') {
+					block.setCollisionGroup(-7)
+				} else {
+					block.setCollisionGroup(-2)
+					if (obj.name === 'kill-sprite') {
+						block.setOnCollide((pair: Types.Physics.Matter.MatterCollisionPair) => {
+							const entity = extractEntity(pair)
+							if (entity) {
+								entity.defeat()
+							}
+						})
+					} else if (obj.name === 'gateway') {
+						block.setOnCollide((pair: Types.Physics.Matter.MatterCollisionPair) => {
+							const entity = extractEntity(pair)
+							if (entity && entity.isPlayer) {
+								this.goToRoom(obj.properties[0].value)
+							}
+						})
+					}
 				}
 			}
 		})
+
 	}
 
 	private buildStatusBar() {
@@ -331,6 +388,12 @@ export default class SceneManager{
 		this.scene.events.on('update-life', () => {
 			lifeBar.width = maxBarWidth * this.player.life / this.player.maxLife 
 		})
+	}
+
+	private goToRoom(room: string) {
+		this.currentStage = room
+		this.stopAllEntities()
+		this.scene.scene.start('StandardScene')
 	}
 
 	private setCamera() {

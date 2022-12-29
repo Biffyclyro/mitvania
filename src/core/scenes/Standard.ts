@@ -1,18 +1,18 @@
 import SceneManager from "../engines/SceneManager"
 import { InputManager } from "../engines/inputs"
-import { playerManager, saveManager } from "../global"
+import { mainGameConfigManager, playerManager, saveManager } from "../global"
 import { Player } from "../entities"
 import GameMenu from "../engines/GameMenu"
 
 
-export default class Standard extends Phaser.Scene {
+export default class StandardScene extends Phaser.Scene {
 	private readonly inputManager = new InputManager()
 	private readonly menu = new GameMenu()
 	private readonly sceneManager: SceneManager 
 	private readonly player: Player
 
 	constructor() {
-		super(saveManager.saveInfos.stage)
+		super('StandardScene')
 		this.player = playerManager.player
 		this.sceneManager = new SceneManager(this)
 		this.menu.scene = this
@@ -49,6 +49,6 @@ export default class Standard extends Phaser.Scene {
 	update() {
 		this.inputManager.inputHandler()
 		this.sceneManager.moveEntities()
-		playerManager.playerCanPassThrough()
+		this.player.playerCanPassThrough()
 	}
 }

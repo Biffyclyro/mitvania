@@ -50,6 +50,7 @@ class SaveManager{
 
 class MainGameConfigManager {
 	private _config: MainGameConfig
+	private _currentStage: string 
 
 	get config() {
 		return this._config
@@ -57,6 +58,14 @@ class MainGameConfigManager {
 
 	set config(config: MainGameConfig) {
 		this._config = config
+	}
+
+	get currentStage() {
+		return this._currentStage
+	}
+
+	set currentStage(stage: string) {
+		this._currentStage = stage 
 	}
 }
 
@@ -81,23 +90,11 @@ class PlayerManager {
 	get player() {
 		return this._player
 	}
-
-	playerCanPassThrough() {
-		const velocityY = this.player.getSprite().body.velocity.y
-		if (velocityY > 5) {
-			
-			this.player.getSprite().setCollisionGroup(7)
-	
-		} else if (velocityY < -5) {
-
-			this.player.getSprite().setCollisionGroup(-7)
-		}
-	}
 }
 
 
-export const mainGameConfigManager = new MainGameConfigManager()
 export const saveManager = new SaveManager()
+export const mainGameConfigManager = new MainGameConfigManager()
 export const playerManager =  new PlayerManager()
 
 //lambda de teste menos útil do que parecia quando foi pensada

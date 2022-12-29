@@ -93,6 +93,10 @@ export class MobSpawner {
 			}
 		})
 	}
+	
+	stopAllMobs() {
+		this.moblist.forEach(m => m.canMove = false)
+	}
 }
 
 export const mobFactory = (scene: Scene, 

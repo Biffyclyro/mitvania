@@ -7,7 +7,7 @@ import { MobBehaviorController, mobFactory, MobSpawner } from "./mobUtils"
 import { itemFactory } from "../especials/itens"
 import { extractEntity } from "./entitiesHandler"
 
-export default class SceneManager{
+export default class SceneBuilder{
 	private numLayers = 1 
 	private readonly mainConfig = mainGameConfigManager.config
 	private currentStage: string 
@@ -17,7 +17,9 @@ export default class SceneManager{
 	private readonly mobController = new MobBehaviorController()
 
 	constructor(private readonly scene: Scene) {
-		this.currentStage = mainGameConfigManager.currentStage
+		this.currentStage = saveManager.saveInfos ? 
+												saveManager.saveInfos.stage : 
+												Object.keys( this.mainConfig.stages)[0]
 	}
 
 	buildPlayerAnims() {
@@ -160,7 +162,7 @@ export default class SceneManager{
 	}
 
 	private backgroundManager() {
-		const bg = this.scene.add.image(0, 0, 'background')
+		const bg = this.scene.add.image(0, 0, `${this.currentStage}-background`)
 		bg.setDisplayOrigin(0, 0)
 		bg.setDisplaySize(windowSize.width + windowSize.width / 2, windowSize.height)
 		//bg.setScrollFactor(0.5)
@@ -182,10 +184,10 @@ export default class SceneManager{
 				})
 			})
 		}
-		this.scene.load.image('background', `backgrounds/${this.currentStage}.png`)
-		this.scene.load.image('tiles', `tiles/${this.currentStage}/Tiles2.png`)
+		//this.scene.load.image(`${this.currentStage}-background`, `backgrounds/${this.currentStage}.png`)
+		this.scene.load.image(this.currentStage, `tiles/${this.currentStage}/Tiles.png`)
 		this.scene.load.image('lotus', 'sprites/lotus.png')
-		this.scene.load.tilemapTiledJSON('map', `tiles/${this.currentStage}/tilemap.json`)
+		this.scene.load.tilemapTiledJSON(this.currentStage, `tiles/${this.currentStage}/tilemap.json`)
 		this.scene.load.image('life-potion', 'sprites/life-potion.png' )
 		this.scene.load.image('mana-potion', 'sprites/mana-potion.png' )
 	}
@@ -222,6 +224,7 @@ export default class SceneManager{
 	}
 
 	//metódo mais complexo até o momento
+	//aguardando para ser deletado
 	private shapeManager(shape: GameObjects.Polygon | 
 															GameObjects.Rectangle | 
 															GameObjects.Ellipse, 
@@ -298,7 +301,11 @@ export default class SceneManager{
 						this.buildAllMobsAnims(obj.properties[1].value)
 						this.mobSpawners.push(new MobSpawner(this.scene, obj))	
 					} else if (obj.name === 'potion') {
-						itemFactory(this.scene, obj.x!, obj.y!, obj.properties[0].value )
+						itemFactory(this.scene, obj.x!, obj.y!, obj.properties[0].value)
+					} else if (obj.name === 'item') {
+						const item = itemFactory(this.scene, obj.x!, obj.y!, obj.properties[0].value)
+						item.setFixedRotation()
+						item.setAngle(135)
 					}
 				}
 			})
@@ -393,7 +400,8 @@ export default class SceneManager{
 	private goToRoom(room: string) {
 		this.currentStage = room
 		this.stopAllEntities()
-		this.scene.scene.start('StandardScene')
+		//this.scene.scene.start('StandardScene')
+		this.scene.scene.restart()
 	}
 
 	private setCamera() {
@@ -406,8 +414,8 @@ export default class SceneManager{
 	buildScene() {
 		this.setCamera()
 		const screenWiew = this.scene.cameras.main.worldView
-		const map = this.scene.make.tilemap({ key: 'map' })
-		const tileset = map.addTilesetImage(this.currentStage, 'tiles')
+		const map = this.scene.make.tilemap({ key: this.currentStage })
+		const tileset = map.addTilesetImage(this.currentStage)
 		const collisionsLayer = map.getObjectLayer('collisions')
 		const spriteLayer = map.getObjectLayer('sprite-objects')
 		this.numLayers += map.layers.length

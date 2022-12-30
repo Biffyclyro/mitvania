@@ -1,4 +1,4 @@
-import StandardScene from "./scenes/Standard";
+import StandardScene from "./scenes/StandardScene";
 
 export const windowSize = {
 	width: window.innerWidth,

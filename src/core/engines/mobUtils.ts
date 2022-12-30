@@ -1,3 +1,4 @@
+import { BodyType } from "matter";
 import { Scene, Types } from "phaser";
 import { Direction, Player, SpriteEntity } from "../entities";
 import { MobConfig, mobsConfigMap } from "../especials/mobsConfig";
@@ -148,7 +149,8 @@ export const mobFactory = (scene: Scene,
 	// })
 
 	//sprite.setOnCollide(mobController.mobCollisionHandler.bind(mobController))
-	//mob.mainBody.onCollideCallback =  mobController.mobCollisionHandler.bind(mobController) 
+	mob.getSprite().setCollisionGroup(-5)
+	mob.mainBody.onCollideCallback =  mobController.playerInteraction.bind(mobController) 
 	mob.sensors.left.onCollideCallback = mobController.mobCollisionHandler.bind(mobController)
 	mob.sensors.right.onCollideCallback = mobController.mobCollisionHandler.bind(mobController)
 	return mob
@@ -238,13 +240,24 @@ export class MobBehaviorController {
 		mob.sensors.areaSensor!.onCollideActiveCallback = seek 
 	}
 
-	mobCollisionHandler({ bodyA, bodyB }: Types.Physics.Matter.MatterCollisionPair) {
-			const mob = bodyA.parent.label === 'sprite' ? bodyA.gameObject.getData('entity') : bodyB.gameObject.getData('entity')
-			const hit = (player: Player) => { player.takeDamage(mob.lvl) }
-			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
-				bodyA.parent.label === 'player' ? hit(bodyA.gameObject.getData('entity')) : hit(bodyB.gameObject.getData('entity'))
-				this.changeDirection(mob)
-			}
+	private getMobFromBody(bodyA: BodyType, bodyB: BodyType): SpriteEntity {
+		return bodyA.parent.label === 'sprite' ? bodyA.gameObject.getData('entity') : bodyB.gameObject.getData('entity')
+	}
+
+	playerInteraction( {bodyA, bodyB }: Types.Physics.Matter.MatterCollisionPair) {
+		const mob = this.getMobFromBody(bodyA, bodyB)
+		const hit = (player: Player) => { player.takeDamage(mob.lvl) }
+		if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
+			bodyA.parent.label === 'player' ? hit(bodyA.gameObject.getData('entity')) : hit(bodyB.gameObject.getData('entity'))
+		}
+	}
+
+	mobCollisionHandler({bodyA, bodyB}: Types.Physics.Matter.MatterCollisionPair) {
+			//const { bodyA, bodyB } = pair
+			//const mob = bodyA.parent.label === 'sprite' ? bodyA.gameObject.getData('entity') : bodyB.gameObject.getData('entity')
+			const mob = this.getMobFromBody(bodyA, bodyB)
+			//this.playerInteraction(pair)
+			
 			if ((bodyA.isStatic || bodyB.isStatic) ) {
 				this.changeDirection(mob)
 				if (mob.behaveor?.fly) {

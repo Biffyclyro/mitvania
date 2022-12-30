@@ -69,24 +69,6 @@
                  "width":0,
                  "x":1107.03,
                  "y":607.515
-                }, 
-                {
-                 "class":"",
-                 "height":0,
-                 "id":49,
-                 "name":"item",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"name",
-                         "type":"string",
-                         "value":"sword"
-                        }],
-                 "rotation":0,
-                 "visible":true,
-                 "width":0,
-                 "x":2195,
-                 "y":790.666666666667
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -837,7 +819,7 @@
          "startx":0,
          "starty":0,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":96,
          "x":0,
          "y":0
@@ -1033,7 +1015,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":50,
+ "nextobjectid":49,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",
@@ -1046,7 +1028,7 @@
          "imageheight":384,
          "imagewidth":352,
          "margin":0,
-         "name":"Forest",
+         "name":"Forest-cp",
          "spacing":0,
          "tilecount":132,
          "tileheight":32,

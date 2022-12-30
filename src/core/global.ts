@@ -50,7 +50,6 @@ class SaveManager{
 
 class MainGameConfigManager {
 	private _config: MainGameConfig
-	private _currentStage: string 
 
 	get config() {
 		return this._config
@@ -60,13 +59,6 @@ class MainGameConfigManager {
 		this._config = config
 	}
 
-	get currentStage() {
-		return this._currentStage
-	}
-
-	set currentStage(stage: string) {
-		this._currentStage = stage 
-	}
 }
 
 class PlayerManager {

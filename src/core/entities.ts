@@ -381,7 +381,9 @@ export class Player extends SpriteEntity {
 			this.dropItem(this.normalSkill)
 			this.normalSkill = newItem
 		} else {
-			this.dropItem(this.weapon)
+			if (this.weapon) {
+				this.dropItem(this.weapon)
+			}
 			this.weapon = newItem
 		}
 	}

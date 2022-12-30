@@ -1,33 +1,33 @@
-import SceneManager from "../engines/SceneManager"
 import { InputManager } from "../engines/inputs"
-import { mainGameConfigManager, playerManager, saveManager } from "../global"
+import { playerManager, saveManager } from "../global"
 import { Player } from "../entities"
 import GameMenu from "../engines/GameMenu"
+import SceneBuilder from "../engines/SceneBuilder"
 
 
 export default class StandardScene extends Phaser.Scene {
 	private readonly inputManager = new InputManager()
 	private readonly menu = new GameMenu()
-	private readonly sceneManager: SceneManager 
+	private readonly sceneBuilder : SceneBuilder 
 	private readonly player: Player
 
 	constructor() {
 		super('StandardScene')
 		this.player = playerManager.player
-		this.sceneManager = new SceneManager(this)
+		this.sceneBuilder= new SceneBuilder(this)
 		this.menu.scene = this
 	}
 
 	preload() {
-		this.sceneManager.loadSceneAssets()
-		this.sceneManager.loadPlayerAssets()
+		this.sceneBuilder.loadSceneAssets()
+		this.sceneBuilder.loadPlayerAssets()
 		this.menu.loadMenuAssets()
 	}
 
 	create() {
 		this.inputManager.buildInput(this)
-		this.sceneManager.buildPlayerAnims()
-		this.sceneManager.buildScene()
+		this.sceneBuilder.buildPlayerAnims()
+		this.sceneBuilder.buildScene()
 		if (saveManager.saveInfos.playerStatus) {
 			const {x, y} = saveManager.saveInfos.playerStatus.position
 			this.player.setSprite(this, {x, y, width: 24, height: 32, scale: 1})
@@ -35,7 +35,6 @@ export default class StandardScene extends Phaser.Scene {
 			this.player.setSprite(this, {x: 96, y: 505, width: 24, height: 32, scale: 1})
 		}
 
-		this.player.weapon = 'knife'
 		this.player.normalSkill = 'lightning-bolt'
 
 		this.cameras.main.startFollow(this.player.getSprite(), true, 0.05, 0.05)
@@ -48,7 +47,7 @@ export default class StandardScene extends Phaser.Scene {
 
 	update() {
 		this.inputManager.inputHandler()
-		this.sceneManager.moveEntities()
+		this.sceneBuilder.moveEntities()
 		this.player.playerCanPassThrough()
 	}
 }

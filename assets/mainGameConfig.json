@@ -1,6 +1,6 @@
 {
 	"stages": {
-		"Garden": {
+		"Forest-cp": {
 			"mobs": [
 				"pato"
 			]
@@ -9,6 +9,12 @@
 			"mobs": [
 				"pato"
 			]
+		},
+		"SecretGarden": {
+			"mobs": [
+				"pato"
+			]
 		}
 	}
 }
+

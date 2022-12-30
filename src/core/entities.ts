@@ -218,6 +218,7 @@ export class SpriteEntity {
 		const x = this.sprite.x 
 		const y = this.sprite.y 
 		this.playAnims(`${this.baseTexture}-damage`)
+		this.getSprite().setCollisionGroup(-5)
 		const damage = hit / this.lvl
 		this.life -= damage 
 		if (this.isPlayer) {this.sprite.scene.events.emit('player-damage', damage)}
@@ -227,6 +228,7 @@ export class SpriteEntity {
 		setTimeout(() => {
 			clearInterval(interval)
 			text.destroy()	
+			this.getSprite().setCollisionGroup(5)
 		}, 1000);
 		if (this.life < 1) {
 			this.defeat()	
@@ -389,12 +391,14 @@ export class Player extends SpriteEntity {
 	}
 
 	playerCanPassThrough() {
+		//esse número que permite de forma mais suave o player atravessar blocos atravessáveis, 4 faz um movimento ficar estranho, 5 faz atravessar quando toca em um item
+		const coefficient = 3.9
 		const velocityY = this.sprite.body.velocity.y
-		if (velocityY > 5) {
+		if (velocityY > coefficient) {
 
 			this.sprite.setCollisionGroup(7)
 
-		} else if (velocityY < -5) {
+		} else if (velocityY < -coefficient) {
 
 			this.sprite.setCollisionGroup(-7)
 		}

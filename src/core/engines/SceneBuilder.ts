@@ -175,7 +175,7 @@ export default class SceneBuilder{
 			mobs.forEach(m => {
 				const mobConfig = mobsConfigMap.get(m)!
 				//this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 48 ,frameHeight:32})
-				this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 43,frameHeight:64 })
+				this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 64,frameHeight:64 })
 				if (mobConfig.skill) {
 					this.scene.load.spritesheet(mobConfig.skill, `sprites/skills/${mobConfig.skill}.png`)
 				} 
@@ -184,7 +184,7 @@ export default class SceneBuilder{
 				})
 			})
 		}
-		//this.scene.load.image(`${this.currentStage}-background`, `backgrounds/${this.currentStage}.png`)
+		this.scene.load.image(`${this.currentStage}-background`, `backgrounds/${this.currentStage}.png`)
 		this.scene.load.image(this.currentStage, `tiles/${this.currentStage}/Tiles.png`)
 		this.scene.load.image('lotus', 'sprites/lotus.png')
 		this.scene.load.tilemapTiledJSON(this.currentStage, `tiles/${this.currentStage}/tilemap.json`)
@@ -314,7 +314,7 @@ export default class SceneBuilder{
 
 	private collisionsManager(collisionsLayer: Tilemaps.ObjectLayer) {
 		collisionsLayer.objects.forEach((obj: Types.Tilemaps.TiledObject) => {
-			const objType = obj.name 
+			//const objType = obj.name 
 			let shape: GameObjects.Polygon | GameObjects.Rectangle | GameObjects.Ellipse
 			let shapeObject: GameObjects.GameObject 
 			//if (obj.height === 0 && obj.width === 0) {
@@ -367,6 +367,7 @@ export default class SceneBuilder{
 							if (entity && entity.isPlayer) {
 								this.goToRoom(obj.properties[0].value)
 							}
+
 						})
 					}
 				}
@@ -377,10 +378,16 @@ export default class SceneBuilder{
 
 	private buildStatusBar() {
 		const maxBarWidth = 200
-		const sectionLife = this.player.life / this.player.maxLife
-		const sectionMana = this.player.mana/ this.player.maxMana
-		const lifeBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5, maxBarWidth * sectionLife, 5, 50000)
-		const manaBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5 + 10, maxBarWidth  * sectionMana, 5, 5000)
+		// const sectionLife = this.player.life / this.player.maxLife
+		// const sectionMana = this.player.mana/ this.player.maxMana
+		// const lifeBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5, maxBarWidth * sectionLife, 5, 50000)
+		// const manaBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5 + 10, maxBarWidth  * sectionMana, 5, 5000)
+
+		const lifeBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5, 0, 5, 50000)
+		const manaBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5 + 10, 0, 5, 5000)
+
+		lifeBar.width = maxBarWidth * this.player.life / this.player.maxLife 
+		manaBar.width = maxBarWidth *  this.player.mana / this.player.maxMana
 		lifeBar.setScrollFactor(0)
 		manaBar.setScrollFactor(0)
 		this.scene.events.on('player-damage', (damage: number) => {
@@ -432,7 +439,9 @@ export default class SceneBuilder{
 		this.spriteLayerManager(spriteLayer)
 		this.buildStatusBar()
 		
-		const stageName = this.scene.add.text(screenWiew.centerX, screenWiew.centerY /2, this.currentStage )
+		//const stageName = this.scene.add.text(screenWiew.centerX, screenWiew.centerY /2, this.currentStage )
+		const stageName = this.scene.add.text(windowSize.width/2, windowSize.height/2, this.currentStage )
+		console.log(stageName)
 		this.scene.matter.pause()
 		stageName.setOrigin(0.5)
 		stageName.setScrollFactor(0, 0)

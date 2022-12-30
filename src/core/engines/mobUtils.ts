@@ -115,10 +115,10 @@ export const mobFactory = (scene: Scene,
 	mob.behaveor = mobConfigs.behaveInfos
 
 	if (mob.behaveor.seekPlayer) {
-		mob.setSprite(scene, { x, y, width: 23, height: 32 }, mob.behaveor.distance / 3)
+		mob.setSprite(scene, { x, y, width: 23, height: 64 }, mob.behaveor.distance / 3)
 		mobController.seekPlayer(mob)
 	} else {
-		mob.setSprite(scene, { x, y, width: 23, height: 32 })
+		mob.setSprite(scene, { x, y, width: 23, height: 64 })
 	}
 
 	const sprite = mob.getSprite()

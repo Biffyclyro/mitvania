@@ -6,7 +6,35 @@
          "draworder":"topdown",
          "id":3,
          "name":"sprite-objects",
-         "objects":[],
+         "objects":[
+                {
+                 "class":"",
+                 "height":0,
+                 "id":6,
+                 "name":"boss",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"lvl",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"name",
+                         "type":"string",
+                         "value":"snake"
+                        }, 
+                        {
+                         "name":"size",
+                         "type":"int",
+                         "value":3
+                        }],
+                 "rotation":0,
+                 "visible":true,
+                 "width":0,
+                 "x":746,
+                 "y":442.333333333333
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -26,8 +54,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":1023.88,
-                 "x":-0.764917100443483,
-                 "y":522.487203585888
+                 "x":-0.764917,
+                 "y":522.487
                 }, 
                 {
                  "class":"",
@@ -62,8 +90,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":1009.39239707661,
-                 "y":522.627264191948
+                 "x":1009.39,
+                 "y":522.627
                 }, 
                 {
                  "class":"",
@@ -79,8 +107,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":64.25,
-                 "x":1151.46212121212,
-                 "y":479.393939393939
+                 "x":1151.46,
+                 "y":479.394
                 }, 
                 {
                  "class":"",
@@ -90,8 +118,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":314.5,
-                 "x":258.583333333333,
-                 "y":474.291666666667
+                 "x":258.583,
+                 "y":474.292
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -370,7 +398,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":6,
+ "nextobjectid":7,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",

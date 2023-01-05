@@ -47,11 +47,11 @@ mobsConfigMap.set('pato',{
 			})
 
 mobsConfigMap.set('snake',{
-													skill: '',
+													skill: 'test',
 													inventory: ['sword'],
 													behaveInfos: {
 														distance: 1000,
-														seekPlayer:false,
+														seekPlayer:true,
 														// fly: {
 														// 	distance: 150,
 														// 	speed: 3

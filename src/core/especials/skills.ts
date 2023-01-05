@@ -53,3 +53,5 @@ export const skillsMap = new Map<string, Skill>()
 skillsMap.set('fire-ball', (se: SpriteEntity) => throwableSkill(se, 'fire-ball', 8, 5, 3))
 
 skillsMap.set('lightning-bolt', (se: SpriteEntity) => throwableSkill(se, 'lightning-bolt', 10, 3, 1))
+
+skillsMap.set('test',  (se: SpriteEntity ) => console.log('atacou'))

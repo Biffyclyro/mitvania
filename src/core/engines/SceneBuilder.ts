@@ -92,7 +92,7 @@ export default class SceneBuilder{
 		const {x, y} = obj
 		const mobKey = obj.properties[1].value
 		const lvl = obj.properties[0].value
-		const mob = mobFactory(this.scene, mobKey, lvl, x!, y!)
+		const mob = mobFactory(this.scene, mobKey, lvl, x!, y!, obj.properties[2] ? obj.properties[2].value : 0)
 		mob.behaveor!.initPos = x
 		// const rnd = Math.random()
 		// const mobKey = obj.properties[0].value
@@ -306,6 +306,9 @@ export default class SceneBuilder{
 						const item = itemFactory(this.scene, obj.x!, obj.y!, obj.properties[0].value)
 						item.setFixedRotation()
 						item.setAngle(135)
+					} else if (obj.name === 'boss') {
+						this.buildAllMobsAnims(obj.properties[1].value)
+						this.spawnMob(obj)
 					}
 				}
 			})

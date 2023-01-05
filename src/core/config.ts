@@ -14,10 +14,10 @@ export const phaserConfig = {
 	},
 	physics: {
 		default: 'matter',
-		// matter: {
-		// 	debug: {
-		// 		showBody: true,
-		// 	}
-		// }
+		matter: {
+			debug: {
+				showBody: true,
+			}
+		}
 	}
 }

@@ -104,7 +104,8 @@ export const mobFactory = (scene: Scene,
 													 mobKey: string,
 													 lvl: number,
 													 x: number,
-													 y: number): SpriteEntity => {
+													 y: number,
+													 scale = 0): SpriteEntity => {
 
 	const rnd = Math.random()
 	const mobConfigs = mobsConfigMap.get(mobKey)!
@@ -115,10 +116,10 @@ export const mobFactory = (scene: Scene,
 	mob.behaveor = mobConfigs.behaveInfos
 
 	if (mob.behaveor.seekPlayer) {
-		mob.setSprite(scene, { x, y, width: 23, height: 64 }, mob.behaveor.distance / 3)
+		mob.setSprite(scene, { x, y, width: 23, height: 64, scale }, mob.behaveor.distance / 3)
 		mobController.seekPlayer(mob)
 	} else {
-		mob.setSprite(scene, { x, y, width: 23, height: 64 })
+		mob.setSprite(scene, { x, y, width: 23, height: 64, scale})
 	}
 
 	const sprite = mob.getSprite()
@@ -228,9 +229,9 @@ export class MobBehaviorController {
 			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
 				const playerSprite = playerManager.player.getSprite()
 				if (playerSprite && sprite &&  mob.alive) {
-					if (playerSprite.x > sprite.x) {
+					if (playerSprite.x > sprite.x + 40) {
 						mob.direction = Direction.Right
-					} else if (playerSprite.x < sprite.x) {
+					} else if (playerSprite.x < sprite.x - 40) {
 
 						mob.direction = Direction.Left
 					}
@@ -273,6 +274,12 @@ export class MobBehaviorController {
 		}
 		if (mob.direction === Direction.Left && velocityX < 0) {
 			mob.direction = Direction.Right
+		}
+	}
+
+	combatManager(se: SpriteEntity) {
+		while (se.alive) {
+			setTimeout(se.useNormalSkill, Math.random() * 100 )
 		}
 	}
 

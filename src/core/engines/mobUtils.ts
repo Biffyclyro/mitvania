@@ -118,6 +118,7 @@ export const mobFactory = (scene: Scene,
 	if (mob.behaveor.seekPlayer) {
 		mob.setSprite(scene, { x, y, width: 23, height: 64, scale }, mob.behaveor.distance / 3)
 		mobController.seekPlayer(mob)
+
 	} else {
 		mob.setSprite(scene, { x, y, width: 23, height: 64, scale})
 	}
@@ -159,6 +160,7 @@ export const mobFactory = (scene: Scene,
 
 export class MobBehaviorController {
 	private static readonly INSTANCE = new MobBehaviorController()
+	private readonly mobs: {mob: SpriteEntity, attacksList: string[]}[] = []
 
 	constructor() {
 		if (MobBehaviorController.INSTANCE) {
@@ -227,6 +229,7 @@ export class MobBehaviorController {
 		// })
 		const seek = ({ bodyA, bodyB }: Types.Physics.Matter.MatterCollisionPair) => {
 			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
+				setTimeout(this.combatManager, Math.random() * 5000)
 				const playerSprite = playerManager.player.getSprite()
 				if (playerSprite && sprite &&  mob.alive) {
 					if (playerSprite.x > sprite.x + 40) {
@@ -278,9 +281,7 @@ export class MobBehaviorController {
 	}
 
 	combatManager(se: SpriteEntity) {
-		while (se.alive) {
-			setTimeout(se.useNormalSkill, Math.random() * 100 )
-		}
+		 console.log('atacou')
 	}
 
 	autoFly(se: SpriteEntity) {

@@ -1,5 +1,5 @@
-import { GameObjects, Scene } from "phaser"
 import { playerManager } from "../global"
+import { GameObjects, Scene } from "phaser"
 
 export default class GameMenu {
 	private _scene: Scene 

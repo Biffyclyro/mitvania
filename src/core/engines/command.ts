@@ -1,5 +1,5 @@
-import { Direction, Player, SpriteEntity } from "../entities"
 import GameMenu from "./GameMenu"
+import { Direction, Player, SpriteEntity } from "../entities"
 
 const menu = new GameMenu()
 
@@ -13,7 +13,6 @@ export const command = {
 	},
 
 	'moveDown': (sprite: SpriteEntity) => {
-		console.log('blalbla bla')
 		sprite.getSprite().setCollisionGroup(-7)
 	},
 
@@ -41,7 +40,5 @@ export const command = {
 		sprite.attack()
 	},
 	
-	'menu': () => {
-		menu.commandHandler()
-	}
+	'menu': menu.commandHandler.bind(menu)
 }

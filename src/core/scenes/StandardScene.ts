@@ -1,20 +1,20 @@
-import { InputManager } from "../engines/inputs"
-import { playerManager, saveManager } from "../global"
 import { Player } from "../entities"
 import GameMenu from "../engines/GameMenu"
+import { InputManager } from "../engines/inputs"
 import SceneBuilder from "../engines/SceneBuilder"
+import { playerManager, saveManager } from "../global"
 
 
 export default class StandardScene extends Phaser.Scene {
 	private readonly inputManager = new InputManager()
 	private readonly menu = new GameMenu()
-	private readonly sceneBuilder : SceneBuilder 
+	private readonly sceneBuilder: SceneBuilder 
 	private readonly player: Player
 
 	constructor() {
 		super('StandardScene')
 		this.player = playerManager.player
-		this.sceneBuilder= new SceneBuilder(this)
+		this.sceneBuilder = new SceneBuilder(this)
 		this.menu.scene = this
 	}
 

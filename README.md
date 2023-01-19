@@ -125,7 +125,7 @@ Tiled JSON Tilemap file with:
 collision object names: passable, kill-sprite
 
 ### To-dos
-- [ ] Itens spwan
+- [X] Itens spawn 
 - [ ] Save dialog box
 - [ ] Menus
 - [x] Drop itens/skills from mobs
@@ -135,11 +135,12 @@ collision object names: passable, kill-sprite
 - [ ] Flying mobs
 - [x] Load all the assets dynamically
 - [ ] Make all the tilesets and sprites
+- [X] Attacking mobs
 - [X] XP system
 - [X] Mob Factory
 - [ ] HUD
 - [X] Mobs follow player
-- [ ] Player status control
+- [X] Player status control
 - [ ] Aura
 - [ ] All inputs other than the keyboard
 - [ ] AIs

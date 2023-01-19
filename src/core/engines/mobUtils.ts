@@ -1,9 +1,10 @@
 import { BodyType } from "matter";
+import { command } from "./command";
 import { Scene, Types } from "phaser";
+import { playerManager } from "../global";
 import { Direction, Player, SpriteEntity } from "../entities";
 import { MobConfig, mobsConfigMap } from "../especials/mobsConfig";
-import { playerManager } from "../global";
-import { command } from "./command";
+
 
 export class MobSpawner {
 	private readonly moblist: SpriteEntity[] = []
@@ -131,6 +132,16 @@ export const mobFactory = (scene: Scene,
 		mob.behaveor.fly.speed = Math.random() > 0.5 ? mob.behaveor.fly.speed : mob.behaveor.fly.speed * -1
 	}
 
+	if ( mobConfigs.skill) {
+		mob.normalSkill = mobConfigs.skill
+		//mobController.setAttack(mob)
+	}
+
+	if (mobConfigs.specialSkill) {
+		mob.specialSkill = mobConfigs.specialSkill
+		//mobController.setAttack(mob)
+	}
+
 	mob.canMove = true
 	rnd > 0.5 ? mob.direction = Direction.Right : mob.direction = Direction.Left
 	//sprite.setCollisionGroup(-5)
@@ -160,7 +171,6 @@ export const mobFactory = (scene: Scene,
 
 export class MobBehaviorController {
 	private static readonly INSTANCE = new MobBehaviorController()
-	private readonly mobs: {mob: SpriteEntity, attacksList: string[]}[] = []
 
 	constructor() {
 		if (MobBehaviorController.INSTANCE) {
@@ -170,7 +180,7 @@ export class MobBehaviorController {
 
 	moveMob(mob: SpriteEntity) {
 		const sprite = mob.getSprite()
-		if (mob.canMove) {
+		if (mob.canMove && !mob.attacking) {
 			command['move'](mob)
 			if (mob.behaveor?.fly) {
 				this.autoFly(mob)
@@ -227,15 +237,18 @@ export class MobBehaviorController {
 		// 		areaSensor.destroy()
 		// 	}
 		// })
+		const mobAgro = {
+			mob: mob,
+			agro: false
+		}
 		const seek = ({ bodyA, bodyB }: Types.Physics.Matter.MatterCollisionPair) => {
 			if (bodyA.parent.label === 'player' || bodyB.parent.label === 'player') {
-				setTimeout(this.combatManager, Math.random() * 5000)
+				this.combatManager(mobAgro)
 				const playerSprite = playerManager.player.getSprite()
 				if (playerSprite && sprite &&  mob.alive) {
 					if (playerSprite.x > sprite.x + 40) {
 						mob.direction = Direction.Right
 					} else if (playerSprite.x < sprite.x - 40) {
-
 						mob.direction = Direction.Left
 					}
 				}
@@ -280,8 +293,19 @@ export class MobBehaviorController {
 		}
 	}
 
-	combatManager(se: SpriteEntity) {
-		 console.log('atacou')
+	combatManager(mobAgro: {mob: SpriteEntity, agro: boolean}) {
+		if (!mobAgro.agro) {
+			mobAgro.agro = true
+			const interval =  setInterval(() => {
+				mobAgro.mob.getSprite().setVelocity(0,0)
+				mobAgro.mob.useNormalSkill()
+			}, 5000)
+
+			mobAgro.mob.sensors.areaSensor!.onCollideEndCallback = () => {
+				clearInterval(interval)
+				mobAgro.agro = false
+			}
+		}
 	}
 
 	autoFly(se: SpriteEntity) {

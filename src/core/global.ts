@@ -58,7 +58,6 @@ class MainGameConfigManager {
 	set config(config: MainGameConfig) {
 		this._config = config
 	}
-
 }
 
 class PlayerManager {

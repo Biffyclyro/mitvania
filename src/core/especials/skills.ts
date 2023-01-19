@@ -1,6 +1,6 @@
 import { Physics, Types } from "phaser"
-import { extractEntity } from "../engines/entitiesHandler"
 import { SpriteEntity } from "../entities"
+import { extractEntity } from "../engines/entitiesHandler"
 
 interface Skill {
 	(se: SpriteEntity): void
@@ -10,7 +10,28 @@ export const setSide = (sprite: Physics.Matter.Sprite): number => {
 	return sprite.flipX ? - sprite.width/2 - 1 : sprite.width/2 + 1
 }
 
-const throwableSkill = (se: SpriteEntity, texture: string, velocity: number, damage: number, manaCost: number) => {
+const areaSkill = (se: SpriteEntity, 
+												texture: string, 
+												velocity: number, 
+												damage: number, 
+												manaCost: number,
+												conjurationTime: number) => {
+
+	se.attacking = true	
+	setTimeout(() => se.attacking = false, conjurationTime)
+}
+
+const throwableSkill = (se: SpriteEntity, 
+												texture: string, 
+												velocity: number, 
+												damage: number, 
+												manaCost: number,
+												conjurationTime: number ) => {
+
+	se.attacking = true
+
+	setTimeout(() => se.attacking = false, conjurationTime)
+
 	const sprite = se.getSprite()
 	if (se.mana - manaCost >= 0) {
 		if (se.isPlayer) {
@@ -48,10 +69,11 @@ const throwableSkill = (se: SpriteEntity, texture: string, velocity: number, dam
 	}
 }
 
+
 export const skillsMap = new Map<string, Skill>()
 
-skillsMap.set('fire-ball', (se: SpriteEntity) => throwableSkill(se, 'fire-ball', 8, 5, 3))
+skillsMap.set('fire-ball', (se: SpriteEntity) => throwableSkill(se, 'fire-ball', 8, 5, 3, 100))
 
-skillsMap.set('lightning-bolt', (se: SpriteEntity) => throwableSkill(se, 'lightning-bolt', 10, 3, 1))
+skillsMap.set('lightning-bolt', (se: SpriteEntity) => throwableSkill(se, 'lightning-bolt', 10, 3, 1, 50))
 
 skillsMap.set('test',  (se: SpriteEntity ) => console.log('atacou'))

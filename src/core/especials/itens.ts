@@ -1,6 +1,6 @@
+import { Item } from "../entities";
 import { Physics, Scene, Types } from "phaser";
 import { extractEntity } from "../engines/entitiesHandler";
-import { Item } from "../entities";
 
 
 export const itemFactory = (scene: Scene, x: number, y: number, itemKey: string, volatile = false): Physics.Matter.Image => {
@@ -46,11 +46,11 @@ gameItens.set('life-potion', {type: 'life-potion',
 															dropRate: 0.1})
 
 gameItens.set('sword', {type: 'weapon',
-												description: 'item de teste',
+												description: 'Standard sword',
 												properties: {dmg: 10, atkInterval: 0.3},
 												dropRate: 0.1	})
 
 gameItens.set('knife', {type: 'weapon',
-												description: 'item de teste',
+												description: 'Standard knfe',
 												properties: {dmg: 5, atkInterval: 0.8},
 												dropRate: 0.1	})

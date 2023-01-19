@@ -60,12 +60,13 @@ export class SpriteEntity {
 	jumps = this.maxJumps
 	velocity = 6
 	normalSkill: string = ''
+	specialSkill: string = ''
 	inventory: string[] = []
 	attacking = false
-	maxMana: number 
+	maxMana: number
 	life: number
-	maxLife: number 
-	mana: number 
+	maxLife: number
+	mana: number
 	xp: number
 	alive = true
 	behaveor: BehaviorInfos | undefined
@@ -143,7 +144,7 @@ export class SpriteEntity {
 
 	useNormalSkill() {
 		const skill = skillsMap.get(this.normalSkill)
-		if (skill && this.canMove) {
+		if (skill && this.canMove && !this.attacking) {
 			skill(this)
 		}
 	}
@@ -287,7 +288,6 @@ export class SpriteEntity {
 export class Player extends SpriteEntity {
 	//sensors: Sensors
 	//mainBody: BodyType
-	specialSkill: string = ''
 	weapon: string 
 	
 	collectXp(xp: number) {

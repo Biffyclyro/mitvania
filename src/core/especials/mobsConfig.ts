@@ -1,5 +1,6 @@
 export interface MobConfig {
-	skill: string
+	skill?: string
+	specialSkill?: string
 	inventory: string[] 
 	behaveInfos: BehaviorInfos,
 	velocity: number
@@ -46,8 +47,7 @@ mobsConfigMap.set('pato',{
 													velocity: 3
 			})
 
-mobsConfigMap.set('snake',{
-													skill: 'test',
+mobsConfigMap.set('snake',{skill: 'fire-ball',
 													inventory: ['sword'],
 													behaveInfos: {
 														distance: 1000,

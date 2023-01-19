@@ -175,9 +175,9 @@ export default class SceneBuilder{
 			mobs.forEach(m => {
 				const mobConfig = mobsConfigMap.get(m)!
 				//this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 48 ,frameHeight:32})
-				this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 64,frameHeight:64 })
+				this.scene.load.spritesheet(m, `sprites/mobs/${m}.png`,  {frameWidth: 64,frameHeight:64 })
 				if (mobConfig.skill) {
-					this.scene.load.spritesheet(mobConfig.skill, `sprites/skills/${mobConfig.skill}.png`)
+					this.scene.load.spritesheet(mobConfig.skill, `sprites/skills/${mobConfig.skill}.png`, {frameWidth: 16, frameHeight: 16})
 				} 
 				mobConfig.inventory.forEach(item => {
 					this.scene.load.spritesheet(item, `sprites/itens/${item}.png`, {frameWidth: 24, frameHeight: 16})
@@ -370,7 +370,6 @@ export default class SceneBuilder{
 							if (entity && entity.isPlayer) {
 								this.goToRoom(obj.properties[0].value)
 							}
-
 						})
 					}
 				}
@@ -386,8 +385,8 @@ export default class SceneBuilder{
 		// const lifeBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5, maxBarWidth * sectionLife, 5, 50000)
 		// const manaBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5 + 10, maxBarWidth  * sectionMana, 5, 5000)
 
-		const lifeBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5, 0, 5, 50000)
-		const manaBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5 + 10, 0, 5, 5000)
+		const lifeBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5, 0, 5, 100085000)
+		const manaBar = this.scene.add.rectangle(windowSize.width/4, windowSize.height/5 + 10, 0, 5, 300000)
 
 		lifeBar.width = maxBarWidth * this.player.life / this.player.maxLife 
 		manaBar.width = maxBarWidth *  this.player.mana / this.player.maxMana
@@ -444,7 +443,6 @@ export default class SceneBuilder{
 		
 		//const stageName = this.scene.add.text(screenWiew.centerX, screenWiew.centerY /2, this.currentStage )
 		const stageName = this.scene.add.text(windowSize.width/2, windowSize.height/2, this.currentStage )
-		console.log(stageName)
 		this.scene.matter.pause()
 		stageName.setOrigin(0.5)
 		stageName.setScrollFactor(0, 0)

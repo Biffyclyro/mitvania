@@ -52,10 +52,10 @@ mobsConfigMap.set('snake',{skill: 'fire-ball',
 													behaveInfos: {
 														distance: 1000,
 														seekPlayer:true,
-														// fly: {
-														// 	distance: 150,
-														// 	speed: 3
-														// }
+														fly: {
+															distance: 150,
+															speed: 3
+														}
 													},
 													velocity: 3
 			})

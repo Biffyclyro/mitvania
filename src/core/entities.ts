@@ -73,7 +73,7 @@ export class SpriteEntity {
 	sensors: Sensors
 	mainBody: BodyType
 	protected sprite: Physics.Matter.Sprite
-	constructor(
+	constructor (
 		public lvl: number,
 		public def: number,
 		public isPlayer: boolean,
@@ -230,7 +230,7 @@ export class SpriteEntity {
 			clearInterval(interval)
 			text.destroy()	
 			this.getSprite().setCollisionGroup(5)
-		}, 1000);
+		}, 1000)
 		if (this.life < 1) {
 			this.defeat()	
 			//this.canMove = false
@@ -392,15 +392,17 @@ export class Player extends SpriteEntity {
 
 	playerCanPassThrough() {
 		//esse número que permite de forma mais suave o player atravessar blocos atravessáveis, 4 faz um movimento ficar estranho, 5 faz atravessar quando toca em um item
-		const coefficient = 3.9
-		const velocityY = this.sprite.body.velocity.y
-		if (velocityY > coefficient) {
+		if (this.canMove) {
+			const coefficient = 3.9
+			const velocityY = this.sprite.body.velocity.y
+			if (velocityY > coefficient) {
 
-			this.sprite.setCollisionGroup(7)
+				this.sprite.setCollisionGroup(7)
 
-		} else if (velocityY < -coefficient) {
+			} else if (velocityY < -coefficient) {
 
-			this.sprite.setCollisionGroup(-7)
+				this.sprite.setCollisionGroup(-7)
+			}
 		}
 	}
 

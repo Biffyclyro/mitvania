@@ -15,11 +15,16 @@ export default class SceneBuilder{
 	private readonly entitiesList: SpriteEntity[] = []
 	private readonly mobSpawners: MobSpawner[] = []
 	private readonly mobController = new MobBehaviorController()
+	private map: Tilemaps.Tilemap
+	private spriteLayer: Tilemaps.ObjectLayer 
+	//private tileset: Tilemaps.Tileset
 
 	constructor(private readonly scene: Scene) {
 		this.currentStage = saveManager.saveInfos ? 
 												saveManager.saveInfos.stage : 
-												Object.keys( this.mainConfig.stages)[0]
+												//Object.keys( this.mainConfig.stages)[0]
+												'Forest'
+		
 	}
 
 	buildPlayerAnims() {
@@ -168,28 +173,56 @@ export default class SceneBuilder{
 		//bg.setScrollFactor(0.5)
 		this.setParallax(bg)
 	}
+	
 
 	loadSceneAssets() {
-		const mobs = this.mainConfig.stages[this.currentStage].mobs
-		if (mobs) { 
-			mobs.forEach(m => {
-				const mobConfig = mobsConfigMap.get(m)!
-				//this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 48 ,frameHeight:32})
-				this.scene.load.spritesheet(m, `sprites/mobs/${m}.png`,  {frameWidth: 64,frameHeight:64 })
-				if (mobConfig.skill) {
-					this.scene.load.spritesheet(mobConfig.skill, `sprites/skills/${mobConfig.skill}.png`, {frameWidth: 16, frameHeight: 16})
-				} 
-				mobConfig.inventory.forEach(item => {
-					this.scene.load.spritesheet(item, `sprites/itens/${item}.png`, {frameWidth: 24, frameHeight: 16})
-				})
-			})
-		}
-		this.scene.load.image(`${this.currentStage}-background`, `backgrounds/${this.currentStage}.png`)
 		this.scene.load.image(this.currentStage, `tiles/${this.currentStage}/Tiles.png`)
-		this.scene.load.image('lotus', 'sprites/lotus.png')
 		this.scene.load.tilemapTiledJSON(this.currentStage, `tiles/${this.currentStage}/tilemap.json`)
-		this.scene.load.image('life-potion', 'sprites/life-potion.png' )
-		this.scene.load.image('mana-potion', 'sprites/mana-potion.png' )
+		this.scene.load.image(`${this.currentStage}-background`, `backgrounds/${this.currentStage}.png`)
+		this.scene.load.image('lotus', 'sprites/lotus.png')
+		this.scene.load.image('life-potion', 'sprites/life-potion.png')
+		this.scene.load.image('mana-potion', 'sprites/mana-potion.png')
+		//essa parte carrega os assets dinamicamente baseado no json do tilemap, se não quebrar será a solução ideal
+		this.scene.load.on('filecomplete', (key: string, type: string, obj: Tilemaps.Tilemap) => {
+			if (type === 'tilemapJSON') {
+				this.map = this.scene.make.tilemap({ key: this.currentStage })
+				this.spriteLayer = this.map.getObjectLayer('sprite-objects')
+				this.spriteLayer.objects.forEach(obj => {
+					const objType = obj.name
+
+					switch (objType) {
+						case 'mob': case 'spawner':
+							const mobName = obj.properties[1].value
+							const mobConfig = mobsConfigMap.get(mobName)!
+							//this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 48 ,frameHeight:32})
+							this.scene.load.spritesheet(mobName, `sprites/mobs/${mobName}.png`, { frameWidth: 64, frameHeight: 64 })
+							if (mobConfig.skill) {
+								this.scene.load.spritesheet(mobConfig.skill, `sprites/skills/${mobConfig.skill}.png`, { frameWidth: 16, frameHeight: 16 })
+							}
+							mobConfig.inventory.forEach(item => {
+								this.scene.load.spritesheet(item, `sprites/itens/${item}.png`, { frameWidth: 24, frameHeight: 16 })
+							})
+							break
+					}
+				})
+			}
+		})
+
+		// const mobs = this.mainConfig.stages[this.currentStage].mobs
+		// if (mobs) { 
+		// 	mobs.forEach(m => {
+		// 		const mobConfig = mobsConfigMap.get(m)!
+		// 		//this.scene.load.spritesheet(m, `sprites/${m}.png`,  {frameWidth: 48 ,frameHeight:32})
+		// 		this.scene.load.spritesheet(m, `sprites/mobs/${m}.png`,  {frameWidth: 64,frameHeight:64 })
+		// 		if (mobConfig.skill) {
+		// 			this.scene.load.spritesheet(mobConfig.skill, `sprites/skills/${mobConfig.skill}.png`, {frameWidth: 16, frameHeight: 16})
+		// 		} 
+		// 		mobConfig.inventory.forEach(item => {
+		// 			this.scene.load.spritesheet(item, `sprites/itens/${item}.png`, {frameWidth: 24, frameHeight: 16})
+		// 		})
+		// 	})
+		// }
+	
 	}
 
 	loadPlayerAssets() {
@@ -289,7 +322,7 @@ export default class SceneBuilder{
 
 	private spriteLayerManager(spriteLayer: Tilemaps.ObjectLayer) {
 		if (spriteLayer) {
-			spriteLayer.objects.forEach((obj: Types.Tilemaps.TiledObject) => {
+			this.spriteLayer.objects.forEach((obj: Types.Tilemaps.TiledObject) => {
 				if (obj.point) {
 					//if (obj.properties && obj.properties[0].name === 'mob') {
 					if (obj.name === 'mob') {
@@ -298,7 +331,7 @@ export default class SceneBuilder{
 					} else if (obj.name === 'lotus') {
 						this.buildSaveLotus(obj)
 					} else if (obj.name === 'spawner') {
-						this.buildAllMobsAnims(obj.properties[1].value)
+					//	this.buildAllMobsAnims(obj.properties[1].value)
 						this.mobSpawners.push(new MobSpawner(this.scene, obj))	
 					} else if (obj.name === 'potion') {
 						itemFactory(this.scene, obj.x!, obj.y!, obj.properties[0].value)
@@ -409,6 +442,7 @@ export default class SceneBuilder{
 	private goToRoom(room: string) {
 		this.currentStage = room
 		this.stopAllEntities()
+		this.scene.cache.tilemap.remove(this.currentStage)
 		//this.scene.scene.start('StandardScene')
 		this.scene.scene.restart()
 	}
@@ -423,22 +457,21 @@ export default class SceneBuilder{
 	buildScene() {
 		this.setCamera()
 		const screenWiew = this.scene.cameras.main.worldView
-		const map = this.scene.make.tilemap({ key: this.currentStage })
-		const tileset = map.addTilesetImage(this.currentStage)
-		const collisionsLayer = map.getObjectLayer('collisions')
-		const spriteLayer = map.getObjectLayer('sprite-objects')
-		this.numLayers += map.layers.length
+		const collisionsLayer = this.map.getObjectLayer('collisions')
+		this.numLayers += this.map.layers.length
 		this.backgroundManager()
+
+		const tileset = this.map.addTilesetImage(this.currentStage)
 		
 
-		map.getTileLayerNames().forEach((tileLayerName: string) => {
-			const layer = map.createLayer(tileLayerName, tileset)
+		this.map.getTileLayerNames().forEach((tileLayerName: string) => {
+			const layer = this.map.createLayer(tileLayerName, tileset)
 			if (tileLayerName !== 'main-layer' && tileLayerName !== 'second-layer') {
 				this.setParallax(layer)
 			}
 		})
 		this.collisionsManager(collisionsLayer)
-		this.spriteLayerManager(spriteLayer)
+		this.spriteLayerManager(this.spriteLayer)
 		this.buildStatusBar()
 		
 		//const stageName = this.scene.add.text(screenWiew.centerX, screenWiew.centerY /2, this.currentStage )

@@ -38,6 +38,7 @@ export default class StandardScene extends Phaser.Scene {
 		this.player.normalSkill = 'lightning-bolt'
 
 		this.cameras.main.startFollow(this.player.getSprite(), true, 0.05, 0.05)
+	//	this.add.sprite(0, 0, 'snake')
 
 		//setTimeout(()=> test(player.takeDamage.bind(player)), 6000)
 		//saveManager.saveGame({stage: JSON.stringify(mainGameConfigManager.config.stages)})

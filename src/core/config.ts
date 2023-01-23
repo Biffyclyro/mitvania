@@ -10,7 +10,7 @@ export const phaserConfig = {
 	height: windowSize.height,
 	scene: [StandardScene],
 	loader: {
-		path: "../assets/"
+		path: "./assets/",
 	},
 	physics: {
 		default: 'matter',

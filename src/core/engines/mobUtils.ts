@@ -253,10 +253,11 @@ export class MobBehaviorController {
 					}
 
 					if (mob.behaveor?.fly) {
-						if (playerSprite.y > sprite.y + 40 && sprite.body.velocity.y < 0) {
-							mob.behaveor.fly.speed *= -1
-						} else if (playerSprite.y < sprite.y - 40 && sprite.body.velocity.y > 0) {
-							mob.behaveor.fly.speed *= -1
+						const absSpeed = Math.abs(mob.behaveor.fly.speed) 
+						if (playerSprite.y > sprite.y + 40 ) {
+							mob.behaveor.fly.speed = absSpeed 
+						} else if (playerSprite.y < sprite.y - 40 ) {
+							mob.behaveor.fly.speed = absSpeed * -1 
 						}
 					}
 				}

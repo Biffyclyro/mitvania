@@ -136,6 +136,7 @@ export class SpriteEntity {
 		this.sprite.setFixedRotation()
 		this.sprite.setFriction(0)
 		this.sprite.setData('entity', this)
+		this.sprite.setMass(100)
 		
 		//scene.matter.world.on('collisionactive', this.verifyCollision.bind(this))
 		//scene.matter.world.on('collisionend', this.verifyCollision.bind(this))

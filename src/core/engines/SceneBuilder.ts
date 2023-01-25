@@ -180,8 +180,8 @@ export default class SceneBuilder{
 		this.scene.load.tilemapTiledJSON(this.currentStage, `tiles/${this.currentStage}/tilemap.json`)
 		this.scene.load.image(`${this.currentStage}-background`, `backgrounds/${this.currentStage}.png`)
 		this.scene.load.image('lotus', 'sprites/lotus.png')
-		this.scene.load.image('life-potion', 'sprites/life-potion.png')
-		this.scene.load.image('mana-potion', 'sprites/mana-potion.png')
+		//this.scene.load.image('life-potion', 'sprites/life-potion.png')
+		//this.scene.load.image('mana-potion', 'sprites/mana-potion.png')
 		//essa parte carrega os assets dinamicamente baseado no json do tilemap, se não quebrar será a solução ideal
 		this.scene.load.on('filecomplete', (key: string, type: string, obj: Tilemaps.Tilemap) => {
 			if (type === 'tilemapJSON') {
@@ -202,6 +202,16 @@ export default class SceneBuilder{
 							mobConfig.inventory.forEach(item => {
 								this.scene.load.spritesheet(item, `sprites/itens/${item}.png`, { frameWidth: 24, frameHeight: 16 })
 							})
+							break
+
+						case 'item': case 'potion':
+							const itemName = obj.properties[0].value
+							this.scene.load.spritesheet(itemName, `sprites/itens/${itemName}.png`, { frameWidth: 24, frameHeight: 16 })
+							break
+
+						case 'skill':
+							const skillName = obj.properties[0].value
+							this.scene.load.spritesheet(skillName, `sprites/skills/${skillName}.png`, { frameWidth: 24, frameHeight: 16 })
 							break
 					}
 				})

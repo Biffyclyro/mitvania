@@ -29,6 +29,7 @@ export const itemFactory = (scene: Scene, x: number, y: number, itemKey: string,
 	if (volatile) {
 		setTimeout(() => item.destroy(), 5000)
 	}
+	item.setMass(1)
 	return item
 }
 

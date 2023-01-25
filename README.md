@@ -132,7 +132,7 @@ collision object names: passable, kill-sprite
 - [ ] Sound effects
 - [ ] Musics
 - [X] Fix items overlapping the wall
-- [ ] Flying mobs
+- [X] Flying mobs
 - [x] Load all the assets dynamically
 - [ ] Make all the tilesets and sprites
 - [X] Attacking mobs

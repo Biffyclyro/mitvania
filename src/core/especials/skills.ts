@@ -15,10 +15,38 @@ const areaSkill = (se: SpriteEntity,
 												velocity: number, 
 												damage: number, 
 												manaCost: number,
-												conjurationTime: number) => {
+												conjurationTime: number,
+												area: number) => {
 
 	se.attacking = true	
 	setTimeout(() => se.attacking = false, conjurationTime)
+
+	const sprite = se.getSprite()
+	if (se.mana - manaCost >= 0 ) {
+		if (se.isPlayer) {
+			se.mana -= manaCost
+			se.getSprite().scene.events.emit('player-skill', manaCost)
+		}
+		const skill = sprite.scene.matter.add.sprite(sprite.x, sprite.y, texture, 0, {
+			ignoreGravity: true,
+			label: texture,
+			isSensor: true
+		})
+		skill.setVisible(true)
+		skill.setFixedRotation()
+		skill.type = 'skill'
+
+		skill.setOnCollide((pair: Types.Physics.Matter.MatterCollisionPair) => {
+			const entity = extractEntity(pair)
+			if (entity) {
+				entity.takeDamage(damage * se.lvl)
+			}
+
+			if (!pair.bodyA.isSensor || !pair.bodyB.isSensor) {
+				skill.destroy()
+			}
+		})
+	}
 }
 
 const throwableSkill = (se: SpriteEntity, 
@@ -36,7 +64,8 @@ const throwableSkill = (se: SpriteEntity,
 	if (se.mana - manaCost >= 0) {
 		if (se.isPlayer) {
 			se.mana -= manaCost
-			se.getSprite().scene.events.emit('player-skill', manaCost)
+			//se.getSprite().scene.events.emit('player-skill', manaCost)
+			sprite.scene.events.emit('player-skill', manaCost)
 		}
 
 		const skill = sprite.scene.matter.add.sprite(sprite.x + setSide(sprite), sprite.y, texture, 0, {

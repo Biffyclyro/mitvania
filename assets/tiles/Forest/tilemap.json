@@ -8,7 +8,6 @@
          "name":"sprite-objects",
          "objects":[
                 {
-                 "class":"",
                  "height":0,
                  "id":5,
                  "name":"potion",
@@ -20,25 +19,25 @@
                          "value":"life-potion"
                         }],
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":847.03,
                  "y":534.182
                 }, 
                 {
-                 "class":"",
                  "height":0,
                  "id":6,
                  "name":"lotus",
                  "point":true,
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":1619.03,
                  "y":752.515
                 }, 
                 {
-                 "class":"",
                  "height":0,
                  "id":30,
                  "name":"spawner",
@@ -65,13 +64,13 @@
                          "value":true
                         }],
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":1107.03,
                  "y":607.515
                 }, 
                 {
-                 "class":"",
                  "height":0,
                  "id":49,
                  "name":"item",
@@ -83,10 +82,44 @@
                          "value":"sword"
                         }],
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":2195,
-                 "y":790.666666666667
+                 "y":790.667
+                }, 
+                {
+                 "height":0,
+                 "id":56,
+                 "name":"plataform",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"key",
+                         "type":"string",
+                         "value":"plataform"
+                        }, 
+                        {
+                         "name":"velocity",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"x",
+                         "type":"int",
+                         "value":200
+                        }, 
+                        {
+                         "name":"y",
+                         "type":"int",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":1257.67,
+                 "y":541.667
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -100,29 +133,28 @@
          "name":"collisions",
          "objects":[
                 {
-                 "class":"",
                  "height":11.2727,
                  "id":3,
                  "name":"passable",
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":192.727,
                  "x":755.136,
                  "y":563.652
                 }, 
                 {
-                 "class":"",
                  "height":49.0435,
                  "id":19,
                  "name":"",
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":1280,
                  "x":2.66667,
                  "y":653.97
                 }, 
                 {
-                 "class":"",
                  "height":0,
                  "id":20,
                  "name":"",
@@ -148,24 +180,24 @@
                          "y":144.625
                         }],
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":1282.67,
                  "y":653.974
                 }, 
                 {
-                 "class":"",
                  "height":14.4766,
                  "id":22,
                  "name":"",
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":159.922,
                  "x":1538.75,
                  "y":784.493
                 }, 
                 {
-                 "class":"",
                  "height":0,
                  "id":29,
                  "name":"",
@@ -195,35 +227,35 @@
                          "y":78.9565
                         }],
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":1699,
                  "y":783.97
                 }, 
                 {
-                 "class":"",
                  "height":11.2727,
                  "id":33,
                  "name":"passable",
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":192.727,
                  "x":751.636,
                  "y":498.364
                 }, 
                 {
-                 "class":"",
                  "height":66.5,
                  "id":39,
                  "name":"kill-sprite",
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":128.5,
                  "x":2048.5,
                  "y":894
                 }, 
                 {
-                 "class":"",
                  "height":0,
                  "id":43,
                  "name":"",
@@ -257,13 +289,13 @@
                          "y":-65.5455
                         }],
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":2144.73,
                  "y":894.545
                 }, 
                 {
-                 "class":"",
                  "height":0,
                  "id":44,
                  "name":"",
@@ -289,13 +321,13 @@
                          "y":58.3125
                         }],
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":2495.25,
                  "y":782.688
                 }, 
                 {
-                 "class":"",
                  "height":51,
                  "id":46,
                  "name":"gateway",
@@ -306,13 +338,13 @@
                          "value":"SecretGarden"
                         }],
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":39,
                  "x":2731.67,
                  "y":800.667
                 }, 
                 {
-                 "class":"",
                  "height":0,
                  "id":47,
                  "name":"",
@@ -338,17 +370,18 @@
                          "y":-8.39526
                         }],
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":2668.78,
                  "y":872.304
                 }, 
                 {
-                 "class":"",
                  "height":11.875,
                  "id":48,
                  "name":"",
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":98.125,
                  "x":2672.5,
@@ -1032,17 +1065,17 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":7,
- "nextobjectid":50,
+ "nextlayerid":8,
+ "nextobjectid":57,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.9.2",
+ "tiledversion":"1.10.1",
  "tileheight":32,
  "tilesets":[
         {
          "columns":11,
          "firstgid":1,
-         "image":"Tiles2.png",
+         "image":"Tiles.png",
          "imageheight":384,
          "imagewidth":352,
          "margin":0,
@@ -1054,6 +1087,6 @@
         }],
  "tilewidth":32,
  "type":"map",
- "version":"1.9",
+ "version":"1.10",
  "width":30
 }

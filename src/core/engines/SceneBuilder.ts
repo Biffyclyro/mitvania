@@ -6,6 +6,7 @@ import { mobsConfigMap } from "../especials/mobsConfig"
 import { MobBehaviorController, mobFactory, MobSpawner } from "./mobUtils"
 import { itemFactory } from "../especials/itens"
 import { extractEntity } from "./entitiesHandler"
+import { Plataform } from "./mapUtils"
 
 export default class SceneBuilder{
 	private numLayers = 1 
@@ -17,6 +18,7 @@ export default class SceneBuilder{
 	private readonly mobController = new MobBehaviorController()
 	private map: Tilemaps.Tilemap
 	private spriteLayer: Tilemaps.ObjectLayer 
+	private readonly plataforms: Plataform[] = []
 	//private tileset: Tilemaps.Tileset
 
 	constructor(private readonly scene: Scene) {
@@ -135,6 +137,7 @@ export default class SceneBuilder{
 	}
 
 	moveEntities() {
+		//this.plataforms.forEach(p => p.moveHorizontally())
 		this.mobSpawners.forEach(ms => ms.moveMobs())
 		this.entitiesList.forEach(se => {
 		// const sprite = se.getSprite()
@@ -162,6 +165,7 @@ export default class SceneBuilder{
 	}
 	
 	stopAllEntities() {
+		this.plataforms.forEach(p => p.stop())
 		this.mobSpawners.forEach(ms => ms.stopAllMobs())
 		this.entitiesList.forEach(e => e.canMove = false)
 	}
@@ -212,6 +216,11 @@ export default class SceneBuilder{
 						case 'skill':
 							const skillName = obj.properties[0].value
 							this.scene.load.spritesheet(skillName, `sprites/skills/${skillName}.png`, { frameWidth: 24, frameHeight: 16 })
+							break
+
+						case 'plataform':
+							const plataformName = obj.properties[0].value
+							this.scene.load.spritesheet(plataformName, `sprites/moving-objects/${plataformName}.png`, { frameWidth: 128, frameHeight: 16 })
 							break
 					}
 				})
@@ -342,7 +351,7 @@ export default class SceneBuilder{
 						this.buildSaveLotus(obj)
 					} else if (obj.name === 'spawner') {
 					//	this.buildAllMobsAnims(obj.properties[1].value)
-						this.mobSpawners.push(new MobSpawner(this.scene, obj))	
+						//this.mobSpawners.push(new MobSpawner(this.scene, obj))	
 					} else if (obj.name === 'potion') {
 						itemFactory(this.scene, obj.x!, obj.y!, obj.properties[0].value)
 					} else if (obj.name === 'item') {
@@ -352,6 +361,16 @@ export default class SceneBuilder{
 					} else if (obj.name === 'boss') {
 						this.buildAllMobsAnims(obj.properties[1].value)
 						this.spawnMob(obj)
+					} else if (obj.name === 'plataform') {
+							const movement = {
+								x: obj.properties[2].value,
+								y: obj.properties[3].value,
+								velocity: obj.properties[1].value
+							}
+
+							const plataform = new Plataform(this.scene.matter.add.image(obj.x!, obj.y!, obj.properties![0].value), movement)
+							plataform.moveHorizontally()
+							//this.plataforms.push(plataform)
 					}
 				}
 			})
@@ -398,6 +417,15 @@ export default class SceneBuilder{
 			if (obj.name) {
 				if (obj.name === 'passable') {
 					block.setCollisionGroup(-7)
+					
+					// if( obj.properties ) {
+					// 	const movement = {
+					// 										x: obj.properties[1].value, 
+					// 										y: obj.properties[2].value, 
+					// 										velocity: obj.properties[0].value
+					// 									}
+					// 	this.plataforms.push(new Plataform(block, movement ))
+					// }
 				} else {
 					block.setCollisionGroup(-2)
 					if (obj.name === 'kill-sprite') {
@@ -476,7 +504,7 @@ export default class SceneBuilder{
 
 		this.map.getTileLayerNames().forEach((tileLayerName: string) => {
 			const layer = this.map.createLayer(tileLayerName, tileset)
-			if (tileLayerName !== 'main-layer' && tileLayerName !== 'second-layer') {
+			if (tileLayerName !== 'main-layer' && tileLayerName !== 'second-layer' ) {
 				this.setParallax(layer)
 			}
 		})

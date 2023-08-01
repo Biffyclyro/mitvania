@@ -72,6 +72,7 @@ export class SpriteEntity {
 	behaveor: BehaviorInfos | undefined
 	sensors: Sensors
 	mainBody: BodyType
+	isMoving = false
 	protected sprite: Physics.Matter.Sprite
 	constructor (
 		public lvl: number,
@@ -106,7 +107,7 @@ export class SpriteEntity {
 			left: Bodies.rectangle(-1 - (width/2), 0, 1, width/2, {isSensor: true}),
 			right: Bodies.rectangle(1 + (width/2), 0, 1, width/2, {isSensor: true})
 		}
-		if (areaSensorSize > 0 ) {
+		if ( areaSensorSize > 0 ) {
 			this.sensors.areaSensor = Bodies.circle(0, 0, areaSensorSize, { isSensor: true })
 		}
 		this.sensors.bottom.onCollideActiveCallback = this.resetJump.bind(this)
@@ -163,12 +164,15 @@ export class SpriteEntity {
 	}
 
 	idle() {
-		this.sprite.setVelocityX(0)
-		this.playAnims(`${this.baseTexture}-idle`)
+		if (this.isMoving) {
+			this.sprite.setVelocityX(0)
+			this.playAnims(`${this.baseTexture}-idle`)
+		}
 	}
 
 	jump() {
 		if (this.jumps > 0 && this.canMove) {
+			this.isMoving = true
 			this.jumps--
 			this.sprite.setVelocityY(-10)
 		}
@@ -205,6 +209,7 @@ export class SpriteEntity {
 			},
 		}
 		if (this.canMove) {
+			this.isMoving = true
 			switch (direction) {
 				case Direction.Left:
 					movements.Left()
